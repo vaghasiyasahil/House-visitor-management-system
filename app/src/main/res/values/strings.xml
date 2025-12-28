@@ -31,6 +31,19 @@
     <string name="number">12</string>
     <string name="existing_houses">EXISTING HOUSES</string>
     <string name="total">Total</string>
+    <string name="back">Back</string>
+    <string name="add_new_house">Add New House</string>
+    <string name="add_new_house_info">Enter the details below to register a new residence in the system.</string>
+    <string name="house_number">House Number</string>
+    <string name="house_number_hint">e.g. A-102</string>
+    <string name="owner_name">Owner Name</string>
+    <string name="full_name">Full Name</string>
+    <string name="owner_email">Owner Email</string>
+    <string name="email_hint">email@example.com</string>
+    <string name="create_password">Create Password</string>
+    <string name="create_a_password">Create a password</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_house">Add House</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

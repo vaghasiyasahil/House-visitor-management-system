@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityViewHouseBinding
+import com.example.todoapp.utils.KeyboardUtils
 
 class ViewHouseActivity : AppCompatActivity() {
 
