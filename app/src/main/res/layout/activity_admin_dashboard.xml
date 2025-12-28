@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B131E"
+    android:background="@color/night_blue"
     tools:context=".AdminDashboardActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +30,7 @@
                 android:padding="2dp"
                 android:src="@drawable/person_image"
                 app:shapeAppearanceOverlay="@style/CircleImage"
-                app:strokeColor="#2C3643"
+                app:strokeColor="@color/slate_blue_gray"
                 app:strokeWidth="2dp" />
 
             <View
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hello_again"
-                android:textColor="#6C757D"
+                android:textColor="@color/cool_gray"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_user"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -84,7 +84,7 @@
                 android:layout_gravity="center"
                 android:contentDescription="@string/notification"
                 android:src="@android:drawable/ic_popup_reminder"
-                app:tint="#FFFFFF" />
+                app:tint="@color/white" />
 
             <View
                 android:layout_width="8dp"
@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/overview"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/updated_just_now"
-                    android:textColor="#6C757D"
+                    android:textColor="@color/cool_gray"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="@id/tvOverview"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -153,7 +153,7 @@
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
-                        app:cardBackgroundColor="#1A222C"
+                        app:cardBackgroundColor="@color/dark_navy"
                         app:cardCornerRadius="24dp"
                         app:strokeWidth="0dp">
 
@@ -179,7 +179,7 @@
                                 app:layout_constraintEnd_toEndOf="@id/bgIcon1"
                                 app:layout_constraintStart_toStartOf="@id/bgIcon1"
                                 app:layout_constraintTop_toTopOf="@id/bgIcon1"
-                                app:tint="#3498DB" />
+                                app:tint="@color/bright_blue" />
 
                             <TextView
                                 android:id="@+id/txtVal1"
@@ -187,7 +187,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp"
                                 android:text="@string/number"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -197,7 +197,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/active_visitors"
-                                android:textColor="#6C757D"
+                                android:textColor="@color/cool_gray"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/txtVal1" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -207,7 +207,7 @@
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
-                        app:cardBackgroundColor="#1A222C"
+                        app:cardBackgroundColor="@color/dark_navy"
                         app:cardCornerRadius="24dp"
                         app:strokeWidth="0dp">
 
@@ -233,7 +233,7 @@
                                 app:layout_constraintEnd_toEndOf="@id/bgIcon2"
                                 app:layout_constraintStart_toStartOf="@id/bgIcon2"
                                 app:layout_constraintTop_toTopOf="@id/bgIcon2"
-                                app:tint="#E67E22" />
+                                app:tint="@color/orange" />
 
                             <TextView
                                 android:id="@+id/txtVal2"
@@ -241,7 +241,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp"
                                 android:text="@string/number"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -251,7 +251,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/pending_complaints"
-                                android:textColor="#6C757D"
+                                android:textColor="@color/cool_gray"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/txtVal2" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -265,7 +265,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:text="@string/modules"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -283,7 +283,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -301,7 +301,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#0F2B45" />
+                                android:backgroundTint="@color/deep_ocean_blue" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -309,7 +309,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/house_management"
                                 android:src="@drawable/ic_home_filled"
-                                app:tint="@color/module_blue" />
+                                app:tint="@color/bright_azure_blue" />
                         </FrameLayout>
 
                         <TextView
@@ -318,7 +318,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/house_management"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -329,7 +329,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -347,7 +347,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#151A35" />
+                                android:backgroundTint="@color/midnight_blue" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -355,7 +355,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/guard_management"
                                 android:src="@drawable/ic_security_shield"
-                                app:tint="@color/module_purple" />
+                                app:tint="@color/purple" />
                         </FrameLayout>
 
                         <TextView
@@ -364,7 +364,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/guard_management"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -375,7 +375,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -393,7 +393,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#292115" />
+                                android:backgroundTint="@color/dark_coffee" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -401,7 +401,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/announcements"
                                 android:src="@drawable/ic_announcement"
-                                app:tint="@color/module_orange" />
+                                app:tint="@color/orange" />
                         </FrameLayout>
 
                         <TextView
@@ -410,7 +410,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/announcements"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -421,7 +421,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -439,7 +439,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#102526" />
+                                android:backgroundTint="@color/deep_teal" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -447,7 +447,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/visitor_logs"
                                 android:src="@drawable/ic_visitor_log"
-                                app:tint="@color/module_teal" />
+                                app:tint="@color/teal" />
                         </FrameLayout>
 
                         <TextView
@@ -456,7 +456,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/visitor_logs"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -467,7 +467,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -485,7 +485,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#2C191C" />
+                                android:backgroundTint="@color/deep_maroon" />
 
                             <ImageView
                                 android:contentDescription="@string/complaints"
@@ -493,7 +493,7 @@
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_warning_triangle"
-                                app:tint="@color/module_red" />
+                                app:tint="@color/red" />
                         </FrameLayout>
 
                         <TextView
@@ -502,7 +502,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/complaints"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -513,7 +513,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -531,7 +531,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#1B1629" />
+                                android:backgroundTint="@color/deep_indigo" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -539,7 +539,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/reports"
                                 android:src="@drawable/ic_analytics_chart"
-                                app:tint="@color/module_purple" />
+                                app:tint="@color/purple" />
                         </FrameLayout>
 
                         <TextView
@@ -548,7 +548,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/reports"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -559,7 +559,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -577,7 +577,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#1A222C" />
+                                android:backgroundTint="@color/dark_navy" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -585,7 +585,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/blocklist"
                                 android:src="@drawable/ic_block_circle"
-                                app:tint="@color/module_gray" />
+                                app:tint="@color/gray" />
                         </FrameLayout>
 
                         <TextView
@@ -594,7 +594,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/blocklist"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -605,7 +605,7 @@
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#1A222C"
+                    app:cardBackgroundColor="@color/dark_navy"
                     app:cardCornerRadius="28dp"
                     app:strokeWidth="0dp">
 
@@ -623,7 +623,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="#1A222C" />
+                                android:backgroundTint="@color/dark_navy" />
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -631,7 +631,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/settings"
                                 android:src="@drawable/ic_settings_gear"
-                                app:tint="@color/module_gray" />
+                                app:tint="@color/gray" />
                         </FrameLayout>
 
                         <TextView
@@ -640,7 +640,7 @@
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:text="@string/settings"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textStyle="bold"
                             tools:ignore="TooManyViews" />
                     </LinearLayout>

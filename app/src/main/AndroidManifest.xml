@@ -13,6 +13,9 @@
         android:theme="@style/Theme.HouseVisitorManagementSystem"
         tools:targetApi="31">
         <activity
+            android:name=".AddHouseActivity"
+            android:exported="false" />
+        <activity
             android:name=".ViewHouseActivity"
             android:exported="false" />
         <activity
