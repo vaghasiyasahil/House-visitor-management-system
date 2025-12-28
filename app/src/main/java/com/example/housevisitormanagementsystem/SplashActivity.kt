@@ -24,8 +24,8 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
         Handler(Looper.getMainLooper()).postDelayed({
-            intent = Intent(applicationContext,LoginActivity::class.java)
-//            intnt = Intent(applicationContext,AdminDashboardActivity::class.java)
+//            intent = Intent(applicationContext,LoginActivity::class.java)
+            intent = Intent(applicationContext,AdminDashboardActivity::class.java)
             startActivity(intent)
             finish()
         },5000)
