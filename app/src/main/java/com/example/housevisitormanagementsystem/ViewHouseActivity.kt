@@ -35,14 +35,28 @@ class ViewHouseActivity : AppCompatActivity() {
         }
 
         binding.delete1.setOnClickListener {
-            val dialog = DeleteConfirmationDialogFragment.newInstance(
-                title = "Delete House?",
-                message = "Are you sure you want to remove this house from the system? This process is irreversible.",
-                onConfirm = {
-                    Toast.makeText(this, "House deleted successfully", Toast.LENGTH_SHORT).show()
-                }
-            )
-            dialog.show(supportFragmentManager, "DeleteHouseDialog")
+            showDeleteDialog();
+        }
+        binding.delete2.setOnClickListener {
+            showDeleteDialog();
+        }
+        binding.delete3.setOnClickListener {
+            showDeleteDialog();
+        }
+        binding.delete4.setOnClickListener {
+            showDeleteDialog();
         }
     }
+
+    fun showDeleteDialog(){
+        val dialog = DeleteConfirmationDialogFragment.newInstance(
+            title = "Delete House?",
+            message = "Are you sure you want to remove this house from the system? This process is irreversible.",
+            onConfirm = {
+                Toast.makeText(this, "House deleted successfully", Toast.LENGTH_SHORT).show()
+            }
+        )
+        dialog.show(supportFragmentManager, "DeleteHouseDialog")
+    }
+
 }

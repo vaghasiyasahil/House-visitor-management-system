@@ -69,10 +69,8 @@ class DeleteConfirmationDialogFragment(
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
-            setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+            setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
     }
