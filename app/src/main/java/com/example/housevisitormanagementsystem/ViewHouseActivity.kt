@@ -7,7 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityViewHouseBinding
-import com.example.todoapp.utils.KeyboardUtils
+import android.widget.Toast
+import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 
 class ViewHouseActivity : AppCompatActivity() {
 
@@ -31,6 +32,17 @@ class ViewHouseActivity : AppCompatActivity() {
         binding.fabAddHouse.setOnClickListener {
             intent = Intent(this,AddHouseActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.delete1.setOnClickListener {
+            val dialog = DeleteConfirmationDialogFragment.newInstance(
+                title = "Delete House?",
+                message = "Are you sure you want to remove this house from the system? This process is irreversible.",
+                onConfirm = {
+                    Toast.makeText(this, "House deleted successfully", Toast.LENGTH_SHORT).show()
+                }
+            )
+            dialog.show(supportFragmentManager, "DeleteHouseDialog")
         }
     }
 }

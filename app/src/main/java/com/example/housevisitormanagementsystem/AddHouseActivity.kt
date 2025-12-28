@@ -42,10 +42,10 @@ class AddHouseActivity : AppCompatActivity() {
 
         binding.btnAddHouse.setOnClickListener {
             KeyboardUtils.hideKeyboard(this)
-            binding.etHouseNumber.error = Validators.validateRequired(binding.etHouseNumber.editText.toString(),"House number")
-            binding.etOwnerName.error = Validators.validateName(binding.etOwnerName.editText.toString(),"Owner name")
-            binding.etOwnerEmail.error = Validators.validateEmail(binding.etOwnerEmail.editText.toString())
-            binding.etPassword.error = Validators.validatePassword(binding.etPassword.editText.toString())
+            binding.etHouseNumber.error = Validators.validateRequired(binding.etHouseNumber.editText?.text.toString(),"House number")
+            binding.etOwnerName.error = Validators.validateName(binding.etOwnerName.editText?.text.toString(),"Owner name")
+            binding.etOwnerEmail.error = Validators.validateEmail(binding.etOwnerEmail.editText?.text.toString())
+            binding.etPassword.error = Validators.validatePassword(binding.etPassword.editText?.text.toString())
         }
 
         binding.etHouseNumber.editText?.addTextChangedListener {
