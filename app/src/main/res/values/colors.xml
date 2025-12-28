@@ -7,4 +7,13 @@
     <color name="white">#FFFFFF</color>
     <color name="background_light">#F6F7F8</color>
     <color name="charcoal_blue">#334f6a</color>
+    
+    <!-- Module Colors -->
+    <color name="module_blue">#137fec</color>
+    <color name="module_purple">#6C5CE7</color>
+    <color name="module_orange">#E67E22</color>
+    <color name="module_green">#2ECC71</color>
+    <color name="module_red">#E74C3C</color>
+    <color name="module_teal">#1ABC9C</color>
+    <color name="module_gray">#95A5A6</color>
 </resources>
