@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_dark">#101922</color>
+    <color name="dark_blue_gray">#1a2632</color>
+    <color name="sky_blue">#92ADC9</color>
+    <color name="bright_azure_blue">#137fec</color>
+    <color name="white">#FFFFFF</color>
+    <color name="background_light">#F6F7F8</color>
+    <color name="charcoal_blue">#334f6a</color>
+</resources>
