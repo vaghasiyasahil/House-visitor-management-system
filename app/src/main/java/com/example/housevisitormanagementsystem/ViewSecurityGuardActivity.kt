@@ -25,6 +25,19 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSearch()
         setupFilters()
+        setupClickListeners()
+    }
+
+    private fun setupClickListeners() {
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
+        binding.fabAddGuard.setOnClickListener {
+            // TODO: Navigate to Add Guard Screen
+            // For now, show a placeholder or do nothing
+             android.widget.Toast.makeText(this, "Add Guard Clicked", android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupDummyData() {
