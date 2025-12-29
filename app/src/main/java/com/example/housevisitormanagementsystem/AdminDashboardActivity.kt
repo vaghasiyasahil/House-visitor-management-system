@@ -27,6 +27,10 @@ class AdminDashboardActivity : AppCompatActivity() {
             intent = Intent(this,ViewHouseActivity::class.java)
             startActivity(intent)
         }
+        binding.guardManagement.setOnClickListener {
+            intent = Intent(this,ViewSecurityGuardActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }

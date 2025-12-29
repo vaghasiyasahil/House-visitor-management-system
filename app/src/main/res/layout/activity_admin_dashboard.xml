@@ -276,7 +276,6 @@
                 android:paddingHorizontal="8dp"
                 app:columnCount="2">
 
-                <!-- House Management -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/houseManagement"
                     android:layout_width="0dp"
@@ -323,8 +322,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Guard Management -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/guardManagement"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -369,8 +368,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Announcements -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/announcements"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -415,8 +414,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Visitor Logs -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/visitorLogs"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -461,8 +460,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Complaints -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/complaints"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -507,8 +506,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Reports -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/reports"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -553,8 +552,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Blocklist -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/blocklist"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"
@@ -599,8 +598,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Settings -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/settings"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_columnWeight="1"

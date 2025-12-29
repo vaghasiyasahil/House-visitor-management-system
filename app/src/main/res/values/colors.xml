@@ -27,4 +27,16 @@
     <color name="steel_blue_gray">#8B95A5</color>
     <color name="slate_gray">#596577</color>
     <color name="dark_plum">#291619</color>
+
+    <!-- Security Guard UI Colors -->
+    <color name="dark_navy_bg">#0B131E</color>
+    <color name="card_dark_bg">#1A222C</color>
+    <color name="text_grey">#8B95A5</color>
+    <color name="badge_blue_bg">#1A2632</color>
+    <color name="badge_purple_bg">#2D1F38</color>
+    <color name="badge_blue_text">#3498DB</color>
+    <color name="badge_purple_text">#9B59B6</color>
+    <color name="status_green">#2ECC71</color>
+    <color name="status_yellow">#F1C40F</color>
+    <color name="status_grey">#95A5A6</color>
 </resources>

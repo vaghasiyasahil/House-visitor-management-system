@@ -2,9 +2,113 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewSecurityGuardActivity">
+    android:background="@color/dark_navy_bg"
+    android:padding="16dp">
+
+    <!-- Search Bar -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxBackgroundMode="none"
+        app:hintEnabled="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/ic_search"
+        app:startIconTint="@color/text_grey"
+        app:endIconDrawable="@drawable/ic_filter"
+        app:endIconTint="@color/text_grey"
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_search_bar"
+            android:hint="Search by name or ID"
+            android:textColor="@color/white"
+            android:textColorHint="@color/text_grey"
+            android:paddingStart="4dp"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Filter Tabs -->
+    <HorizontalScrollView
+        android:id="@+id/filterScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/searchLayout">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Guards"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bright_azure_blue"
+                app:chipStrokeWidth="0dp"
+                android:checkable="true"
+                android:checked="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMorning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Morning Shift"
+                android:textColor="@color/text_grey"
+                app:chipBackgroundColor="@color/card_dark_bg"
+                app:chipStrokeWidth="0dp"
+                android:checkable="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipNight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Night Shift"
+                android:textColor="@color/text_grey"
+                app:chipBackgroundColor="@color/card_dark_bg"
+                app:chipStrokeWidth="0dp"
+                android:checkable="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+            
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Section Title -->
+    <TextView
+        android:id="@+id/tvSectionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="ACTIVE PERSONNEL"
+        android:textColor="@color/text_grey"
+        android:textSize="12sp"
+        android:letterSpacing="0.05"
+        android:textAllCaps="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
+
+    <!-- Guard List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGuards"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle"
+        tools:listitem="@layout/item_security_guard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
