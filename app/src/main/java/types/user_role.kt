@@ -7,7 +7,7 @@ enum class UserRole {
 
     companion object {
         fun fromString(value: String): UserRole? {
-            return when (value.lowercase().replace(" ","").replace("_","")) {
+            return when (value.lowercase().replace(" ","").replace("_","").replace("-","")) {
                 "admin" -> Admin
                 "houseowner" -> HouseOwner
                 "securityguard" -> SecurityGuard
