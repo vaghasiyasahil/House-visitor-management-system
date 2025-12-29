@@ -44,6 +44,12 @@
     <string name="create_a_password">Create a password</string>
     <string name="cancel">Cancel</string>
     <string name="add_house">Add House</string>
+    <string name="security_guards">Security Guards</string>
+    <string name="search_hint_text">Search by name or email</string>
+    <string name="all_guards">All Guards</string>
+    <string name="morning_shift">Morning Shift</string>
+    <string name="night_shift">Night Shift</string>
+    <string name="add_guard">Add Guard</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

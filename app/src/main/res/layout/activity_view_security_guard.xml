@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_navy_bg"
+    android:background="@color/night_blue"
     android:padding="16dp">
 
     <!-- Custom App Bar -->
@@ -18,6 +18,7 @@
             android:id="@+id/btnBack"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:contentDescription="@string/back"
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/white"
             android:padding="4dp"
@@ -30,7 +31,7 @@
             android:id="@+id/tvPageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Security Guards"
+            android:text="@string/security_guards"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -61,11 +62,12 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_search_bar"
-            android:hint="Search by name or ID"
+            android:hint="@string/search_hint_text"
             android:textColor="@color/white"
             android:textColorHint="@color/text_grey"
             android:paddingStart="4dp"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:ignore="RtlSymmetry" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Filter Tabs -->
@@ -88,7 +90,7 @@
                 android:id="@+id/chipAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All Guards"
+                android:text="@string/all_guards"
                 android:textColor="@color/white"
                 app:chipBackgroundColor="@color/bright_azure_blue"
                 app:chipStrokeWidth="0dp"
@@ -100,7 +102,7 @@
                 android:id="@+id/chipMorning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Morning Shift"
+                android:text="@string/morning_shift"
                 android:textColor="@color/text_grey"
                 app:chipBackgroundColor="@color/card_dark_bg"
                 app:chipStrokeWidth="0dp"
@@ -111,7 +113,7 @@
                 android:id="@+id/chipNight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Night Shift"
+                android:text="@string/night_shift"
                 android:textColor="@color/text_grey"
                 app:chipBackgroundColor="@color/card_dark_bg"
                 app:chipStrokeWidth="0dp"
@@ -122,18 +124,6 @@
     </HorizontalScrollView>
 
     <!-- Section Title -->
-    <TextView
-        android:id="@+id/tvSectionTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="ACTIVE PERSONNEL"
-        android:textColor="@color/text_grey"
-        android:textSize="12sp"
-        android:letterSpacing="0.05"
-        android:textAllCaps="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
 
     <!-- Guard List -->
     <androidx.recyclerview.widget.RecyclerView
@@ -143,7 +133,7 @@
         android:layout_marginTop="12dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle"
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView"
         tools:listitem="@layout/item_security_guard" />
 
     <!-- Floating Action Button -->
@@ -153,7 +143,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:contentDescription="Add Guard"
+        android:contentDescription="@string/add_guard"
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/bright_azure_blue"
         app:tint="@color/white"
