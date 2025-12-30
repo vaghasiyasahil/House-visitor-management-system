@@ -34,21 +34,15 @@ class SecurityGuardAdapter(
 
     override fun onBindViewHolder(holder: GuardViewHolder, position: Int) {
         val guard = guardList[position]
-
         holder.tvName.text = guard.name
         holder.tvId.text = "ID: ${guard.guardId}"
         holder.tvShiftBadge.text = guard.shift
         holder.tvLocation.text = "• ${guard.location}"
-        
-        // Load profile image (using a placeholder if 0 or invalid, assuming resource ID here)
-        // In a real app with URLs, you'd use Glide/Picasso.
         if (guard.profileImage != 0) {
             holder.ivProfile.setImageResource(guard.profileImage)
         } else {
             holder.ivProfile.setImageResource(R.drawable.ic_launcher_background) // Fallback
         }
-
-        // Status Logic
         when (guard.status) {
             "Active" -> {
                 holder.viewStatusDot.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_green))
@@ -85,6 +79,26 @@ class SecurityGuardAdapter(
             holder.itemView.alpha = 0.7f
         } else {
             holder.itemView.alpha = 1.0f
+        }
+
+        // Popup Menu for Edit/Delete
+        holder.btnMore.setOnClickListener { view ->
+            val popup = android.widget.PopupMenu(context, view)
+            popup.menuInflater.inflate(R.menu.menu_guard_options, popup.menu)
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_edit -> {
+                        android.widget.Toast.makeText(context, "Edit ${guard.name}", android.widget.Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.action_delete -> {
+                        android.widget.Toast.makeText(context, "Delete ${guard.name}", android.widget.Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
         }
     }
 

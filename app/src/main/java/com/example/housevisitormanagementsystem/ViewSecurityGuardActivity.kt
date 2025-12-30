@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +21,19 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityViewSecurityGuardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
+        window.decorView.systemUiVisibility = 0 // Clear light status bar flag to use light icons
 
         setupDummyData()
         setupRecyclerView()
         setupSearch()
         setupFilters()
         setupClickListeners()
+
+        binding.fabAddGuard.setOnClickListener {
+            intent = Intent(this, AddSecurityGuardsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupClickListeners() {
