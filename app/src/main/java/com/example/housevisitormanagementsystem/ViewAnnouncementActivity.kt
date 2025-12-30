@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,6 +34,10 @@ class ViewAnnouncementActivity : AppCompatActivity() {
 
         binding.main.setOnClickListener {
             KeyboardUtils.hideKeyboard(this);
+        }
+        binding.fabAddAnnouncement.setOnClickListener {
+            intent = Intent(this, AddAnnouncementActivity::class.java);
+            startActivity(intent)
         }
     }
 

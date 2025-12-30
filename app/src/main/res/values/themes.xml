@@ -8,4 +8,20 @@
     <style name="CircleImage">
         <item name="cornerSize">50%</item>
     </style>
+
+    <!-- Custom Date Picker Theme -->
+    <style name="CustomDatePickerDialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:colorPrimary">@color/bright_azure_blue</item>
+        <item name="android:colorAccent">@color/bright_azure_blue</item>
+        <item name="android:windowBackground">@color/night_blue</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <!-- Custom Time Picker Theme -->
+    <style name="CustomTimePickerDialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:colorPrimary">@color/bright_azure_blue</item>
+        <item name="android:colorAccent">@color/bright_azure_blue</item>
+        <item name="android:windowBackground">@color/night_blue</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
 </resources>
