@@ -1,4 +1,4 @@
-package com.example.housevisitormanagementsystem.model
+package model
 
 data class SecurityGuard(
     val name: String,

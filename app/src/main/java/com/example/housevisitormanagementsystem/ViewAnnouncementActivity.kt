@@ -6,9 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.housevisitormanagementsystem.adapter.AnnouncementAdapter
+import adapter.AnnouncementAdapter
 import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnouncementBinding
-import com.example.housevisitormanagementsystem.model.Announcement
+import model.Announcement
 import com.example.todoapp.utils.KeyboardUtils
 
 class ViewAnnouncementActivity : AppCompatActivity() {

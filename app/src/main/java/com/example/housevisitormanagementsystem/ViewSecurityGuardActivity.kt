@@ -6,9 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.housevisitormanagementsystem.adapter.SecurityGuardAdapter
+import adapter.SecurityGuardAdapter
 import com.example.housevisitormanagementsystem.databinding.ActivityViewSecurityGuardBinding
-import com.example.housevisitormanagementsystem.model.SecurityGuard
+import model.SecurityGuard
 import java.util.Locale
 
 class ViewSecurityGuardActivity : AppCompatActivity() {

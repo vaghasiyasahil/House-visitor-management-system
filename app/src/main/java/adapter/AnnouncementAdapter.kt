@@ -1,4 +1,4 @@
-package com.example.housevisitormanagementsystem.adapter
+package adapter
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.AnnouncementDetailsActivity
 import com.example.housevisitormanagementsystem.R
-import com.example.housevisitormanagementsystem.model.Announcement
+import model.Announcement
 
 class AnnouncementAdapter(
     private val context: Context,

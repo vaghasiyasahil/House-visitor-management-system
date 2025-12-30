@@ -1,4 +1,4 @@
-package com.example.housevisitormanagementsystem.adapter
+package adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
-import com.example.housevisitormanagementsystem.model.SecurityGuard
+import model.SecurityGuard
 
 class SecurityGuardAdapter(
     private val context: Context,
