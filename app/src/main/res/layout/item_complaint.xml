@@ -8,7 +8,8 @@
     app:cardBackgroundColor="@color/card_dark_bg"
     app:cardCornerRadius="24dp"
     app:cardElevation="0dp"
-    app:strokeWidth="0dp">
+    app:strokeWidth="0dp"
+    android:minHeight="220dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="4"
             android:text="The sink pipe is leaking heavily and causing water to pool on the floor nea..."
             android:textColor="@color/text_grey"
             android:textSize="14sp"
