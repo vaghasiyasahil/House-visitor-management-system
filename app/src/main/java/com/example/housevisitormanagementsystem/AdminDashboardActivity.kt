@@ -39,6 +39,10 @@ class AdminDashboardActivity : AppCompatActivity() {
             intent = Intent(this,ViewVisitorActivity::class.java)
             startActivity(intent)
         }
+        binding.complaints.setOnClickListener {
+            intent = Intent(this, ViewComplaintActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }

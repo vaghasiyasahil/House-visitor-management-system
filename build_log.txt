@@ -1,3 +1,5 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.11.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
 WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 36
 
 This Android Gradle plugin (8.6.1) was tested up to compileSdk = 35.
@@ -56,7 +58,7 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':app:processDebugResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
    > Android resource linking failed
-     com.example.housevisitormanagementsystem.app-mergeDebugResources-47:/layout/item_security_guard.xml:108: error: resource drawable/ic_menu (aka com.example.housevisitormanagementsystem:drawable/ic_menu) not found.
+     com.example.housevisitormanagementsystem.app-mergeDebugResources-47:/layout/item_complaint.xml:100: error: resource drawable/bg_status_in_progress (aka com.example.housevisitormanagementsystem:drawable/bg_status_in_progress) not found.
      error: failed linking file resources.
 
 
@@ -66,5 +68,5 @@ Execution failed for task ':app:processDebugResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 4s
+BUILD FAILED in 25s
 27 actionable tasks: 1 executed, 26 up-to-date
