@@ -35,6 +35,10 @@ class AdminDashboardActivity : AppCompatActivity() {
             intent = Intent(this,ViewAnnouncementActivity::class.java);
             startActivity(intent)
         }
+        binding.visitorLogs.setOnClickListener {
+            intent = Intent(this,ViewVisitorActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }
