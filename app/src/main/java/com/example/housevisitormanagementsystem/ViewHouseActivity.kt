@@ -29,6 +29,10 @@ class ViewHouseActivity : AppCompatActivity() {
             finish();
         }
 
+        binding.btnGenerateReport.setOnClickListener {
+            Toast.makeText(this, "Exporting to PDF...", Toast.LENGTH_SHORT).show()
+        }
+
         binding.fabAddHouse.setOnClickListener {
             intent = Intent(this,AddHouseActivity::class.java)
             startActivity(intent)

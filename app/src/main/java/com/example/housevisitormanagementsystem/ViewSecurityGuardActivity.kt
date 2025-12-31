@@ -41,6 +41,10 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.btnGenerateReport.setOnClickListener {
+            android.widget.Toast.makeText(this, "Exporting to PDF...", android.widget.Toast.LENGTH_SHORT).show()
+        }
+
         binding.fabAddGuard.setOnClickListener {
             // TODO: Navigate to Add Guard Screen
             // For now, show a placeholder or do nothing

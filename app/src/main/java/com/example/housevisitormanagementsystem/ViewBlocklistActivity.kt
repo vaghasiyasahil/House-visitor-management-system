@@ -59,6 +59,10 @@ class ViewBlocklistActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.btnGenerateReport.setOnClickListener {
+            Toast.makeText(this, "Exporting to PDF...", Toast.LENGTH_SHORT).show()
+        }
+
         binding.tabBlocked.setOnClickListener {
             if (isHistoryTab) {
                 isHistoryTab = false

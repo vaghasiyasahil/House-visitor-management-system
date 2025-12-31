@@ -76,6 +76,9 @@ class ViewVisitorActivity : AppCompatActivity() {
         binding.btnFilter.setOnClickListener {
             Toast.makeText(this, "Filter Clicked", Toast.LENGTH_SHORT).show()
         }
+        binding.btnGenerateReport.setOnClickListener {
+            Toast.makeText(this, "Exporting to PDF...", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupDummyData() {

@@ -50,6 +50,10 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             android.widget.Toast.makeText(this, "Filter Clicked", android.widget.Toast.LENGTH_SHORT).show()
         }
 
+        binding.btnGenerateReport.setOnClickListener {
+            android.widget.Toast.makeText(this, "Exporting to PDF...", android.widget.Toast.LENGTH_SHORT).show()
+        }
+
         binding.fabAddAnnouncement.setOnClickListener {
             android.widget.Toast.makeText(this, "Add Announcement", android.widget.Toast.LENGTH_SHORT).show()
             // TODO: Navigate to Add Announcement screen
