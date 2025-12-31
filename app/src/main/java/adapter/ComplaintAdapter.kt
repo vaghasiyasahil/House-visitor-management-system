@@ -1,6 +1,7 @@
 package adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
+import com.example.housevisitormanagementsystem.UpdateComplaintStatusActivity
 import model.Complaint
 
 class ComplaintAdapter(
@@ -69,91 +71,10 @@ class ComplaintAdapter(
         }
 
         holder.statusBadge.setOnClickListener {
-            showUpdateStatusDialog(complaint)
+            val intent = Intent(context, UpdateComplaintStatusActivity::class.java)
+            intent.putExtra("complaint", complaint)
+            context.startActivity(intent)
         }
-    }
-
-    private fun showUpdateStatusDialog(complaint: Complaint) {
-        val dialog = android.app.Dialog(context)
-        dialog.setContentView(R.layout.dialog_update_complaint_status)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
-        // Remove fixed width to allow FrameLayout padding to act as margin
-        dialog.window?.setLayout(
-            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        val tvDetail = dialog.findViewById<TextView>(R.id.tvComplaintDetail)
-        tvDetail.text = "#CMP-${complaint.id} • ${complaint.title}"
-
-        val rbPending = dialog.findViewById<android.widget.RadioButton>(R.id.rbPending)
-        val rbInProgress = dialog.findViewById<android.widget.RadioButton>(R.id.rbInProgress)
-        val rbResolved = dialog.findViewById<android.widget.RadioButton>(R.id.rbResolved)
-
-        val optionPending = dialog.findViewById<android.view.View>(R.id.optionPending)
-        val optionInProgress = dialog.findViewById<android.view.View>(R.id.optionInProgress)
-        val optionResolved = dialog.findViewById<android.view.View>(R.id.optionResolved)
-
-        // Initial Selection
-        when (complaint.status) {
-            "Pending" -> {
-                rbPending.isChecked = true
-                optionPending.isSelected = true
-            }
-            "In Progress" -> {
-                rbInProgress.isChecked = true
-                optionInProgress.isSelected = true
-            }
-            "Resolved" -> {
-                rbResolved.isChecked = true
-                optionResolved.isSelected = true
-            }
-        }
-
-        // Click Listeners for Options
-        optionPending.setOnClickListener {
-            rbPending.isChecked = true
-            rbInProgress.isChecked = false
-            rbResolved.isChecked = false
-            optionPending.isSelected = true
-            optionInProgress.isSelected = false
-            optionResolved.isSelected = false
-        }
-
-        optionInProgress.setOnClickListener {
-            rbPending.isChecked = false
-            rbInProgress.isChecked = true
-            rbResolved.isChecked = false
-            optionPending.isSelected = false
-            optionInProgress.isSelected = true
-            optionResolved.isSelected = false
-        }
-
-        optionResolved.setOnClickListener {
-            rbPending.isChecked = false
-            rbInProgress.isChecked = false
-            rbResolved.isChecked = true
-            optionPending.isSelected = false
-            optionInProgress.isSelected = false
-            optionResolved.isSelected = true
-        }
-
-        dialog.findViewById<android.view.View>(R.id.btnCancel).setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.findViewById<android.view.View>(R.id.btnUpdateStatus).setOnClickListener {
-            val newStatus = when {
-                rbPending.isChecked -> "Pending"
-                rbInProgress.isChecked -> "In Progress"
-                else -> "Resolved"
-            }
-            android.widget.Toast.makeText(context, "Status updated to $newStatus", android.widget.Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     override fun getItemCount(): Int = complaints.size

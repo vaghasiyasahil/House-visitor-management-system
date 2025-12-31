@@ -1,5 +1,7 @@
 package model
 
+import java.io.Serializable
+
 data class Complaint(
     val id: String,
     val title: String,
@@ -10,4 +12,4 @@ data class Complaint(
     val iconRes: Int,
     val iconBgColor: Int,
     val iconTint: Int
-)
+) : Serializable

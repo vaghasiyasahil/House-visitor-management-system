@@ -506,51 +506,51 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/reports"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardBackgroundColor="@color/dark_navy"
-                    app:cardCornerRadius="28dp"
-                    app:strokeWidth="0dp">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:id="@+id/reports"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_columnWeight="1"-->
+<!--                    android:layout_margin="8dp"-->
+<!--                    app:cardBackgroundColor="@color/dark_navy"-->
+<!--                    app:cardCornerRadius="28dp"-->
+<!--                    app:strokeWidth="0dp">-->
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="24dp">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="24dp">-->
 
-                        <FrameLayout
-                            android:layout_width="50dp"
-                            android:layout_height="50dp">
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/circle_dark_bg"
-                                android:backgroundTint="@color/deep_indigo" />
+<!--                        <FrameLayout-->
+<!--                            android:layout_width="50dp"-->
+<!--                            android:layout_height="50dp">-->
+<!--                            <View-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:background="@drawable/circle_dark_bg"-->
+<!--                                android:backgroundTint="@color/deep_indigo" />-->
 
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:contentDescription="@string/reports"
-                                android:src="@drawable/ic_analytics_chart"
-                                app:tint="@color/purple" />
-                        </FrameLayout>
+<!--                            <ImageView-->
+<!--                                android:layout_width="24dp"-->
+<!--                                android:layout_height="24dp"-->
+<!--                                android:layout_gravity="center"-->
+<!--                                android:contentDescription="@string/reports"-->
+<!--                                android:src="@drawable/ic_analytics_chart"-->
+<!--                                app:tint="@color/purple" />-->
+<!--                        </FrameLayout>-->
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:gravity="center"
-                            android:text="@string/reports"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginTop="12dp"-->
+<!--                            android:gravity="center"-->
+<!--                            android:text="@string/reports"-->
+<!--                            android:textColor="@color/white"-->
+<!--                            android:textStyle="bold" />-->
+<!--                    </LinearLayout>-->
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/blocklist"
