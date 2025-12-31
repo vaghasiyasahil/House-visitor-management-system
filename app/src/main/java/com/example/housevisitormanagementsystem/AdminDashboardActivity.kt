@@ -43,6 +43,10 @@ class AdminDashboardActivity : AppCompatActivity() {
             intent = Intent(this, ViewComplaintActivity::class.java)
             startActivity(intent)
         }
+        binding.blocklist.setOnClickListener {
+            intent = Intent(this, ViewBlocklistActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }
