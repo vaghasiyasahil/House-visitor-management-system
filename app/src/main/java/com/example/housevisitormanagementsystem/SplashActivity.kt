@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -24,8 +25,8 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
         Handler(Looper.getMainLooper()).postDelayed({
+            SharedPreferencesService.init(this)
             intent = Intent(applicationContext,LoginActivity::class.java)
-//            intent = Intent(applicationContext,AdminDashboardActivity::class.java)
             startActivity(intent)
             finish()
         },5000)
