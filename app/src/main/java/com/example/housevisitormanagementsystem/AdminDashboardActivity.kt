@@ -66,7 +66,31 @@ class AdminDashboardActivity : AppCompatActivity() {
             binding.txtTotalAnnouncements.text = (value?.size() ?: 0).toString()
         }
         
-        // Placeholder for Active Visitors - reusing txtVal1 if needed, or leaving static
-        // binding.txtVal1.text = "12" 
+        setupProfile()
+    }
+
+    private fun setupProfile() {
+        binding.profileContainer.setOnClickListener {
+            showLogoutDialog()
+        }
+    }
+
+    private fun showLogoutDialog() {
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Yes") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun performLogout() {
+        SharedPreferencesService.clear()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

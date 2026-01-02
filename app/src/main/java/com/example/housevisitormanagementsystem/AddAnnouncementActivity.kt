@@ -31,7 +31,6 @@ class AddAnnouncementActivity : AppCompatActivity() {
         binding = ActivityAddAnnouncementBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Status bar customization
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
 
@@ -47,7 +46,6 @@ class AddAnnouncementActivity : AppCompatActivity() {
     }
 
     private fun setupCategoryDropdown() {
-        // Removed "General" as requested
         val categories = arrayOf("Urgent", "Maintenance", "Event")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
         binding.actvCategory.setAdapter(adapter)
@@ -131,7 +129,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
         binding.btnSendNotification.isEnabled = false
         binding.btnSendNotification.text = if (isEditMode) "Updating..." else "Sending..."
 
-        val id = if (isEditMode && announcementId != null) announcementId!! else UUID.randomUUID().toString()
+        val id = if (isEditMode && announcementId != null) announcementId!! else generateUniqueId()
         val announcement = Announcement(
             id = id,
             title = title,
@@ -198,5 +196,12 @@ class AddAnnouncementActivity : AppCompatActivity() {
     private fun updateTimeDisplay() {
         val timeFormat = java.text.SimpleDateFormat("hh:mm a", Locale.getDefault())
         binding.etTime.setText(timeFormat.format(calendar.time))
+    }
+
+    private fun generateUniqueId(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..20)
+            .map { chars.random() }
+            .joinToString("")
     }
 }

@@ -37,7 +37,6 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         binding = ActivityViewAnnouncementBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Status bar customization
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
 
@@ -76,9 +75,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             generatePDF()
         }
         
-        // Filter button (icon) - Maybe redundant if chips are there, but provided in layout
         binding.btnFilter.setOnClickListener {
-            // Optional: Show filter dialog, or just rely on Chips
             Toast.makeText(this, "Use chips to filter categories", Toast.LENGTH_SHORT).show()
         }
 
@@ -154,8 +151,6 @@ class ViewAnnouncementActivity : AppCompatActivity() {
                     }
                 }
                 
-                // Sort by something? Timestamp? For now simpler is better.
-                // Apply current filters
                 val currentQuery = binding.etSearch.text.toString()
                 val currentFilter = getCurrentFilter()
                 filterList(currentQuery, currentFilter)
