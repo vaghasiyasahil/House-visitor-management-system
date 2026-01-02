@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import adapter.AnnouncementAdapter
 import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnouncementBinding
 import model.Announcement
-import com.example.todoapp.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 
 class ViewAnnouncementActivity : AppCompatActivity() {
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import adapter.VisitorLogAdapter
 import com.example.housevisitormanagementsystem.databinding.ActivityViewVisitorBinding
 import model.VisitorLog
-import com.example.todoapp.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 
 class ViewVisitorActivity : AppCompatActivity() {
 

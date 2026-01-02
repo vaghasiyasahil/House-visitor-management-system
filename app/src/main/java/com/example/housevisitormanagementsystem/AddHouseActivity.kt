@@ -7,8 +7,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityAddHouseBinding
-import com.example.todoapp.utils.KeyboardUtils
-import com.example.todoapp.utils.Validators
+import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Validators
 
 class AddHouseActivity : AppCompatActivity() {
 
