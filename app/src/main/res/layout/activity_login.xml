@@ -101,5 +101,4 @@
         android:backgroundTint="@color/bright_azure_blue"
         android:textColor="@color/white" />
 
-
 </LinearLayout>
