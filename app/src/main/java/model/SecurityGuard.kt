@@ -1,10 +1,13 @@
 package model
 
+import java.io.Serializable
+
 data class SecurityGuard(
-    val name: String,
-    val guardId: String,
-    val shift: String, // "Morning Shift", "Night Shift", "Off Duty"
-    val location: String, // "Block A", "Block B", etc.
-    val status: String, // "Active", "Night", "Off"
-    val profileImage: Int // Resource ID for now
-)
+    var id: String = "",
+    var name: String = "",
+    var email: String = "",
+    var password: String = "",
+    var phoneNumber: String = "",
+    var salary: String = "",
+    var shift: String = ""
+) : Serializable

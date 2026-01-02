@@ -116,40 +116,54 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipAll"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/all_guards"
-                android:textColor="@color/white"
-                app:chipBackgroundColor="@color/bright_azure_blue"
-                app:chipStrokeWidth="0dp"
                 android:checkable="true"
                 android:checked="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                android:text="@string/all_guards"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipMorning"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/morning_shift"
-                android:textColor="@color/text_grey"
-                app:chipBackgroundColor="@color/card_dark_bg"
-                app:chipStrokeWidth="0dp"
                 android:checkable="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                android:text="@string/morning_shift"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipNight"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/night_shift"
-                android:textColor="@color/text_grey"
-                app:chipBackgroundColor="@color/card_dark_bg"
-                app:chipStrokeWidth="0dp"
                 android:checkable="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice" />
-            
+                android:text="@string/night_shift"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp" />
+
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
+
+    <!-- Empty State View -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Security Guards not available"
+        android:textColor="@color/text_grey"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView"
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Section Title -->
 

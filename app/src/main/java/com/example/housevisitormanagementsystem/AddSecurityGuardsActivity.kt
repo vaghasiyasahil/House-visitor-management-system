@@ -2,46 +2,219 @@ package com.example.housevisitormanagementsystem
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityAddSecurityGuardBinding
+import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Validators
+import com.google.firebase.firestore.FirebaseFirestore
+import constants.DatabaseTableName
+import model.SecurityGuard
+import types.UserRole
 
 class AddSecurityGuardsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddSecurityGuardBinding
+    private val db = FirebaseFirestore.getInstance()
+    private var guardId: String? = null
+    private var isEditMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddSecurityGuardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         // Status bar customization
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
-        window.decorView.systemUiVisibility = 0
 
         setupDropdowns()
+        
+        if (intent.hasExtra("guardData")) {
+            val guard = intent.getSerializableExtra("guardData") as SecurityGuard
+            guardId = guard.id
+            isEditMode = true
+            preFillData(guard)
+            binding.btnSaveGuard.text = "Update Guard"
+            binding.etEmail.isEnabled = false // Email unique identifier usually
+        }
+
         setupClickListeners()
+        setupTextWatchers()
     }
 
     private fun setupDropdowns() {
-        // Shift Dropdown
-        val shifts = arrayOf("Morning", "Evening", "Night")
+        val shifts = arrayOf("Morning", "Night")
         val shiftAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, shifts)
         binding.actvShift.setAdapter(shiftAdapter)
     }
 
-    private fun setupClickListeners() {
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
+    private fun preFillData(guard: SecurityGuard) {
+        binding.etFullName.editText?.setText(guard.name)
+        binding.etEmail.editText?.setText(guard.email)
+        binding.etPhoneNumber.editText?.setText(guard.phoneNumber)
+        binding.etSalary.editText?.setText(guard.salary)
+        binding.etPassword.editText?.setText(guard.password)
+        binding.actvShift.setText(guard.shift, false)
+    }
 
-        binding.btnCancel.setOnClickListener {
-            finish()
-        }
+    private fun setupClickListeners() {
+        binding.btnBack.setOnClickListener { finish() }
+        binding.btnCancel.setOnClickListener { finish() }
+        binding.main.setOnClickListener { KeyboardUtils.hideKeyboard(this) }
 
         binding.btnSaveGuard.setOnClickListener {
-            // TODO: Implement save guard logic
-            android.widget.Toast.makeText(this, "Guard Saved Successfully", android.widget.Toast.LENGTH_SHORT).show()
-            finish()
+            KeyboardUtils.hideKeyboard(this)
+            validateAndSave()
         }
+    }
+    
+    private fun setupTextWatchers() {
+        val layouts = listOf(
+            binding.etFullName, binding.etEmail, binding.etPhoneNumber, 
+            binding.etSalary, binding.etPassword, binding.spShift
+        )
+        layouts.forEach { layout ->
+            layout.editText?.addTextChangedListener { layout.error = null }
+        }
+    }
+
+    private fun validateAndSave() {
+        val name = binding.etFullName.editText?.text.toString().trim()
+        val email = binding.etEmail.editText?.text.toString().trim()
+        val phone = binding.etPhoneNumber.editText?.text.toString().trim()
+        val salary = binding.etSalary.editText?.text.toString().trim()
+        val password = binding.etPassword.editText?.text.toString().trim()
+        val shift = binding.actvShift.text.toString().trim()
+
+        var isValid = true
+        
+        if (Validators.validateName(name, "Full Name") != null) {
+            binding.etFullName.error = Validators.validateName(name, "Full Name")
+            isValid = false
+        }
+        if (Validators.validateEmail(email) != null) {
+            binding.etEmail.error = Validators.validateEmail(email)
+            isValid = false
+        }
+        if (Validators.validateMobile(phone) != null) {
+            binding.etPhoneNumber.error = Validators.validateMobile(phone)
+            isValid = false
+        }
+        if (Validators.validateRequired(salary, "Salary") != null) {
+            binding.etSalary.error = Validators.validateRequired(salary, "Salary")
+            isValid = false
+        }
+        if (Validators.validatePassword(password) != null) {
+            binding.etPassword.error = Validators.validatePassword(password)
+            isValid = false
+        }
+        if (shift.isEmpty()) {
+            binding.spShift.error = "Shift is required"
+            isValid = false
+        }
+
+        if (!isValid) return
+
+        binding.btnSaveGuard.isEnabled = false
+        binding.btnSaveGuard.text = "Checking..."
+        
+        checkUniquenessAndSave(name, email, phone, salary, password, shift)
+    }
+
+    private fun checkUniquenessAndSave(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
+        // Check User table for unique email
+        db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
+            .addOnSuccessListener { userSnap ->
+                if (!isEditMode && !userSnap.isEmpty) {
+                    binding.etEmail.error = "Email already registered"
+                    resetButtonState()
+                    return@addOnSuccessListener
+                }
+                
+                // Allow save
+                saveGuard(name, email, phone, salary, password, shift)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error checking uniqueness: ${it.message}", Toast.LENGTH_SHORT).show()
+                resetButtonState()
+            }
+    }
+
+    private fun saveGuard(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
+        val id = if (isEditMode && guardId != null) guardId!! else generateUniqueId()
+        
+        val guard = SecurityGuard(
+            id = id,
+            name = name,
+            email = email,
+            phoneNumber = phone,
+            salary = salary,
+            password = password,
+            shift = shift
+        )
+        
+        val batch = db.batch()
+        
+        // 1. Save Guard
+        val guardRef = db.collection(DatabaseTableName.SECURITY_GUARDS).document(id)
+        batch.set(guardRef, guard)
+        
+        // 2. Save/Sync User
+        val userMap = hashMapOf(
+            "name" to name,
+            "email" to email,
+            "password" to password,
+            "role" to UserRole.SecurityGuard.name,
+            "id" to id
+        )
+        
+        db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
+            .addOnSuccessListener { userSnap ->
+                val userRef = if (!userSnap.isEmpty) {
+                    // Update existing if found (e.g. updating profile)
+                    // But strict ID rule: User ID must match ID field.
+                    // If creating new, we use 'id'. If existing, we might have mismatch if we don't handle carefully.
+                    // However, for Add Guard, usually we create fresh user.
+                    // If we found a user with same email (and we are in edit mode), we use that ref.
+                    userSnap.documents[0].reference
+                } else {
+                    // Create new with same ID
+                    db.collection(DatabaseTableName.USER).document(id)
+                }
+                
+                // If it's a new doc, document(id) ensures ID matches.
+                // If existing doc (from edit mode), we update it.
+                // NOTE: If creating new guard but email exists in user table (shared email?), we blocked it in checkUniqueness unless edit mode.
+                
+                batch.set(userRef, userMap)
+                
+                batch.commit().addOnSuccessListener {
+                    Toast.makeText(this, if (isEditMode) "Guard Updated" else "Guard Saved", Toast.LENGTH_SHORT).show()
+                    finish()
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Error saving: ${it.message}", Toast.LENGTH_SHORT).show()
+                    resetButtonState()
+                }
+            }
+    }
+
+    private fun generateUniqueId(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..20).map { chars.random() }.joinToString("")
+    }
+
+    private fun resetButtonState() {
+        binding.btnSaveGuard.isEnabled = true
+        binding.btnSaveGuard.text = if (isEditMode) "Update Guard" else "Save Guard"
     }
 }
