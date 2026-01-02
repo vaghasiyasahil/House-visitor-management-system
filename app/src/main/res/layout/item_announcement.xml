@@ -57,6 +57,17 @@
             app:layout_constraintStart_toEndOf="@id/iconContainer"
             app:layout_constraintTop_toTopOf="@id/iconContainer" />
 
+        <!-- Options Button -->
+        <ImageView
+            android:id="@+id/btnOptions"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_menu_dots"
+            app:tint="@color/text_grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvTitle" />
+
         <!-- Badge -->
         <TextView
             android:id="@+id/tvBadge"
@@ -70,8 +81,10 @@
             android:textSize="11sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvTitle" />
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/btnOptions"
+            app:layout_constraintEnd_toStartOf="@id/btnOptions"
+            app:layout_constraintTop_toTopOf="@id/btnOptions" />
 
         <!-- Description -->
         <TextView

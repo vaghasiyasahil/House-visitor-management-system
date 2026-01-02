@@ -80,9 +80,6 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         // Chip Filters
         binding.chipGroupFilters.setOnCheckedChangeListener { _, checkedId ->
             val query = binding.etSearch.text.toString()
-            // Since adapter filter only takes string, implementing multi-criteria filtering inside adapter 
-            // is harder with current Simple Filter.
-            // Simplified: We will filter list locally and update adapter.
             filterList(query, idToFilterName(checkedId))
         }
     }
@@ -120,11 +117,8 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     }
 
     private fun fetchGuards() {
-        // binding.progressBar.visibility = View.VISIBLE // Ensure View has progressBar
-        
         db.collection(DatabaseTableName.SECURITY_GUARDS)
             .addSnapshotListener { value, error ->
-                // binding.progressBar.visibility = View.GONE
                 if (error != null) {
                     Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
@@ -137,8 +131,6 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
                         allGuards.add(guard)
                     }
                 }
-                
-                // Reset filter
                 val currentFilter = idToFilterName(binding.chipGroupFilters.checkedChipId)
                 val currentQuery = binding.etSearch.text.toString()
                 filterList(currentQuery, currentFilter)
@@ -161,8 +153,6 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(this, "Guard deleted successfully", Toast.LENGTH_SHORT).show()
-                // Also delete from User table? 
-                // db.collection(DatabaseTableName.USER).document(guard.id).delete() // If we want to fully remove access
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error deleting: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -182,8 +172,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         paint.textSize = 12f
         var yPosition = 100f
         
-        for (item in allGuards) { // Use allGuards (unfiltered) or adapter's list? Usually reported on full list or filtered. 
-            // Let's use allGuards for now.
+        for (item in allGuards) {
             canvas.drawText("${item.name} (${item.shift}) - ${item.email}", 50f, yPosition, paint)
             yPosition += 30f
             if (yPosition > 800) break

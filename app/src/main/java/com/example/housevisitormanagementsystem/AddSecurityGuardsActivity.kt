@@ -34,7 +34,6 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             insets
         }
 
-        // Status bar customization
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
 
         setupDropdowns()
@@ -45,7 +44,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             isEditMode = true
             preFillData(guard)
             binding.btnSaveGuard.text = "Update Guard"
-            binding.etEmail.isEnabled = false // Email unique identifier usually
+            binding.etEmail.isEnabled = false
         }
 
         setupClickListeners()
@@ -132,7 +131,6 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
     }
 
     private fun checkUniquenessAndSave(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
-        // Check User table for unique email
         db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
             .addOnSuccessListener { userSnap ->
                 if (!isEditMode && !userSnap.isEmpty) {
@@ -141,7 +139,6 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
                     return@addOnSuccessListener
                 }
                 
-                // Allow save
                 saveGuard(name, email, phone, salary, password, shift)
             }
             .addOnFailureListener {
@@ -165,11 +162,9 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         
         val batch = db.batch()
         
-        // 1. Save Guard
         val guardRef = db.collection(DatabaseTableName.SECURITY_GUARDS).document(id)
         batch.set(guardRef, guard)
         
-        // 2. Save/Sync User
         val userMap = hashMapOf(
             "name" to name,
             "email" to email,
@@ -181,21 +176,11 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
             .addOnSuccessListener { userSnap ->
                 val userRef = if (!userSnap.isEmpty) {
-                    // Update existing if found (e.g. updating profile)
-                    // But strict ID rule: User ID must match ID field.
-                    // If creating new, we use 'id'. If existing, we might have mismatch if we don't handle carefully.
-                    // However, for Add Guard, usually we create fresh user.
-                    // If we found a user with same email (and we are in edit mode), we use that ref.
                     userSnap.documents[0].reference
                 } else {
-                    // Create new with same ID
                     db.collection(DatabaseTableName.USER).document(id)
                 }
-                
-                // If it's a new doc, document(id) ensures ID matches.
-                // If existing doc (from edit mode), we update it.
-                // NOTE: If creating new guard but email exists in user table (shared email?), we blocked it in checkUniqueness unless edit mode.
-                
+
                 batch.set(userRef, userMap)
                 
                 batch.commit().addOnSuccessListener {

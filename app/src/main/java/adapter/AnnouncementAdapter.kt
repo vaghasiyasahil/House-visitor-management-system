@@ -16,7 +16,9 @@ import model.Announcement
 
 class AnnouncementAdapter(
     private val context: Context,
-    private val announcements: List<Announcement>
+    private var announcements: List<Announcement>,
+    private val onEditClick: (Announcement) -> Unit,
+    private val onDeleteClick: (Announcement) -> Unit
 ) : RecyclerView.Adapter<AnnouncementAdapter.AnnouncementViewHolder>() {
 
     class AnnouncementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,6 +29,7 @@ class AnnouncementAdapter(
         val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
         val tvAuthorInfo: TextView = itemView.findViewById(R.id.tvAuthorInfo)
         val tvReadMore: TextView = itemView.findViewById(R.id.tvReadMore)
+        val btnOptions: ImageView = itemView.findViewById(R.id.btnOptions)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnnouncementViewHolder {
@@ -41,52 +44,69 @@ class AnnouncementAdapter(
         holder.tvDescription.text = announcement.description
         holder.tvAuthorInfo.text = "${announcement.author} • ${announcement.timestamp}"
 
-        // Set icon
-        holder.ivIcon.setImageResource(announcement.iconRes)
-        if (announcement.iconColor != 0) {
-            holder.ivIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, announcement.iconColor))
+        // Dynamic Styling based on Category
+        val (iconRes, colorRes, badgeRes) = when (announcement.category) {
+            "Urgent" -> Triple(R.drawable.ic_warning_triangle, R.color.red, R.drawable.bg_badge_urgent)
+            "Maintenance" -> Triple(R.drawable.ic_maintenance, R.color.orange, R.drawable.bg_badge_urgent)
+            "Event" -> Triple(R.drawable.ic_calendar, R.color.bright_azure_blue, R.drawable.bg_badge_event)
+            else -> Triple(R.drawable.ic_announcement, R.color.bright_azure_blue, R.drawable.bg_badge_event)
         }
 
-        // Set border color
-        if (announcement.borderColor != 0) {
-            holder.leftBorder.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, announcement.borderColor))
-        }
+        holder.ivIcon.setImageResource(iconRes)
+        holder.ivIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
+        holder.leftBorder.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        // Handle badge
-        when (announcement.category) {
-            "Urgent" -> {
-                holder.tvBadge.visibility = View.VISIBLE
-                holder.tvBadge.text = "Urgent"
-                holder.tvBadge.setBackgroundResource(R.drawable.bg_badge_urgent)
-                holder.tvBadge.setTextColor(ContextCompat.getColor(context, R.color.red))
-            }
-            "Event" -> {
-                holder.tvBadge.visibility = View.VISIBLE
-                holder.tvBadge.text = "Event"
-                holder.tvBadge.setBackgroundResource(R.drawable.bg_badge_event)
-                holder.tvBadge.setTextColor(ContextCompat.getColor(context, R.color.bright_azure_blue))
-            }
-            else -> {
-                holder.tvBadge.visibility = View.GONE
-            }
-        }
+        holder.tvBadge.visibility = View.VISIBLE
+        holder.tvBadge.text = announcement.category
+        holder.tvBadge.setBackgroundResource(badgeRes)
+        holder.tvBadge.setTextColor(ContextCompat.getColor(context, colorRes))
 
         // Handle Read More
         if (announcement.showReadMore) {
             holder.tvReadMore.visibility = View.VISIBLE
             holder.tvReadMore.setOnClickListener {
-                val intent = Intent(context, AnnouncementDetailsActivity::class.java)
-                intent.putExtra("TITLE", announcement.title)
-                intent.putExtra("DESCRIPTION", announcement.description)
-                intent.putExtra("CATEGORY", announcement.category)
-                intent.putExtra("AUTHOR", announcement.author)
-                intent.putExtra("TIMESTAMP", announcement.timestamp)
-                context.startActivity(intent)
+                openDetails(announcement)
             }
         } else {
             holder.tvReadMore.visibility = View.GONE
         }
+
+        // Handle Options Menu
+        holder.btnOptions.setOnClickListener { view ->
+            val popup = android.widget.PopupMenu(context, view)
+            // Reusing guard options menu which has action_edit and action_delete
+            popup.menuInflater.inflate(R.menu.menu_guard_options, popup.menu)
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_edit -> {
+                        onEditClick(announcement)
+                        true
+                    }
+                    R.id.action_delete -> {
+                        onDeleteClick(announcement)
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
+        }
+    }
+
+    private fun openDetails(announcement: Announcement) {
+        val intent = Intent(context, AnnouncementDetailsActivity::class.java)
+        intent.putExtra("TITLE", announcement.title)
+        intent.putExtra("DESCRIPTION", announcement.description)
+        intent.putExtra("CATEGORY", announcement.category)
+        intent.putExtra("AUTHOR", announcement.author)
+        intent.putExtra("TIMESTAMP", announcement.timestamp)
+        context.startActivity(intent)
     }
 
     override fun getItemCount(): Int = announcements.size
+
+    fun updateList(newList: List<Announcement>) {
+        announcements = newList
+        notifyDataSetChanged()
+    }
 }

@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="All"
-            android:textColor="@color/white"
+            android:textColor="@color/chip_text_selector"
             app:checkedIconVisible="false"
             app:chipBackgroundColor="@color/chip_bg_selector"
             app:chipStrokeWidth="0dp" />
@@ -147,7 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Urgent"
-            android:textColor="@color/white"
+            android:textColor="@color/chip_text_selector"
             app:checkedIconVisible="false"
             app:chipBackgroundColor="@color/chip_bg_selector"
             app:chipStrokeWidth="0dp" />
@@ -158,7 +158,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Maintenance"
-            android:textColor="@color/white"
+            android:textColor="@color/chip_text_selector"
             app:checkedIconVisible="false"
             app:chipBackgroundColor="@color/chip_bg_selector"
             app:chipStrokeWidth="0dp" />
@@ -169,12 +169,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Events"
-            android:textColor="@color/white"
+            android:textColor="@color/chip_text_selector"
             app:checkedIconVisible="false"
             app:chipBackgroundColor="@color/chip_bg_selector"
             app:chipStrokeWidth="0dp" />
 
     </com.google.android.material.chip.ChipGroup>
+
+    <!-- Empty State View -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Announcements Available"
+        android:textColor="@color/text_grey"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Announcements List -->
     <androidx.recyclerview.widget.RecyclerView
