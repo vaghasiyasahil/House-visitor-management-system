@@ -151,22 +151,71 @@ class ViewHouseActivity : AppCompatActivity() {
 
     private fun generatePDF() {
         val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create() // A4 size
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
         val paint = Paint()
+        val titlePaint = Paint()
 
-        paint.textSize = 18f
-        canvas.drawText("House Visitor Management System - House Report", 100f, 50f, paint)
+        // Page Title
+        titlePaint.textSize = 20f
+        titlePaint.isFakeBoldText = true
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("House Management Report", 595f / 2, 50f, titlePaint)
+
+        // Table Constants
+        val startX = 20f
+        val endX = 575f
+        var yPos = 100f
+        val rowHeight = 25f
+        val padding = 5f
+
+        // Column Configs
+        val colSn = startX
+        val colHouseNo = colSn + 30f
+        val colOwner = colHouseNo + 80f
+        val colEmail = colOwner + 130f
+        val colMembers = colEmail + 160f
+
+        // 1. Draw Header Background
+        paint.color = android.graphics.Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        // 2. Draw Header Text
+        paint.color = android.graphics.Color.BLACK
+        paint.textSize = 11f
+        paint.isFakeBoldText = true
+        canvas.drawText("#", colSn + padding, yPos, paint)
+        canvas.drawText("House No", colHouseNo + padding, yPos, paint)
+        canvas.drawText("Owner Name", colOwner + padding, yPos, paint)
+        canvas.drawText("Owner Email", colEmail + padding, yPos, paint)
+        canvas.drawText("Members", colMembers + padding, yPos, paint)
+
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
         
-        paint.textSize = 12f
-        var yPosition = 100f
-        
-        for (house in houseList) {
-            canvas.drawText("House No: ${house.houseNo}, Owner: ${house.ownerName} (${house.ownerEmail})", 50f, yPosition, paint)
-            yPosition += 30f
-            if (yPosition > 800) break // Simple paging check for demo
+        yPos += rowHeight
+        paint.isFakeBoldText = false
+
+        for ((index, item) in houseList.withIndex()) {
+            if (yPos > 800) break
+
+            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
+            canvas.drawText(item.houseNo, colHouseNo + padding, yPos, paint)
+            canvas.drawText(item.ownerName.take(20), colOwner + padding, yPos, paint)
+            canvas.drawText(item.ownerEmail.take(25), colEmail + padding, yPos, paint)
+            canvas.drawText(item.members.toString(), colMembers + padding, yPos, paint)
+            
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            yPos += rowHeight
         }
+
+        // Vertical lines
+        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colHouseNo, 100f - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colOwner, 100f - 18f, colOwner, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colEmail, 100f - 18f, colEmail, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colMembers, 100f - 18f, colMembers, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 

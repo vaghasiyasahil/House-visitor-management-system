@@ -185,22 +185,77 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
         val paint = Paint()
+        val titlePaint = Paint()
 
-        paint.textSize = 18f
-        canvas.drawText("Announcements Report", 100f, 50f, paint)
+        // Page Title
+        titlePaint.textSize = 20f
+        titlePaint.isFakeBoldText = true
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Announcements Report", 595f / 2, 50f, titlePaint)
 
+        // Table Constants
+        val startX = 20f
+        val endX = 575f
+        var yPos = 100f
+        val rowHeight = 25f
+        val padding = 5f
+
+        // Column Configs (X positions)
+        val colSn = startX
+        val colTitle = colSn + 30f
+        val colCategory = colTitle + 120f
+        val colDate = colCategory + 80f
+        val colTime = colDate + 80f
+        val colAuthor = colTime + 80f
+        val colDesc = colAuthor + 70f // Last col
+
+        // 1. Draw Header Background
+        paint.color = android.graphics.Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        // 2. Draw Header Text
+        paint.color = android.graphics.Color.BLACK
         paint.textSize = 12f
-        var yPosition = 100f
+        paint.isFakeBoldText = true
+        canvas.drawText("#", colSn + padding, yPos, paint)
+        canvas.drawText("Title", colTitle + padding, yPos, paint)
+        canvas.drawText("Category", colCategory + padding, yPos, paint)
+        canvas.drawText("Date", colDate + padding, yPos, paint)
+        canvas.drawText("Time", colTime + padding, yPos, paint)
+        canvas.drawText("Author", colAuthor + padding, yPos, paint)
+        // Description maybe too long, but let's add it
+        // canvas.drawText("Description", colDesc + padding, yPos, paint)
 
-        for (item in allAnnouncements) {
-             // Only export filtered or all? Export All for report usually.
-            canvas.drawText("${item.title} [${item.category}] - ${item.date}", 50f, yPosition, paint)
-            yPosition += 20f
-            canvas.drawText("   ${item.description.take(60)}...", 50f, yPosition, paint)
-            yPosition += 30f
+        // Draw header bottom line
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+        
+        yPos += rowHeight
+        paint.isFakeBoldText = false
+
+        for ((index, item) in allAnnouncements.withIndex()) {
+            if (yPos > 800) break // Simple page break check (not multi-page yet)
+
+            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
+            canvas.drawText(item.title.take(18), colTitle + padding, yPos, paint)
+            canvas.drawText(item.category, colCategory + padding, yPos, paint)
+            canvas.drawText(item.date, colDate + padding, yPos, paint)
+            canvas.drawText(item.time, colTime + padding, yPos, paint)
+            canvas.drawText(item.author, colAuthor + padding, yPos, paint)
             
-            if (yPosition > 800) break
+            // Draw horizontal line after each row
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            
+            yPos += rowHeight
         }
+
+        // Draw vertical lines
+        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colTitle, 100f - 18f, colTitle, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colCategory, 100f - 18f, colCategory, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colDate, 100f - 18f, colDate, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colTime, 100f - 18f, colTime, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colAuthor, 100f - 18f, colAuthor, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 

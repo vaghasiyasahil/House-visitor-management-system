@@ -165,18 +165,71 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
         val paint = Paint()
+        val titlePaint = Paint()
 
-        paint.textSize = 18f
-        canvas.drawText("Security Guards Report", 100f, 50f, paint)
+        // Page Title
+        titlePaint.textSize = 20f
+        titlePaint.isFakeBoldText = true
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Security Guards Report", 595f / 2, 50f, titlePaint)
+
+        // Table Constants
+        val startX = 20f
+        val endX = 575f
+        var yPos = 100f
+        val rowHeight = 25f
+        val padding = 5f
+
+        // Column Configs
+        val colSn = startX
+        val colName = colSn + 30f
+        val colEmail = colName + 110f
+        val colPhone = colEmail + 120f
+        val colShift = colPhone + 100f
+        val colSalary = colShift + 70f
+
+        // 1. Draw Header Background
+        paint.color = android.graphics.Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        // 2. Draw Header Text
+        paint.color = android.graphics.Color.BLACK
+        paint.textSize = 11f
+        paint.isFakeBoldText = true
+        canvas.drawText("#", colSn + padding, yPos, paint)
+        canvas.drawText("Name", colName + padding, yPos, paint)
+        canvas.drawText("Email", colEmail + padding, yPos, paint)
+        canvas.drawText("Phone", colPhone + padding, yPos, paint)
+        canvas.drawText("Shift", colShift + padding, yPos, paint)
+        canvas.drawText("Salary", colSalary + padding, yPos, paint)
+
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
         
-        paint.textSize = 12f
-        var yPosition = 100f
-        
-        for (item in allGuards) {
-            canvas.drawText("${item.name} (${item.shift}) - ${item.email}", 50f, yPosition, paint)
-            yPosition += 30f
-            if (yPosition > 800) break
+        yPos += rowHeight
+        paint.isFakeBoldText = false
+
+        for ((index, item) in allGuards.withIndex()) {
+            if (yPos > 800) break
+
+            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
+            canvas.drawText(item.name.take(18), colName + padding, yPos, paint)
+            canvas.drawText(item.email.take(22), colEmail + padding, yPos, paint)
+            canvas.drawText(item.phoneNumber, colPhone + padding, yPos, paint)
+            canvas.drawText(item.shift, colShift + padding, yPos, paint)
+            canvas.drawText(item.salary.toString(), colSalary + padding, yPos, paint)
+            
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            yPos += rowHeight
         }
+
+        // Vertical lines
+        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colName, 100f - 18f, colName, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colEmail, 100f - 18f, colEmail, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colPhone, 100f - 18f, colPhone, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colShift, 100f - 18f, colShift, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colSalary, 100f - 18f, colSalary, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 

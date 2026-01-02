@@ -39,6 +39,7 @@
     <string name="owner_name">Owner Name</string>
     <string name="full_name">Full Name</string>
     <string name="owner_email">Owner Email</string>
+    <string name="number_of_members">Number of Members</string>
     <string name="email_hint">email@example.com</string>
     <string name="create_password">Create Password</string>
     <string name="create_a_password">Create a password</string>

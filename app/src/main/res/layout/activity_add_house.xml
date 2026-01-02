@@ -169,6 +169,19 @@
                     android:textColorHint="@color/slate_gray" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:visibility="visible"
+                tools:visibility="gone"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/number_of_members"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etMembers"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -190,7 +203,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Number of Members"
+                    android:hint="@string/number_of_members"
                     android:inputType="number"
                     android:textColor="@color/white"
                     android:textColorHint="@color/slate_gray" />
