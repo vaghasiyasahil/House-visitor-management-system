@@ -48,5 +48,25 @@ class AdminDashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        setupDashboardCounts()
+    }
+
+    private fun setupDashboardCounts() {
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+
+        db.collection(constants.DatabaseTableName.HOUSES).addSnapshotListener { value, _ ->
+            binding.txtTotalHouses.text = (value?.size() ?: 0).toString()
+        }
+
+        db.collection(constants.DatabaseTableName.SECURITY_GUARDS).addSnapshotListener { value, _ ->
+            binding.txtTotalGuards.text = (value?.size() ?: 0).toString()
+        }
+
+        db.collection(constants.DatabaseTableName.ANNOUNCEMENTS).addSnapshotListener { value, _ ->
+            binding.txtTotalAnnouncements.text = (value?.size() ?: 0).toString()
+        }
+        
+        // Placeholder for Active Visitors - reusing txtVal1 if needed, or leaving static
+        // binding.txtVal1.text = "12" 
     }
 }

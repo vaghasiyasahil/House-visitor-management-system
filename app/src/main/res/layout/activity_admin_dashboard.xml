@@ -217,7 +217,7 @@
                             android:padding="16dp">
 
                             <View
-                                android:id="@+id/bgIcon2"
+                                android:id="@+id/bgIconHouses"
                                 android:layout_width="36dp"
                                 android:layout_height="36dp"
                                 android:background="@drawable/circle_dark_bg"
@@ -227,33 +227,141 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:contentDescription="@string/pending_complaints"
-                                android:src="@android:drawable/stat_sys_warning"
-                                app:layout_constraintBottom_toBottomOf="@id/bgIcon2"
-                                app:layout_constraintEnd_toEndOf="@id/bgIcon2"
-                                app:layout_constraintStart_toStartOf="@id/bgIcon2"
-                                app:layout_constraintTop_toTopOf="@id/bgIcon2"
-                                app:tint="@color/orange" />
+                                android:contentDescription="Total Houses"
+                                android:src="@drawable/ic_home_filled"
+                                app:layout_constraintBottom_toBottomOf="@id/bgIconHouses"
+                                app:layout_constraintEnd_toEndOf="@id/bgIconHouses"
+                                app:layout_constraintStart_toStartOf="@id/bgIconHouses"
+                                app:layout_constraintTop_toTopOf="@id/bgIconHouses"
+                                app:tint="@color/bright_azure_blue" />
 
                             <TextView
-                                android:id="@+id/txtVal2"
+                                android:id="@+id/txtTotalHouses"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp"
-                                android:text="@string/number"
+                                android:text="0"
                                 android:textColor="@color/white"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/bgIcon2" />
+                                app:layout_constraintTop_toBottomOf="@id/bgIconHouses" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/pending_complaints"
+                                android:text="Total Houses"
                                 android:textColor="@color/cool_gray"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/txtVal2" />
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalHouses" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        app:cardBackgroundColor="@color/dark_navy"
+                        app:cardCornerRadius="24dp"
+                        app:strokeWidth="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <View
+                                android:id="@+id/bgIconGuards"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_dark_bg"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Total Guards"
+                                android:src="@drawable/ic_security_shield"
+                                app:layout_constraintBottom_toBottomOf="@id/bgIconGuards"
+                                app:layout_constraintEnd_toEndOf="@id/bgIconGuards"
+                                app:layout_constraintStart_toStartOf="@id/bgIconGuards"
+                                app:layout_constraintTop_toTopOf="@id/bgIconGuards"
+                                app:tint="@color/purple" />
+
+                            <TextView
+                                android:id="@+id/txtTotalGuards"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/bgIconGuards" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Guards"
+                                android:textColor="@color/cool_gray"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalGuards" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        app:cardBackgroundColor="@color/dark_navy"
+                        app:cardCornerRadius="24dp"
+                        app:strokeWidth="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <View
+                                android:id="@+id/bgIconAnnouncements"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_dark_bg"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Announcements"
+                                android:src="@drawable/ic_announcement"
+                                app:layout_constraintBottom_toBottomOf="@id/bgIconAnnouncements"
+                                app:layout_constraintEnd_toEndOf="@id/bgIconAnnouncements"
+                                app:layout_constraintStart_toStartOf="@id/bgIconAnnouncements"
+                                app:layout_constraintTop_toTopOf="@id/bgIconAnnouncements"
+                                app:tint="@color/orange" />
+
+                            <TextView
+                                android:id="@+id/txtTotalAnnouncements"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/bgIconAnnouncements" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Notices"
+                                android:textColor="@color/cool_gray"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalAnnouncements" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
