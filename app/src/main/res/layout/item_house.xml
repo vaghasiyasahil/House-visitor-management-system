@@ -79,9 +79,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/separator">
+
+            <TextView
+                android:id="@+id/tvMembers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_badge_gray"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="4 Members"
+                android:textColor="@color/steel_blue_gray"
+                android:textSize="12sp" />
 
             <FrameLayout
                 android:id="@+id/btnEdit"

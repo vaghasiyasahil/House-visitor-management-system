@@ -1,9 +1,10 @@
 package com.example.housevisitormanagementsystem
 
-import android.widget.Toast
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.provider.ContactsContract.Data
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,7 +13,9 @@ import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityAddHouseBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
+import types.UserRole
 import com.google.firebase.firestore.FirebaseFirestore
+import constants.DatabaseTableName
 import model.House
 import java.util.UUID
 
@@ -37,7 +40,7 @@ class AddHouseActivity : AppCompatActivity() {
         // Check for Edit Mode
         if (intent.hasExtra("houseData")) {
             val house = intent.getSerializableExtra("houseData") as House
-            houseId = house.houseId
+            houseId = house.id
             isEditMode = true
             preFillData(house)
             binding.btnAddHouse.text = "Update House"
@@ -57,36 +60,22 @@ class AddHouseActivity : AppCompatActivity() {
 
         binding.btnAddHouse.setOnClickListener {
             KeyboardUtils.hideKeyboard(this)
-            
-            val houseNo = binding.etHouseNumber.editText?.text.toString().trim()
-            val ownerName = binding.etOwnerName.editText?.text.toString().trim()
-            val ownerEmail = binding.etOwnerEmail.editText?.text.toString().trim()
-            val password = binding.etPassword.editText?.text.toString().trim()
-            val members = 4 // Default or add input field if needed
-
-            binding.etHouseNumber.error = Validators.validateRequired(houseNo,"House number")
-            binding.etOwnerName.error = Validators.validateName(ownerName,"Owner name")
-            binding.etOwnerEmail.error = Validators.validateEmail(ownerEmail)
-            binding.etPassword.error = Validators.validatePassword(password)
-            
-            if (binding.etHouseNumber.error == null && binding.etOwnerName.error == null &&
-                binding.etOwnerEmail.error == null && binding.etPassword.error == null
-            ) {
-                saveHouse(houseNo, ownerName, ownerEmail, password, members)
-            }
+            validateAndSave()
         }
 
-        binding.etHouseNumber.editText?.addTextChangedListener {
-            binding.etHouseNumber.error = null
-        }
-        binding.etOwnerName.editText?.addTextChangedListener {
-            binding.etOwnerName.error = null
-        }
-        binding.etOwnerEmail.editText?.addTextChangedListener {
-            binding.etOwnerEmail.error = null
-        }
-        binding.etPassword.editText?.addTextChangedListener {
-            binding.etPassword.error = null
+        setupTextWatchers()
+    }
+
+    private fun setupTextWatchers() {
+        val rootLayouts = listOf(
+            binding.etHouseNumber,
+            binding.etOwnerName,
+            binding.etOwnerEmail,
+            binding.etMembers,
+            binding.etPassword
+        )
+        rootLayouts.forEach { layout ->
+            layout.editText?.addTextChangedListener { layout.error = null }
         }
     }
 
@@ -94,28 +83,136 @@ class AddHouseActivity : AppCompatActivity() {
         binding.etHouseNumber.editText?.setText(house.houseNo)
         binding.etOwnerName.editText?.setText(house.ownerName)
         binding.etOwnerEmail.editText?.setText(house.ownerEmail)
+        binding.etMembers.editText?.setText(house.members.toString())
         binding.etPassword.editText?.setText(house.password)
+        // Disable house number editing in edit mode to prevent conflict issues implies logic change
+        binding.etHouseNumber.editText?.isEnabled = false
     }
 
-    private fun saveHouse(houseNo: String, ownerName: String, ownerEmail: String, password: String, members: Int) {
-        val id = houseId ?: UUID.randomUUID().toString()
-        val house = House(id, houseNo, ownerName, ownerEmail, password, members)
+    private fun validateAndSave() {
+        val houseNo = binding.etHouseNumber.editText?.text.toString().trim()
+        val ownerName = binding.etOwnerName.editText?.text.toString().trim()
+        val ownerEmail = binding.etOwnerEmail.editText?.text.toString().trim()
+        val memberStr = binding.etMembers.editText?.text.toString().trim()
+        val password = binding.etPassword.editText?.text.toString().trim()
 
-        val collection = db.collection("houses")
-        
-        // Show loading if you want, or just wait
+        var isValid = true
+
+        if (Validators.validateRequired(houseNo, "House number") != null) {
+            binding.etHouseNumber.error = Validators.validateRequired(houseNo, "House number")
+            isValid = false
+        }
+        if (Validators.validateName(ownerName, "Owner name") != null) {
+            binding.etOwnerName.error = Validators.validateName(ownerName, "Owner name")
+            isValid = false
+        }
+        if (Validators.validateEmail(ownerEmail) != null) {
+            binding.etOwnerEmail.error = Validators.validateEmail(ownerEmail)
+            isValid = false
+        }
+        if (memberStr.isEmpty()) {
+            binding.etMembers.error = "Members count is required"
+            isValid = false
+        }
+        if (Validators.validatePassword(password) != null) {
+            binding.etPassword.error = Validators.validatePassword(password)
+            isValid = false
+        }
+        if (!isValid) return
+        val members = memberStr.toIntOrNull() ?: 0
         binding.btnAddHouse.isEnabled = false
-        binding.btnAddHouse.text = "Saving..."
+        binding.btnAddHouse.text = "Checking..."
+        checkUniquenessAndSave(houseNo, ownerEmail, ownerName, password, members)
+    }
 
-        collection.document(id).set(house)
-            .addOnSuccessListener {
-                Toast.makeText(this, if (isEditMode) "House Updated" else "House Added", Toast.LENGTH_SHORT).show()
-                finish()
+    private fun checkUniquenessAndSave(
+        houseNo: String, 
+        email: String, 
+        name: String, 
+        password: String, 
+        members: Int
+    ) {
+        val houseQuery = db.collection(DatabaseTableName.HOUSES).whereEqualTo("houseNo", houseNo)
+        houseQuery.get().addOnSuccessListener { houseSnap ->
+            if (!isEditMode && !houseSnap.isEmpty) {
+                Toast.makeText(this,"House Number already exists",Toast.LENGTH_LONG);
+                binding.etHouseNumber.error = "House Number already exists"
+                resetButtonState()
+                return@addOnSuccessListener
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                binding.btnAddHouse.isEnabled = true
-                binding.btnAddHouse.text = if (isEditMode) "Update House" else "Add House"
+            val userQuery = db.collection(DatabaseTableName.USER).whereEqualTo("email", email)
+            userQuery.get().addOnSuccessListener { userSnap ->
+                var emailExistsOtherUser = false
+                if (!userSnap.isEmpty) {
+                    if (!isEditMode) {
+                         emailExistsOtherUser = true
+                    } else {
+                    }
+                }
+
+                if (emailExistsOtherUser) {
+                    binding.etOwnerEmail.error = "Email already registered"
+                    resetButtonState()
+                    return@addOnSuccessListener
+                }
+                saveData(houseNo, email, name, password, members)
             }
+        }
+    }
+
+    private fun saveData(houseNo: String, email: String, name: String, password: String, members: Int) {
+        val id = if (isEditMode && houseId != null) houseId!! else generateUniqueId()
+        
+        val house = House(
+            id = id,
+            houseNo = houseNo,
+            ownerName = name,
+            ownerEmail = email,
+            password = password,
+            members = members
+        )
+
+        val batch = db.batch()
+
+        val houseRef = db.collection(DatabaseTableName.HOUSES).document(id)
+        batch.set(houseRef, house)
+
+        val userMap = hashMapOf(
+            "name" to name,
+            "email" to email,
+            "password" to password,
+            "role" to UserRole.HouseOwner.name,
+            "id" to id
+        )
+
+        db.collection(DatabaseTableName.USER).whereEqualTo("houseId", id).get()
+            .addOnSuccessListener { userSnap ->
+                val userRef = if (!userSnap.isEmpty) {
+                    userSnap.documents[0].reference
+                } else {
+                     db.collection(DatabaseTableName.USER).document(id)
+                }
+                
+                batch.set(userRef, userMap)
+                batch.commit().addOnSuccessListener {
+                    Toast.makeText(this, if (isEditMode) "House Updated" else "House Added", Toast.LENGTH_SHORT).show()
+                    finish()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    resetButtonState()
+                }
+            }
+    }
+    
+    private fun generateUniqueId(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..20)
+            .map { chars.random() }
+            .joinToString("")
+    }
+
+    private fun resetButtonState() {
+        binding.btnAddHouse.isEnabled = true
+        binding.btnAddHouse.text = if (isEditMode) "Update House" else "Add House"
     }
 }

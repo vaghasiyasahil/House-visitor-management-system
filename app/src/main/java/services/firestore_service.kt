@@ -4,6 +4,7 @@ import com.google.firebase.firestore.*
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import constants.DatabaseTableName
 import kotlinx.coroutines.tasks.await
 
 class FirestoreService {
@@ -139,7 +140,7 @@ class FirestoreService {
         password: String
     ): DocumentSnapshot? {
         return try {
-            val querySnapshot = firestore.collection("user")
+            val querySnapshot = firestore.collection(DatabaseTableName.USER)
                 .whereEqualTo("email", email)
                 .whereEqualTo("password", password)
                 .limit(1)

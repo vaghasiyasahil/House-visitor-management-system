@@ -8,6 +8,7 @@ import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.ContactsContract.Data
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.housevisitormanagementsystem.databinding.ActivityViewHouseBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
+import constants.DatabaseTableName
 import model.House
 import java.io.File
 import java.io.FileOutputStream
@@ -92,7 +94,7 @@ class ViewHouseActivity : AppCompatActivity() {
     private fun fetchHouses() {
         binding.progressBar.visibility = View.VISIBLE
         
-        db.collection("houses")
+        db.collection(DatabaseTableName.HOUSES)
             .addSnapshotListener { value, error ->
                 binding.progressBar.visibility = View.GONE
                 if (error != null) {
@@ -137,7 +139,7 @@ class ViewHouseActivity : AppCompatActivity() {
     }
 
     private fun deleteHouse(house: House) {
-        db.collection("houses").document(house.houseId)
+        db.collection(DatabaseTableName.HOUSES).document(house.id)
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(this, "House deleted successfully", Toast.LENGTH_SHORT).show()

@@ -35,6 +35,7 @@ class HouseAdapter(
             tvTitle.text = "House: ${house.houseNo}"
             tvSubtitle.text = "Owned by ${house.ownerName}"
             tvEmail.text = house.ownerEmail
+            tvMembers.text = "${house.members} Members"
 
             btnEdit.setOnClickListener { onEditClick(house) }
             btnDelete.setOnClickListener { onDeleteClick(house) }

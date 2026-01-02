@@ -15,6 +15,7 @@ import com.example.housevisitormanagementsystem.databinding.ActivityLoginBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.firestore.FirebaseFirestore
+import constants.DatabaseTableName
 import types.UserRole
 
 class LoginActivity : AppCompatActivity() {
@@ -65,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.login.isEnabled = false
 
-        db.collection("user")
+        db.collection(DatabaseTableName.USER)
             .whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { documents ->
@@ -84,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
                     if (dbPassword == value) {
                         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                         SharedPreferencesService.setIsLogin(true);
-                        if (role == "admin") {
+                        if (UserRole.fromString(role?:"")==UserRole.Admin) {
                             SharedPreferencesService.setUserRole(UserRole.Admin.name)
                             startActivity(Intent(this, AdminDashboardActivity::class.java))
                             finish()

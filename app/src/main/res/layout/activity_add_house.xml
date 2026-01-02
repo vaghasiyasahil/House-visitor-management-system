@@ -169,6 +169,33 @@
                     android:textColorHint="@color/slate_gray" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etMembers"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                app:boxBackgroundColor="@color/charcoal_navy"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusTopStart="24dp"
+                app:boxStrokeColor="@color/slate_blue_gray"
+                app:boxStrokeWidth="1dp"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_person_outline"
+                app:startIconTint="@color/slate_gray">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Number of Members"
+                    android:inputType="number"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/slate_gray" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
