@@ -56,7 +56,7 @@
             android:background="@drawable/bg_badge_gray"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:text="12 Total"
+            android:text="0 Total"
             android:textColor="@color/steel_blue_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -105,476 +105,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/white" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_search_field"
+        app:iconifiedByDefault="false"
+        app:queryBackground="@null"
+        app:queryHint="Search house, name..."
+        app:searchIcon="@drawable/ic_search"
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHouses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:clipToPadding="false"
         android:padding="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
-        app:layout_constraintTop_toBottomOf="@id/appBar">
+        app:layout_constraintTop_toBottomOf="@id/searchView"
+        tools:listitem="@layout/item_house" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Houses Found"
+        android:textColor="@color/steel_blue_gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchView" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/dark_navy"
-                app:cardCornerRadius="24dp"
-                app:strokeColor="@color/slate_blue_gray"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:id="@+id/iconContainer1"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/circle_dark_bg"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_home_filled"
-                            app:tint="@color/bright_blue" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvHouseName1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="House B-204"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer1"
-                        app:layout_constraintTop_toTopOf="@id/iconContainer1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Owned by Michael Chen"
-                        android:textColor="@color/steel_blue_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer1"
-                        app:layout_constraintTop_toBottomOf="@id/tvHouseName1" />
-
-                    <View
-                        android:id="@+id/separator1"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@color/slate_blue_gray"
-                        app:layout_constraintTop_toBottomOf="@id/iconContainer1" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="michael.c@example.com"
-                        android:textColor="@color/slate_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/actionsLayout1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator1" />
-
-                    <LinearLayout
-                        android:id="@+id/actionsLayout1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator1">
-
-                        <FrameLayout
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/charcoal_navy">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_edit"
-                                app:tint="@color/steel_blue_gray" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:id="@+id/delete1"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/dark_plum">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_delete"
-                                app:tint="@color/red" />
-                        </FrameLayout>
-                    </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/dark_navy"
-                app:cardCornerRadius="24dp"
-                app:strokeColor="@color/slate_blue_gray"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:id="@+id/iconContainer2"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/circle_dark_bg"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_home_filled"
-                            app:tint="@color/bright_blue" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvHouseName2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="House B-204"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer2"
-                        app:layout_constraintTop_toTopOf="@id/iconContainer2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Owned by Michael Chen"
-                        android:textColor="@color/steel_blue_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer2"
-                        app:layout_constraintTop_toBottomOf="@id/tvHouseName2" />
-
-                    <View
-                        android:id="@+id/separator2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@color/slate_blue_gray"
-                        app:layout_constraintTop_toBottomOf="@id/iconContainer2" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="michael.c@example.com"
-                        android:textColor="@color/slate_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/actionsLayout2"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator2" />
-
-                    <LinearLayout
-                        android:id="@+id/actionsLayout2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator2">
-
-                        <FrameLayout
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/charcoal_navy">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_edit"
-                                app:tint="@color/steel_blue_gray" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:id="@+id/delete2"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/dark_plum">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_delete"
-                                app:tint="@color/red" />
-                        </FrameLayout>
-                    </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/dark_navy"
-                app:cardCornerRadius="24dp"
-                app:strokeColor="@color/slate_blue_gray"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:id="@+id/iconContainer3"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/circle_dark_bg"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_home_filled"
-                            app:tint="@color/bright_azure_blue" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvHouseName3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="House C-305"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer3"
-                        app:layout_constraintTop_toTopOf="@id/iconContainer3" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Owned by Emma Wilson"
-                        android:textColor="@color/steel_blue_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer3"
-                        app:layout_constraintTop_toBottomOf="@id/tvHouseName3" />
-
-                    <View
-                        android:id="@+id/separator3"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@color/slate_blue_gray"
-                        app:layout_constraintTop_toBottomOf="@id/iconContainer3" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="emma.w@example.com"
-                        android:textColor="@color/slate_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/actionsLayout3"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator3" />
-
-                    <LinearLayout
-                        android:id="@+id/actionsLayout3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator3">
-
-                        <FrameLayout
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/charcoal_navy">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_edit"
-                                app:tint="@color/steel_blue_gray" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:id="@+id/delete3"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/dark_plum">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_delete"
-                                app:tint="@color/red" />
-                        </FrameLayout>
-                    </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/dark_navy"
-                app:cardCornerRadius="24dp"
-                app:strokeColor="@color/slate_blue_gray"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:id="@+id/iconContainer4"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/circle_dark_bg"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_home_filled"
-                            app:tint="@color/bright_azure_blue" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvHouseName4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="House C-305"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer4"
-                        app:layout_constraintTop_toTopOf="@id/iconContainer4" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Owned by Emma Wilson"
-                        android:textColor="@color/steel_blue_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toEndOf="@id/iconContainer4"
-                        app:layout_constraintTop_toBottomOf="@id/tvHouseName4" />
-
-                    <View
-                        android:id="@+id/separator4"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@color/slate_blue_gray"
-                        app:layout_constraintTop_toBottomOf="@id/iconContainer4" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="emma.w@example.com"
-                        android:textColor="@color/slate_gray"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/actionsLayout4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator4" />
-
-                    <LinearLayout
-                        android:id="@+id/actionsLayout4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/separator4">
-
-                        <FrameLayout
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/charcoal_navy">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_edit"
-                                app:tint="@color/steel_blue_gray" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:id="@+id/delete4"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="@drawable/circle_dark_bg"
-                            android:backgroundTint="@color/dark_plum">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_delete"
-                                app:tint="@color/red" />
-                        </FrameLayout>
-                    </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/bright_blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
