@@ -81,8 +81,6 @@ class LoginActivity : AppCompatActivity() {
                 for (document in documents) {
                     val dbPassword = document.getString("password")
                     val role = document.getString("role")
-
-                        Toast.makeText(this, role, Toast.LENGTH_SHORT).show()
                     if (dbPassword == value) {
                         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                         SharedPreferencesService.setIsLogin(true);
