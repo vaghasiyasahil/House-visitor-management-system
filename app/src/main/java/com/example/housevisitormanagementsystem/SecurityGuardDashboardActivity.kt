@@ -23,10 +23,10 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
             insets
         }
 
-        setupProfile()
-    }
+        binding.btnCheckIn.setOnClickListener {
+            startActivity(Intent(this,CheckInActivity::class.java))
+        }
 
-    private fun setupProfile() {
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
         }
