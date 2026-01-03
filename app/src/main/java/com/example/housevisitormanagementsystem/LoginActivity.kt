@@ -82,20 +82,23 @@ class LoginActivity : AppCompatActivity() {
                     val dbPassword = document.getString("password")
                     val role = document.getString("role")
 
+                        Toast.makeText(this, role, Toast.LENGTH_SHORT).show()
                     if (dbPassword == value) {
                         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                         SharedPreferencesService.setIsLogin(true);
                         if (UserRole.fromString(role?:"")==UserRole.Admin) {
                             SharedPreferencesService.setUserRole(UserRole.Admin.name)
                             startActivity(Intent(this, AdminDashboardActivity::class.java))
+                            finish()
                         } else if (UserRole.fromString(role?:"")==UserRole.SecurityGuard) {
                             SharedPreferencesService.setUserRole(UserRole.SecurityGuard.name)
                             startActivity(Intent(this, SecurityGuardDashboardActivity::class.java))
+                            finish()
                         } else {
                             SharedPreferencesService.setUserRole(UserRole.HouseOwner.name)
                             startActivity(Intent(this, HouseOwnerDashboardActivity::class.java))
-                        }
                             finish()
+                        }
                     } else {
                         Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show()
                     }
