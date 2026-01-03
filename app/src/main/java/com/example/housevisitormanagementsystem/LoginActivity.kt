@@ -88,10 +88,14 @@ class LoginActivity : AppCompatActivity() {
                         if (UserRole.fromString(role?:"")==UserRole.Admin) {
                             SharedPreferencesService.setUserRole(UserRole.Admin.name)
                             startActivity(Intent(this, AdminDashboardActivity::class.java))
-                            finish()
+                        } else if (UserRole.fromString(role?:"")==UserRole.SecurityGuard) {
+                            SharedPreferencesService.setUserRole(UserRole.SecurityGuard.name)
+                            startActivity(Intent(this, SecurityGuardDashboardActivity::class.java))
                         } else {
-                            Toast.makeText(this, "Access Denied: Admin role required", Toast.LENGTH_LONG).show()
+                            SharedPreferencesService.setUserRole(UserRole.HouseOwner.name)
+                            startActivity(Intent(this, HouseOwnerDashboardActivity::class.java))
                         }
+                            finish()
                     } else {
                         Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show()
                     }

@@ -36,8 +36,10 @@ class SplashActivity : AppCompatActivity() {
         if(SharedPreferencesService.getIsLogin()){
             if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.Admin){
                 startActivity(Intent(this,AdminDashboardActivity::class.java))
+            }else if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.SecurityGuard){
+                startActivity(Intent(this,SecurityGuardDashboardActivity::class.java))
             }else{
-                Toast.makeText(this, "Pending...",Toast.LENGTH_LONG).show();
+                startActivity(Intent(this,HouseOwnerDashboardActivity::class.java))
             }
         }else{
             startActivity(Intent(this,LoginActivity::class.java))
