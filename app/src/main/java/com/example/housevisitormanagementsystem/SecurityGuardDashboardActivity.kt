@@ -26,6 +26,9 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.btnCheckIn.setOnClickListener {
             startActivity(Intent(this,CheckInActivity::class.java))
         }
+        binding.btnCheckOut.setOnClickListener {
+            startActivity(Intent(this,CheckOutActivity::class.java))
+        }
 
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
