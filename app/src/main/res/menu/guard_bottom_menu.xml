@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_entry"
+        android:icon="@drawable/ic_check_in"
+        android:title="Entry" />
+    <item
+        android:id="@+id/nav_active"
+        android:icon="@drawable/ic_security_shield"
+        android:title="Active" />
+    <item
+        android:id="@+id/nav_history"
+        android:icon="@drawable/ic_logs"
+        android:title="History" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings_gear"
+        android:title="Settings" />
+</menu>

@@ -10,5 +10,8 @@ data class VisitorLog(
     var entryTime: String = "",
     var exitTime: String? = null,
     var visitorPhoto: String? = null, // Base64 or URL
+    var vehiclePlate: String? = null,
+    var entryGate: String? = null,
+    var ownerName: String? = null,
     var isActive: Boolean = true
 )
