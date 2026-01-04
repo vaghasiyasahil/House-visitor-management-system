@@ -29,6 +29,9 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.btnCheckOut.setOnClickListener {
             startActivity(Intent(this,CheckOutActivity::class.java))
         }
+        binding.btnScanQR.setOnClickListener {
+            startActivity(Intent(this, QrCodeScanActivity::class.java))
+        }
 
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
