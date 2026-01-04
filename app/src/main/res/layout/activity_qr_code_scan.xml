@@ -8,15 +8,12 @@
     android:background="@color/black"
     tools:context=".QrCodeScanActivity">
 
-    <!-- Camera Preview Placeholder -->
-    <FrameLayout
-        android:id="@+id/cameraPreview"
+    <!-- Camera Preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
-        
-        <!-- CameraX PreviewView or similar would go here -->
-    </FrameLayout>
+        app:scaleType="fillCenter" />
 
     <!-- Overlay Layer -->
     <androidx.constraintlayout.widget.ConstraintLayout

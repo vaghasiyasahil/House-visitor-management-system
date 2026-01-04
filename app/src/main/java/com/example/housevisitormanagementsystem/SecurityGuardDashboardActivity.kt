@@ -32,7 +32,9 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.btnScanQR.setOnClickListener {
             startActivity(Intent(this, QrCodeScanActivity::class.java))
         }
-
+        binding.btnAnnouncements.setOnClickListener {
+            startActivity(Intent(this,ViewAnnouncementActivity::class.java))
+        }
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
         }
