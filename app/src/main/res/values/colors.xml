@@ -40,5 +40,13 @@
     <color name="status_green">#2ECC71</color>
     <color name="status_yellow">#F1C40F</color>
     <color name="status_grey">#95A5A6</color>
+    <color name="badge_green_bg">#1B2D26</color>
+    <color name="badge_red_bg">#2C191C</color>
+    <color name="badge_orange_bg">#292115</color>
+    <color name="badge_gray_bg">#2C3643</color>
+    <color name="badge_green_text">#2ECC71</color>
+    <color name="badge_red_text">#E74C3C</color>
+    <color name="badge_orange_text">#E67E22</color>
+    <color name="badge_gray_text">#8B95A5</color>
     <color name="red_transparent">#33E74C3C</color>
 </resources>
