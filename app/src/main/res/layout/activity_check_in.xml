@@ -153,16 +153,19 @@
                             android:src="@drawable/ic_home_filled"
                             app:tint="@color/text_grey" />
 
-                        <EditText
+                        <AutoCompleteTextView
                             android:id="@+id/etHouseNo"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="15dp"
                             android:background="@null"
-                            android:hint="A-101"
+                            android:hint="Search house or owner..."
+                            android:completionThreshold="1"
                             android:textColor="@color/white"
                             android:textColorHint="@color/cool_gray"
-                            android:textSize="16sp" />
+                            android:textSize="14sp"
+                            android:imeOptions="actionNext"
+                            android:inputType="text" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -295,5 +298,16 @@
                 app:tint="@color/white" />
         </LinearLayout>
     </FrameLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/bright_azure_blue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
