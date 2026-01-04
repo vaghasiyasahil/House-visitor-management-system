@@ -206,7 +206,9 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnVisitorApproval"
                     style="@style/DashboardSmallCard">
-                    <LinearLayout style="@style/DashboardSmallCardLayout">
+                    <LinearLayout
+                        style="@style/DashboardSmallCardLayout"
+                        android:layout_height="160dp">
                         <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
                             <ImageView
                                 style="@style/DashboardSmallCardIcon"
@@ -222,6 +224,7 @@
                 <!-- Visitor History -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnVisitorHistory"
+                    android:layout_height="160dp"
                     style="@style/DashboardSmallCard">
                     <LinearLayout style="@style/DashboardSmallCardLayout">
                         <ImageView style="@style/DashboardSmallCardIcon" android:backgroundTint="@color/badge_purple_bg" android:src="@drawable/ic_time" app:tint="@color/badge_purple_text" />
@@ -233,6 +236,7 @@
                 <!-- Announcements -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnAnnouncements"
+                    android:layout_height="160dp"
                     style="@style/DashboardSmallCard">
                     <LinearLayout style="@style/DashboardSmallCardLayout">
                         <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
@@ -250,6 +254,7 @@
                 <!-- Complaints -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnComplaints"
+                    android:layout_height="160dp"
                     style="@style/DashboardSmallCard">
                     <LinearLayout style="@style/DashboardSmallCardLayout">
                         <ImageView
@@ -265,6 +270,7 @@
                 <!-- Block Visitor -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnBlockVisitor"
+                    android:layout_height="160dp"
                     style="@style/DashboardSmallCard">
                     <LinearLayout style="@style/DashboardSmallCardLayout">
                         <ImageView
@@ -280,6 +286,7 @@
                 <!-- Directory -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnDirectory"
+                    android:layout_height="160dp"
                     style="@style/DashboardSmallCard">
                     <LinearLayout style="@style/DashboardSmallCardLayout">
                         <ImageView
