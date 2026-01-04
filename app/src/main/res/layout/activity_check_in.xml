@@ -119,101 +119,86 @@
                     android:textSize="16sp" />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="House No."
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
-                android:orientation="horizontal">
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="15dp">
 
-                <LinearLayout
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_home_filled"
+                    app:tint="@color/text_grey" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/etHouseNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:hint="Search owner name"
+                    android:completionThreshold="0"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/cool_gray"
+                    android:textSize="14sp"
+                    android:imeOptions="actionNext"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Purpose"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="15dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_briefcase"
+                    app:tint="@color/text_grey" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/etPurpose"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:hint="Select Purpose"
+                    android:completionThreshold="0"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/cool_gray"
+                    android:textSize="16sp"
+                    android:inputType="text"
+                    android:imeOptions="actionDone" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="House No."
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_input_field"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="15dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_home_filled"
-                            app:tint="@color/text_grey" />
-
-                        <AutoCompleteTextView
-                            android:id="@+id/etHouseNo"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="15dp"
-                            android:background="@null"
-                            android:hint="Search house or owner..."
-                            android:completionThreshold="1"
-                            android:textColor="@color/white"
-                            android:textColorHint="@color/cool_gray"
-                            android:textSize="14sp"
-                            android:imeOptions="actionNext"
-                            android:inputType="text" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Purpose"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_input_field"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="15dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_briefcase"
-                            app:tint="@color/text_grey" />
-
-                        <TextView
-                            android:id="@+id/tvPurpose"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:text="Guest"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_chevron_down"
-                            app:tint="@color/text_grey" />
-                    </LinearLayout>
-                </LinearLayout>
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_down"
+                    app:tint="@color/text_grey" />
             </LinearLayout>
 
             <TextView

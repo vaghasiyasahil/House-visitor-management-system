@@ -2,6 +2,7 @@ package com.example.housevisitormanagementsystem
 
 import adapter.HouseSearchAdapter
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -46,10 +47,16 @@ class CheckInActivity : AppCompatActivity() {
             validateAndCheckIn()
         }
 
-        binding.tvPurpose.parent.let { (it as? android.view.View)?.setOnClickListener {
-            // Logic for purpose selection would go here
-            Toast.makeText(this, "Select Purpose", Toast.LENGTH_SHORT).show()
-        } }
+        // Show House No dropdown on focus or click
+        binding.etHouseNo.setOnClickListener {
+            binding.etHouseNo.showDropDown()
+            binding.etHouseNo.requestFocus()
+        }
+        
+        // Show Purpose dropdown on click
+        binding.etPurpose.setOnClickListener {
+            binding.etPurpose.showDropDown()
+        }
     }
 
     private fun fetchHouses() {
@@ -77,14 +84,15 @@ class CheckInActivity : AppCompatActivity() {
         val name = binding.etVisitorName.text.toString().trim()
         val mobile = binding.etMobileNumber.text.toString().trim()
         val houseNo = binding.etHouseNo.text.toString().trim()
+        val purpose = binding.etPurpose.text.toString().trim()
 
-        if (name.isEmpty() || mobile.isEmpty() || houseNo.isEmpty()) {
+        if (name.isEmpty() || mobile.isEmpty() || houseNo.isEmpty() || purpose.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             return
         }
 
         // Proceed with check-in logic
-        Toast.makeText(this, "Checking in $name...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Checking in $name for $purpose...", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupHouseSelector() {
@@ -94,8 +102,21 @@ class CheckInActivity : AppCompatActivity() {
         binding.etHouseNo.setOnItemClickListener { parent, view, position, id ->
             val selectedHouse = adapter.getItem(position)
             binding.etHouseNo.setText(selectedHouse?.houseNo)
-            // Move focus to next field if needed or hide keyboard
             KeyboardUtils.hideKeyboard(this)
+        }
+        
+        setupPurposeDropdown()
+    }
+
+    private fun setupPurposeDropdown() {
+        val purposes = arrayOf("Guest", "Delivery", "Service", "Maintenance", "Emergency", "Courier", "Other")
+        val adapter = ArrayAdapter(this, R.layout.item_dropdown, purposes)
+        binding.etPurpose.setAdapter(adapter)
+        
+        // Ensure dropdown shows on click even if text is present
+        binding.etPurpose.setOnTouchListener { v, event ->
+            binding.etPurpose.showDropDown()
+            false
         }
     }
 }

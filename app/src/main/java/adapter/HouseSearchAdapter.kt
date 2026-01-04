@@ -24,12 +24,11 @@ class HouseSearchAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(
-            android.R.layout.simple_dropdown_item_1line, parent, false
+            R.layout.item_dropdown, parent, false
         )
         val house = getItem(position)
         val text = view.findViewById<TextView>(android.R.id.text1)
         text.text = "${house?.houseNo} - ${house?.ownerName}"
-        text.setTextColor(context.getColor(android.R.color.white))
         return view
     }
 
