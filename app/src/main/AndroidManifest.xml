@@ -28,9 +28,6 @@
             android:name=".HouseOwnerDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".SecurityGuardActivity"
-            android:exported="false" />
-        <activity
             android:name=".ViewBlocklistActivity"
             android:exported="false" />
         <activity
