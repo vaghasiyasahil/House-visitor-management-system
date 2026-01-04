@@ -41,22 +41,33 @@ class VisitorLogAdapter(
         holder.tvName.text = log.name
         holder.tvDetails.text = "${log.type} • ${log.unit}"
         
-        // Handle Avatar / Icon
-        if (log.avatarRes != null) {
+        // Handle Visitor Photo / Icon
+        val photoBase64 = log.visitorPhoto
+        if (!photoBase64.isNullOrEmpty()) {
             holder.ivAvatar.visibility = View.VISIBLE
             holder.iconBg.visibility = View.GONE
             holder.ivTypeIcon.visibility = View.GONE
-            holder.ivAvatar.setImageResource(log.avatarRes)
-        } else if (log.typeIconRes != null) {
+            try {
+                val imageBytes = android.util.Base64.decode(photoBase64, android.util.Base64.DEFAULT)
+                val decodedImage = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                holder.ivAvatar.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                holder.ivAvatar.setImageResource(R.drawable.person_image)
+            }
+        } else {
             holder.ivAvatar.visibility = View.GONE
             holder.iconBg.visibility = View.VISIBLE
             holder.ivTypeIcon.visibility = View.VISIBLE
-            holder.ivTypeIcon.setImageResource(log.typeIconRes)
-            if (log.typeColor != null) {
-                holder.iconBg.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, log.typeColor))
-                holder.ivTypeIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, log.typeColor))
-                // Apply a lighter background tint or use a circle_dark_bg as is
+            
+            val (iconRes, colorRes) = when (log.type) {
+                "Delivery" -> Pair(R.drawable.ic_delivery, R.color.orange)
+                "Maintenance" -> Pair(R.drawable.ic_maintenance, R.color.bright_blue)
+                else -> Pair(R.drawable.ic_person_outline, R.color.status_green)
             }
+            
+            holder.ivTypeIcon.setImageResource(iconRes)
+            holder.iconBg.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
+            holder.ivTypeIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
         }
 
         // Active Indicator

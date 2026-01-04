@@ -3,6 +3,7 @@ package com.example.housevisitormanagementsystem
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -85,38 +86,38 @@ class ViewVisitorActivity : AppCompatActivity() {
         visitorList.clear()
         visitorList.add(
             VisitorLog(
-                "1", "John Doe", "Guest", "Unit 101", "Inside",
-                "10:00 AM", null, R.drawable.person_image, null, null, true
+                id = "1", name = "John Doe", type = "Guest", unit = "Unit 101", 
+                status = "Inside", entryTime = "10:00 AM", isActive = true
             )
         )
         visitorList.add(
             VisitorLog(
-                "2", "Amazon Delivery", "Delivery", "Unit 305", "Checked Out",
-                "11:15 AM", "11:20 AM", null, R.drawable.ic_delivery, R.color.orange, false
+                id = "2", name = "Amazon Delivery", type = "Delivery", unit = "Unit 305", 
+                status = "Checked Out", entryTime = "11:15 AM", exitTime = "11:20 AM", isActive = false
             )
         )
         visitorList.add(
             VisitorLog(
-                "3", "Mike Smith", "Maintenance", "Clubhouse", "Inside",
-                "08:00 AM", null, null, R.drawable.ic_maintenance, R.color.bright_blue, false
+                id = "3", name = "Mike Smith", type = "Maintenance", unit = "Clubhouse", 
+                status = "Inside", entryTime = "08:00 AM", isActive = false
             )
         )
         visitorList.add(
             VisitorLog(
-                "4", "Sarah Connor", "Guest", "Unit 202", "Checked Out",
-                "09:30 AM", "12:45 PM", R.drawable.person_image, null, null, false
+                id = "4", name = "Sarah Connor", type = "Guest", unit = "Unit 202", 
+                status = "Checked Out", entryTime = "09:30 AM", exitTime = "12:45 PM", isActive = false
             )
         )
         visitorList.add(
             VisitorLog(
-                "5", "Urban Company", "Maintenance", "Unit 401", "Inside",
-                "02:15 PM", null, null, R.drawable.ic_maintenance, R.color.purple, false
+                id = "5", name = "Urban Company", type = "Maintenance", unit = "Unit 401", 
+                status = "Inside", entryTime = "02:15 PM", isActive = false
             )
         )
         visitorList.add(
             VisitorLog(
-                "6", "Zomato", "Delivery", "Unit 105", "Inside",
-                "03:00 PM", null, null, R.drawable.ic_delivery, R.color.red, false
+                id = "6", name = "Zomato", type = "Delivery", unit = "Unit 105", 
+                status = "Inside", entryTime = "03:00 PM", isActive = false
             )
         )
         adapter.notifyDataSetChanged()

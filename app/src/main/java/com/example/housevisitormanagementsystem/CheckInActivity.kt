@@ -1,12 +1,21 @@
 package com.example.housevisitormanagementsystem
 
 import adapter.HouseSearchAdapter
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityCheckInBinding
@@ -20,6 +29,37 @@ class CheckInActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCheckInBinding
     private val db = FirebaseFirestore.getInstance()
     private var houseList = ArrayList<House>()
+    private var capturedImage: Bitmap? = null
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            launchCamera()
+        } else {
+            Toast.makeText(this, "Camera permission is required to capture photo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                result.data?.extras?.getParcelable("data", Bitmap::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                result.data?.extras?.get("data") as? Bitmap
+            }
+            
+            if (imageBitmap != null) {
+                capturedImage = imageBitmap
+                binding.ivCapturedPhoto.setImageBitmap(imageBitmap)
+                binding.ivCapturedPhoto.visibility = View.VISIBLE
+                binding.captureContent.visibility = View.GONE
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +97,30 @@ class CheckInActivity : AppCompatActivity() {
         binding.etPurpose.setOnClickListener {
             binding.etPurpose.showDropDown()
         }
+
+        binding.btnCapturePhoto.setOnClickListener {
+            checkCameraPermission()
+        }
+    }
+
+    private fun checkCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                launchCamera()
+            }
+            else -> {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+    private fun launchCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            cameraLauncher.launch(takePictureIntent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Camera not found", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun fetchHouses() {
@@ -91,8 +155,47 @@ class CheckInActivity : AppCompatActivity() {
             return
         }
 
-        // Proceed with check-in logic
-        Toast.makeText(this, "Checking in $name for $purpose...", Toast.LENGTH_SHORT).show()
+        if (capturedImage == null) {
+            Toast.makeText(this, "Please capture visitor photo", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        saveCheckInData(name, mobile, houseNo, purpose)
+    }
+
+    private fun saveCheckInData(name: String, mobile: String, houseNo: String, purpose: String) {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnCheckInVisitor.isEnabled = false
+
+        val id = db.collection(DatabaseTableName.VISITOR_LOGS).document().id
+        val entryTime = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
+        
+        val visitorPhotoBase64 = com.example.housevisitormanagementsystem.utils.ImageUtils.bitmapToBase64(capturedImage!!)
+
+        val visitorLog = model.VisitorLog(
+            id = id,
+            name = name,
+            mobile = mobile,
+            type = purpose,
+            unit = houseNo,
+            status = "Inside",
+            entryTime = entryTime,
+            visitorPhoto = visitorPhotoBase64,
+            isActive = true
+        )
+
+        db.collection(DatabaseTableName.VISITOR_LOGS).document(id)
+            .set(visitorLog)
+            .addOnSuccessListener {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(this, "Visitor Checked-In Successfully", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                binding.progressBar.visibility = View.GONE
+                binding.btnCheckInVisitor.isEnabled = true
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupHouseSelector() {

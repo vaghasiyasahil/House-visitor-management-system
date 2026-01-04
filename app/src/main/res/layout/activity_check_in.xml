@@ -211,7 +211,8 @@
             <LinearLayout
                 android:id="@+id/btnCapturePhoto"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="wrap_content"
+                android:minHeight="140dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_dotted_border"
@@ -221,8 +222,9 @@
                 <ImageView
                     android:id="@+id/ivCapturedPhoto"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:visibility="gone" />
 
                 <LinearLayout
