@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +29,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.imgProfile.setOnClickListener {
-            Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
+            showLogoutDialog()
         }
 
         binding.notificationContainer.setOnClickListener {
@@ -40,23 +41,23 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
 
         binding.btnVisitorApproval.setOnClickListener {
-            Toast.makeText(this, "Opening Visitor Approvals", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,CheckOutActivity::class.java))
         }
 
         binding.btnVisitorHistory.setOnClickListener {
-            Toast.makeText(this, "Opening Visitor History", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,ViewVisitorActivity::class.java))
         }
 
         binding.btnAnnouncements.setOnClickListener {
-            Toast.makeText(this, "Opening Announcements", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,ViewAnnouncementActivity::class.java))
         }
 
         binding.btnComplaints.setOnClickListener {
-            Toast.makeText(this, "Opening Complaints", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,ViewComplaintActivity::class.java))
         }
 
         binding.btnBlockVisitor.setOnClickListener {
-            Toast.makeText(this, "Opening Security Settings", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,ViewComplaintActivity::class.java))
         }
 
         binding.btnDirectory.setOnClickListener {
@@ -66,5 +67,33 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         binding.tvViewAll.setOnClickListener {
             Toast.makeText(this, "Opening All Recent Activity", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showLogoutDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnYes).setOnClickListener {
+            dialog.dismiss()
+            performLogout()
+        }
+
+        dialog.show()
+    }
+
+    private fun performLogout() {
+        SharedPreferencesService.clear()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
