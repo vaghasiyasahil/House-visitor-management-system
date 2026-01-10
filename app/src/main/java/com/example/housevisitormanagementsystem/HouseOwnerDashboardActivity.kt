@@ -57,7 +57,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
 
         binding.btnBlockVisitor.setOnClickListener {
-            startActivity(Intent(this,ViewComplaintActivity::class.java))
+            startActivity(Intent(this,ViewBlocklistActivity::class.java))
         }
 
         binding.btnDirectory.setOnClickListener {
