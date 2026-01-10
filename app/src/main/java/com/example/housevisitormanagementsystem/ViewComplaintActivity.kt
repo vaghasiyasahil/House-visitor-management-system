@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import adapter.ComplaintAdapter
+import android.content.Intent
 import com.example.housevisitormanagementsystem.databinding.ActivityViewComplaintBinding
 import model.Complaint
 
@@ -74,6 +75,9 @@ class ViewComplaintActivity : AppCompatActivity() {
 
         binding.btnGenerateReport.setOnClickListener {
             android.widget.Toast.makeText(this, "Exporting to PDF...", android.widget.Toast.LENGTH_SHORT).show()
+        }
+        binding.fabAddComplaint.setOnClickListener {
+            startActivity(Intent(this,AddComplaintActivity::class.java))
         }
     }
 }
