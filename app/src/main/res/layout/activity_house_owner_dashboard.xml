@@ -179,6 +179,7 @@
                         app:icon="@drawable/ic_qr_code_scanner"
                         app:iconGravity="textStart"
                         app:iconPadding="10dp"
+                        app:iconTint="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvPreApproveDesc" />
