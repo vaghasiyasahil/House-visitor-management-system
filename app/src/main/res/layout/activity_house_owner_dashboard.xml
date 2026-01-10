@@ -283,21 +283,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Directory -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnDirectory"
-                    android:layout_height="160dp"
-                    style="@style/DashboardSmallCard">
-                    <LinearLayout style="@style/DashboardSmallCardLayout">
-                        <ImageView
-                            style="@style/DashboardSmallCardIcon"
-                            android:backgroundTint="@color/badge_green_bg"
-                            android:src="@drawable/ic_person_outline"
-                            app:tint="@color/badge_green_text" />
-                        <TextView style="@style/DashboardSmallCardTitle" android:text="Directory" />
-                        <TextView style="@style/DashboardSmallCardDesc" android:text="Important contacts" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+
 
             </androidx.gridlayout.widget.GridLayout>
 
@@ -311,21 +297,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Recent Activity"
+                    android:text="Pending Request"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvViewAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="View All"
-                    android:textColor="@color/bright_azure_blue"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+
             </RelativeLayout>
 
             <!-- Recent Activity Item (Mock) -->

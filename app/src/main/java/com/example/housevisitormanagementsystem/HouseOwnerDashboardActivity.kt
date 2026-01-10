@@ -60,13 +60,9 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this,ViewBlocklistActivity::class.java))
         }
 
-        binding.btnDirectory.setOnClickListener {
-            Toast.makeText(this, "Opening Directory", Toast.LENGTH_SHORT).show()
-        }
 
-        binding.tvViewAll.setOnClickListener {
-            Toast.makeText(this, "Opening All Recent Activity", Toast.LENGTH_SHORT).show()
-        }
+
+
     }
 
     private fun showLogoutDialog() {
