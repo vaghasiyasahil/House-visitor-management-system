@@ -36,10 +36,6 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             Toast.makeText(this, "Notifications clicked", Toast.LENGTH_SHORT).show()
         }
 
-        binding.btnGenerateQR.setOnClickListener {
-            Toast.makeText(this, "Generating QR Code...", Toast.LENGTH_SHORT).show()
-        }
-
         binding.btnVisitorApproval.setOnClickListener {
             startActivity(Intent(this,CheckOutActivity::class.java))
         }
@@ -60,7 +56,13 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this,ViewBlocklistActivity::class.java))
         }
 
+        binding.btnViewQRCode.setOnClickListener {
+            startActivity(Intent(this,ViewQrCodeActivity::class.java))
+        }
 
+        binding.btnGenerateQR.setOnClickListener {
+            startActivity(Intent(this,AddQrCodeActivity::class.java))
+        }
 
 
     }
