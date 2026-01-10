@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/card_dark_bg"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#1AFFFFFF"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- QR Icon / Placeholder -->
+        <FrameLayout
+            android:id="@+id/qrContainer"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/circle_dark_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_qr_code_scanner"
+                app:tint="@color/bright_azure_blue" />
+        </FrameLayout>
+
+        <!-- Visitor Info -->
+        <LinearLayout
+            android:id="@+id/infoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/actionLayout"
+            app:layout_constraintStart_toEndOf="@id/qrContainer"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvVisitorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Guest: Alice Johnson"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvVisitorPurpose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Personal Visit"
+                android:textColor="@color/text_grey"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_time"
+                    app:tint="@color/text_grey" />
+
+                <TextView
+                    android:id="@+id/tvValidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Valid until: 12 Jan, 2024"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_dark_bg"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/circle_dark_bg"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/badge_red_text" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
