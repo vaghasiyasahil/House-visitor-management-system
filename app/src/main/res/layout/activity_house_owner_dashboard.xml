@@ -283,6 +283,23 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- View QR Code -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnViewQRCode"
+                    android:layout_height="160dp"
+                    style="@style/DashboardSmallCard">
+                    <LinearLayout style="@style/DashboardSmallCardLayout">
+                        <ImageView
+                            style="@style/DashboardSmallCardIcon"
+                            android:backgroundTint="@color/badge_green_bg"
+                            android:src="@drawable/ic_qr_code_scanner"
+                            app:tint="@color/badge_green_text" />
+                        <TextView style="@style/DashboardSmallCardTitle" android:text="View QR Code" />
+                        <TextView style="@style/DashboardSmallCardDesc" android:text="Manage entry" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+
 
 
             </androidx.gridlayout.widget.GridLayout>
