@@ -4,18 +4,16 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
-import model.VisitorLog
+import model.VisitorModel
 import com.example.housevisitormanagementsystem.databinding.ItemVisitorActiveBinding
 
 class ActiveVisitorAdapter(
     private val context: Context,
-    private val logs: List<VisitorLog>,
-    private val onCheckoutClick: (VisitorLog) -> Unit
+    private val logs: List<VisitorModel>,
+    private val onCheckoutClick: (VisitorModel) -> Unit
 ) : RecyclerView.Adapter<ActiveVisitorAdapter.VisitorViewHolder>() {
 
     class VisitorViewHolder(val binding: ItemVisitorActiveBinding) : RecyclerView.ViewHolder(binding.root)
@@ -30,11 +28,8 @@ class ActiveVisitorAdapter(
         val binding = holder.binding
 
         binding.tvVisitorName.text = log.name
-        binding.tvEntryTime.text = log.entryTime
-        binding.tvVehiclePlate.text = log.vehiclePlate ?: "N/A"
-        binding.tvVisitingUnit.text = log.unit
-        binding.tvOwnerName.text = log.ownerName?.let { " ($it)" } ?: ""
-        binding.tvEntryPoint.text = "Entry: ${log.entryGate ?: "Main Gate"}"
+        binding.tvEntryTime.text = log.entryTime.toString()
+        binding.tvOwnerName.text = log.name
 
         // Handle Photo
         if (!log.visitorPhoto.isNullOrEmpty()) {

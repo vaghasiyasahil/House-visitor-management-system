@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityUpdateComplaintStatusBinding
-import model.Complaint
+import model.ComplaintModel
 
 class UpdateComplaintStatusActivity : AppCompatActivity() {
 
@@ -31,7 +31,7 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
 
-        val complaint = intent.getSerializableExtra("complaint") as? Complaint
+        val complaint = intent.getSerializableExtra("complaint") as? ComplaintModel
         if (complaint == null) {
             finish()
             return
@@ -41,7 +41,7 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         setupClickListeners()
     }
 
-    private fun setupUI(complaint: Complaint) {
+    private fun setupUI(complaint: ComplaintModel) {
         binding.tvComplaintDetail.text = "#CMP-${complaint.id} • ${complaint.houseNo}"
         binding.tvDescription.text = complaint.title
         selectedStatus = complaint.status

@@ -10,7 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.housevisitormanagementsystem.databinding.ActivityViewBlocklistBinding
-import model.BlockedVisitor
+import model.BlockedVisitorModel
 
 class ViewBlocklistActivity : AppCompatActivity() {
 
@@ -18,8 +18,8 @@ class ViewBlocklistActivity : AppCompatActivity() {
     private lateinit var adapter: BlockedVisitorAdapter
     private var isHistoryTab = false
 
-    private val blockedList = mutableListOf<BlockedVisitor>()
-    private val historyList = mutableListOf<BlockedVisitor>()
+    private val blockedList = mutableListOf<BlockedVisitorModel>()
+    private val historyList = mutableListOf<BlockedVisitorModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +97,7 @@ class ViewBlocklistActivity : AppCompatActivity() {
         setupRecyclerView()
     }
 
-    private fun handleAction(visitor: BlockedVisitor) {
+    private fun handleAction(visitor: BlockedVisitorModel) {
         if (isHistoryTab) {
             showBlockVisitorDialog(visitor)
         } else {
@@ -105,7 +105,7 @@ class ViewBlocklistActivity : AppCompatActivity() {
         }
     }
 
-    private fun showBlockVisitorDialog(visitor: BlockedVisitor) {
+    private fun showBlockVisitorDialog(visitor: BlockedVisitorModel) {
         val dialog = android.app.Dialog(this)
         dialog.setContentView(R.layout.dialog_block_visitor)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -132,19 +132,19 @@ class ViewBlocklistActivity : AppCompatActivity() {
     private fun setupDummyData() {
         // Blocked Data
         blockedList.add(
-            BlockedVisitor(
+            BlockedVisitorModel(
                 "1", "John Doe", "+1 (555) 019-2834", "Construction",
                 "Until Oct 15", R.drawable.person_image, null, null, true
             )
         )
         blockedList.add(
-            BlockedVisitor(
+            BlockedVisitorModel(
                 "2", "Metro Deliveries", "Service Provider", "Vacation Mode",
                 "Ends Nov 01", null, R.drawable.ic_delivery, R.color.orange, true
             )
         )
         blockedList.add(
-            BlockedVisitor(
+            BlockedVisitorModel(
                 "3", "Sarah Jenkins", "+1 (555) 991-2200", "Private Matter",
                 "Indefinite", R.drawable.person_image, null, null, true
             )
@@ -152,13 +152,13 @@ class ViewBlocklistActivity : AppCompatActivity() {
 
         // History Data (mocking some previously blocked visitors)
         historyList.add(
-            BlockedVisitor(
+            BlockedVisitorModel(
                 "4", "Mike Ross", "+1 (555) 123-4567", "Late Night Entry",
                 "Resolved on Sep 10", null, R.drawable.ic_maintenance, R.color.bright_blue, false
             )
         )
         historyList.add(
-            BlockedVisitor(
+            BlockedVisitorModel(
                 "5", "Fast Track Couriers", "Delivery Service", "Misconduct",
                 "Resolved on Aug 25", null, R.drawable.ic_delivery, R.color.red, false
             )

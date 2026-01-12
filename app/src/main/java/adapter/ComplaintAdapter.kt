@@ -12,11 +12,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
 import com.example.housevisitormanagementsystem.UpdateComplaintStatusActivity
-import model.Complaint
+import model.ComplaintModel
 
 class ComplaintAdapter(
     private val context: Context,
-    private val complaints: List<Complaint>
+    private val complaints: List<ComplaintModel>
 ) : RecyclerView.Adapter<ComplaintAdapter.ComplaintViewHolder>() {
 
     class ComplaintViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

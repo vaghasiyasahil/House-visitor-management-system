@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class Complaint(
+data class ComplaintModel(
     val id: String,
     val title: String,
     val houseNo: String,

@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class Announcement(
+data class AnnouncementModel(
     var id: String = "",
     var title: String = "",
     var description: String = "",

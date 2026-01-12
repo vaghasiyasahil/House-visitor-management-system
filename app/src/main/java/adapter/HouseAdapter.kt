@@ -6,16 +6,16 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.databinding.ItemHouseBinding
-import model.House
+import model.HouseModel
 import java.util.Locale
 
 class HouseAdapter(
-    private var houseList: ArrayList<House>,
-    private val onEditClick: (House) -> Unit,
-    private val onDeleteClick: (House) -> Unit
+    private var houseList: ArrayList<HouseModel>,
+    private val onEditClick: (HouseModel) -> Unit,
+    private val onDeleteClick: (HouseModel) -> Unit
 ) : RecyclerView.Adapter<HouseAdapter.HouseViewHolder>(), Filterable {
 
-    private var houseListFiltered: ArrayList<House> = houseList
+    private var houseListFiltered: ArrayList<HouseModel> = houseList
 
     inner class HouseViewHolder(val binding: ItemHouseBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -51,7 +51,7 @@ class HouseAdapter(
                 houseListFiltered = if (charString.isEmpty()) {
                     houseList
                 } else {
-                    val filteredList = ArrayList<House>()
+                    val filteredList = ArrayList<HouseModel>()
                     for (row in houseList) {
                         if (row.houseNo.lowercase(Locale.ROOT).contains(charString.lowercase(Locale.ROOT)) ||
                             row.ownerName.lowercase(Locale.ROOT).contains(charString.lowercase(Locale.ROOT))
@@ -67,13 +67,13 @@ class HouseAdapter(
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                houseListFiltered = results?.values as ArrayList<House>
+                houseListFiltered = results?.values as ArrayList<HouseModel>
                 notifyDataSetChanged()
             }
         }
     }
     
-    fun updateList(newList: ArrayList<House>) {
+    fun updateList(newList: ArrayList<HouseModel>) {
         houseList = newList
         houseListFiltered = newList
         notifyDataSetChanged()

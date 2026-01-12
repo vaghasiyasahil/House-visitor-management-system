@@ -8,9 +8,9 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,17 +18,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityCheckInBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.google.firebase.Timestamp
+import java.io.ByteArrayOutputStream
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
-import model.House
+import kotlinx.coroutines.launch
+import model.HouseModel
+import model.VisitorModel
+import types.VisitorStatus
 
 class CheckInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCheckInBinding
     private val db = FirebaseFirestore.getInstance()
-    private var houseList = ArrayList<House>()
+    private var houseList = ArrayList<HouseModel>()
     private var capturedImage: Bitmap? = null
 
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -132,7 +140,7 @@ class CheckInActivity : AppCompatActivity() {
                 houseList.clear()
                 if (value != null) {
                     for (doc in value) {
-                        val house = doc.toObject(House::class.java)
+                        val house = doc.toObject(HouseModel::class.java)
                         houseList.add(house)
                     }
                     setupHouseSelector()
@@ -160,42 +168,48 @@ class CheckInActivity : AppCompatActivity() {
             return
         }
 
-        saveCheckInData(name, mobile, houseNo, purpose)
+        saveCheckInData()
     }
 
-    private fun saveCheckInData(name: String, mobile: String, houseNo: String, purpose: String) {
+    private fun saveCheckInData() {
         binding.progressBar.visibility = View.VISIBLE
         binding.btnCheckInVisitor.isEnabled = false
 
-        val id = db.collection(DatabaseTableName.VISITOR_LOGS).document().id
-        val entryTime = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
-        
-        val visitorPhotoBase64 = com.example.housevisitormanagementsystem.utils.ImageUtils.bitmapToBase64(capturedImage!!)
-
-        val visitorLog = model.VisitorLog(
-            id = id,
-            name = name,
-            mobile = mobile,
-            type = purpose,
-            unit = houseNo,
-            status = "Inside",
-            entryTime = entryTime,
-            visitorPhoto = visitorPhotoBase64,
-            isActive = true
-        )
-
-        db.collection(DatabaseTableName.VISITOR_LOGS).document(id)
-            .set(visitorLog)
-            .addOnSuccessListener {
-                binding.progressBar.visibility = View.GONE
-                Toast.makeText(this, "Visitor Checked-In Successfully", Toast.LENGTH_SHORT).show()
+        val visitorModel = VisitorModel(
+            name = binding.etVisitorName.text.toString(),
+            houseNo = binding.etHouseNo.text.toString(),
+            mobile = binding.etMobileNumber.text.toString(),
+            purpose = binding.etPurpose.text.toString(),
+            status = VisitorStatus.Inside,
+            visitorPhoto = bitmapToBase64(capturedImage!!),
+            entryTime = Timestamp.now()
+        );
+        lifecycleScope.launch{
+            val docId = FirestoreService().addDocument(DatabaseTableName.VISITOR,visitorModel.toHashMap());
+            if (docId != null) {
+                Toast.makeText(
+                    this@CheckInActivity,
+                    "Visitor checked in successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
                 finish()
-            }
-            .addOnFailureListener { e ->
+            } else {
+                Toast.makeText(
+                    this@CheckInActivity,
+                    "Failed to check in visitor",
+                    Toast.LENGTH_SHORT
+                ).show()
                 binding.progressBar.visibility = View.GONE
                 binding.btnCheckInVisitor.isEnabled = true
-                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun bitmapToBase64(bitmap: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        val bytes = baos.toByteArray()
+        return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
     private fun setupHouseSelector() {

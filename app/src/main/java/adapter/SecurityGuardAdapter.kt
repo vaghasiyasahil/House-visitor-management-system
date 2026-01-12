@@ -13,17 +13,17 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
 import com.example.housevisitormanagementsystem.databinding.ItemSecurityGuardBinding
-import model.SecurityGuard
+import model.SecurityGuardModel
 import java.util.Locale
 
 class SecurityGuardAdapter(
     private val context: Context,
-    private var guardList: ArrayList<SecurityGuard>,
-    private val onEditClick: (SecurityGuard) -> Unit,
-    private val onDeleteClick: (SecurityGuard) -> Unit
+    private var guardList: ArrayList<SecurityGuardModel>,
+    private val onEditClick: (SecurityGuardModel) -> Unit,
+    private val onDeleteClick: (SecurityGuardModel) -> Unit
 ) : RecyclerView.Adapter<SecurityGuardAdapter.GuardViewHolder>(), Filterable {
 
-    private var guardListFiltered: ArrayList<SecurityGuard> = guardList
+    private var guardListFiltered: ArrayList<SecurityGuardModel> = guardList
 
     inner class GuardViewHolder(val binding: ItemSecurityGuardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -97,7 +97,7 @@ class SecurityGuardAdapter(
                 guardListFiltered = if (charString.isEmpty()) {
                     guardList
                 } else {
-                    val filteredList = ArrayList<SecurityGuard>()
+                    val filteredList = ArrayList<SecurityGuardModel>()
                     for (row in guardList) {
                         if (row.name.lowercase(Locale.ROOT).contains(charString.lowercase(Locale.ROOT)) ||
                             row.email.lowercase(Locale.ROOT).contains(charString.lowercase(Locale.ROOT)) ||
@@ -114,13 +114,13 @@ class SecurityGuardAdapter(
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                guardListFiltered = results?.values as ArrayList<SecurityGuard>
+                guardListFiltered = results?.values as ArrayList<SecurityGuardModel>
                 notifyDataSetChanged()
             }
         }
     }
     
-    fun updateList(newList: ArrayList<SecurityGuard>) {
+    fun updateList(newList: ArrayList<SecurityGuardModel>) {
         guardList = newList
         guardListFiltered = newList
         notifyDataSetChanged()

@@ -10,13 +10,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.R
-import model.BlockedVisitor
+import model.BlockedVisitorModel
 
 class BlockedVisitorAdapter(
     private val context: Context,
-    private var visitors: List<BlockedVisitor>,
+    private var visitors: List<BlockedVisitorModel>,
     private val isHistoryTab: Boolean,
-    private val onActionClick: (BlockedVisitor) -> Unit
+    private val onActionClick: (BlockedVisitorModel) -> Unit
 ) : RecyclerView.Adapter<BlockedVisitorAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -82,7 +82,7 @@ class BlockedVisitorAdapter(
 
     override fun getItemCount(): Int = visitors.size
 
-    fun updateData(newVisitors: List<BlockedVisitor>, newIsHistoryTab: Boolean) {
+    fun updateData(newVisitors: List<BlockedVisitorModel>, newIsHistoryTab: Boolean) {
         // Simple update for now, could use DiffUtil for better performance
         // But for mock data it's fine
     }

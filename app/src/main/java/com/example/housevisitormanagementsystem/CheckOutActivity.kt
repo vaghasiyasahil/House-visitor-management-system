@@ -10,13 +10,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.housevisitormanagementsystem.databinding.ActivityCheckOutBinding
-import model.VisitorLog
+import model.VisitorModel
 
 class CheckOutActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCheckOutBinding
     private lateinit var adapter: ActiveVisitorAdapter
-    private val activeVisitors = mutableListOf<VisitorLog>()
+    private val activeVisitors = mutableListOf<VisitorModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,6 @@ class CheckOutActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
-        loadDummyData()
     }
 
     private fun setupRecyclerView() {
@@ -47,28 +46,4 @@ class CheckOutActivity : AppCompatActivity() {
     }
 
 
-    private fun loadDummyData() {
-        activeVisitors.clear()
-        activeVisitors.add(
-            VisitorLog(
-                id = "1", name = "John Doe", unit = "Unit 402", ownerName = "Mr. Smith",
-                entryTime = "10:42 AM", vehiclePlate = "ABC - 1234", entryGate = "Main Gate"
-            )
-        )
-        activeVisitors.add(
-            VisitorLog(
-                id = "2", name = "Sarah Jenkins", unit = "Unit 105", ownerName = "Ms. Davis",
-                entryTime = "11:15 AM", vehiclePlate = "XYZ - 9876", entryGate = "Side Gate"
-            )
-        )
-        activeVisitors.add(
-            VisitorLog(
-                id = "3", name = "Amazon Delivery", unit = "Reception",
-                entryTime = "11:45 AM", vehiclePlate = "DL - 2233", entryGate = "Service Entrance"
-            )
-        )
-        
-        adapter.notifyDataSetChanged()
-        binding.tvActiveCount.text = "${activeVisitors.size} Active"
-    }
 }

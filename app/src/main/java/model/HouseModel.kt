@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class House(
+data class HouseModel(
     var id: String = "",
     var houseNo: String = "",
     var ownerName: String = "",

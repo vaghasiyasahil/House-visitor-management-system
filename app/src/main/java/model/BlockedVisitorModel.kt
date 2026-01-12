@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class BlockedVisitor(
+data class BlockedVisitorModel(
     val id: String,
     val name: String,
     val details: String, // Contact or Description (e.g., +1 (555) 019-2834 or Service Provider)

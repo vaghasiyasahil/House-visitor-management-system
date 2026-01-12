@@ -13,7 +13,7 @@ import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.SecurityGuard
+import model.SecurityGuardModel
 import types.UserRole
 
 class AddSecurityGuardsActivity : AppCompatActivity() {
@@ -39,7 +39,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         setupDropdowns()
         
         if (intent.hasExtra("guardData")) {
-            val guard = intent.getSerializableExtra("guardData") as SecurityGuard
+            val guard = intent.getSerializableExtra("guardData") as SecurityGuardModel
             guardId = guard.id
             isEditMode = true
             preFillData(guard)
@@ -57,7 +57,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         binding.actvShift.setAdapter(shiftAdapter)
     }
 
-    private fun preFillData(guard: SecurityGuard) {
+    private fun preFillData(guard: SecurityGuardModel) {
         binding.etFullName.editText?.setText(guard.name)
         binding.etEmail.editText?.setText(guard.email)
         binding.etPhoneNumber.editText?.setText(guard.phoneNumber)
@@ -150,7 +150,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
     private fun saveGuard(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
         val id = if (isEditMode && guardId != null) guardId!! else generateUniqueId()
         
-        val guard = SecurityGuard(
+        val guard = SecurityGuardModel(
             id = id,
             name = name,
             email = email,

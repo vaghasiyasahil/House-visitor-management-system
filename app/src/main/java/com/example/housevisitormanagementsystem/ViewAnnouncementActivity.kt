@@ -20,7 +20,7 @@ import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialog
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.Announcement
+import model.AnnouncementModel
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
@@ -30,7 +30,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewAnnouncementBinding
     private lateinit var adapter: AnnouncementAdapter
     private val db = FirebaseFirestore.getInstance()
-    private var allAnnouncements = ArrayList<Announcement>()
+    private var allAnnouncements = ArrayList<AnnouncementModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,7 +143,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
                 if (value != null) {
                     for (doc in value) {
                         try {
-                            val announcement = doc.toObject(Announcement::class.java)
+                            val announcement = doc.toObject(AnnouncementModel::class.java)
                             allAnnouncements.add(announcement)
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -157,7 +157,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             }
     }
 
-    private fun showDeleteDialog(announcement: Announcement) {
+    private fun showDeleteDialog(announcement: AnnouncementModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
             title = "Delete Announcement?",
             message = "Are you sure you want to delete '${announcement.title}'?",
@@ -168,7 +168,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "DeleteAnnouncementDialog")
     }
 
-    private fun deleteAnnouncement(announcement: Announcement) {
+    private fun deleteAnnouncement(announcement: AnnouncementModel) {
         db.collection(DatabaseTableName.ANNOUNCEMENTS).document(announcement.id)
             .delete()
             .addOnSuccessListener {

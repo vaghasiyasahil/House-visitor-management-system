@@ -19,7 +19,7 @@ import com.example.housevisitormanagementsystem.databinding.ActivityViewSecurity
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.SecurityGuard
+import model.SecurityGuardModel
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
@@ -29,7 +29,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewSecurityGuardBinding
     private lateinit var adapter: SecurityGuardAdapter
     private val db = FirebaseFirestore.getInstance()
-    private var allGuards = ArrayList<SecurityGuard>()
+    private var allGuards = ArrayList<SecurityGuardModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,7 +127,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
                 allGuards.clear()
                 if (value != null) {
                     for (doc in value) {
-                        val guard = doc.toObject(SecurityGuard::class.java)
+                        val guard = doc.toObject(SecurityGuardModel::class.java)
                         allGuards.add(guard)
                     }
                 }
@@ -137,7 +137,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             }
     }
 
-    private fun showDeleteDialog(guard: SecurityGuard) {
+    private fun showDeleteDialog(guard: SecurityGuardModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
             title = "Delete Guard?",
             message = "Are you sure you want to remove ${guard.name}? This process is irreversible.",
@@ -148,7 +148,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "DeleteGuardDialog")
     }
 
-    private fun deleteGuard(guard: SecurityGuard) {
+    private fun deleteGuard(guard: SecurityGuardModel) {
         db.collection(DatabaseTableName.SECURITY_GUARDS).document(guard.id)
             .delete()
             .addOnSuccessListener {

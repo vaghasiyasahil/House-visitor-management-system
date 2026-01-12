@@ -8,7 +8,6 @@ import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.ContactsContract.Data
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
@@ -22,17 +21,16 @@ import com.example.housevisitormanagementsystem.databinding.ActivityViewHouseBin
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.House
+import model.HouseModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 class ViewHouseActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityViewHouseBinding
     private val db = FirebaseFirestore.getInstance()
     private lateinit var houseAdapter: HouseAdapter
-    private var houseList = ArrayList<House>()
+    private var houseList = ArrayList<HouseModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +103,7 @@ class ViewHouseActivity : AppCompatActivity() {
                 houseList.clear()
                 if (value != null) {
                     for (doc in value) {
-                        val house = doc.toObject(House::class.java)
+                        val house = doc.toObject(HouseModel::class.java)
                         houseList.add(house)
                     }
                 }
@@ -127,7 +125,7 @@ class ViewHouseActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDeleteDialog(house: House) {
+    private fun showDeleteDialog(house: HouseModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
             title = "Delete House?",
             message = "Are you sure you want to remove House ${house.houseNo}? This process is irreversible.",
@@ -138,7 +136,7 @@ class ViewHouseActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "DeleteHouseDialog")
     }
 
-    private fun deleteHouse(house: House) {
+    private fun deleteHouse(house: HouseModel) {
         db.collection(DatabaseTableName.HOUSES).document(house.id)
             .delete()
             .addOnSuccessListener {

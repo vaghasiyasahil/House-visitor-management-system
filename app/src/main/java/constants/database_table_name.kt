@@ -5,5 +5,5 @@ object DatabaseTableName{
     const val HOUSES = "houses";
     const val SECURITY_GUARDS = "security_guards";
     const val ANNOUNCEMENTS = "announcements";
-    const val VISITOR_LOGS = "visitor_logs";
+    const val VISITOR = "visitor";
 }

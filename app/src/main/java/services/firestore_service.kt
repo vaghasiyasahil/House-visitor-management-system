@@ -17,7 +17,7 @@ class FirestoreService {
 
     suspend fun addDocument(
         collectionName: String,
-        data: HashMap<String, Any>,
+        data: HashMap<String, Any?>,
         docId: String? = null
     ): String? {
         return try {

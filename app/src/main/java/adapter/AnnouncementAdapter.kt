@@ -12,13 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.AnnouncementDetailsActivity
 import com.example.housevisitormanagementsystem.R
-import model.Announcement
+import model.AnnouncementModel
 
 class AnnouncementAdapter(
     private val context: Context,
-    private var announcements: List<Announcement>,
-    private val onEditClick: (Announcement) -> Unit,
-    private val onDeleteClick: (Announcement) -> Unit
+    private var announcements: List<AnnouncementModel>,
+    private val onEditClick: (AnnouncementModel) -> Unit,
+    private val onDeleteClick: (AnnouncementModel) -> Unit
 ) : RecyclerView.Adapter<AnnouncementAdapter.AnnouncementViewHolder>() {
 
     class AnnouncementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -93,7 +93,7 @@ class AnnouncementAdapter(
         }
     }
 
-    private fun openDetails(announcement: Announcement) {
+    private fun openDetails(announcement: AnnouncementModel) {
         val intent = Intent(context, AnnouncementDetailsActivity::class.java)
         intent.putExtra("TITLE", announcement.title)
         intent.putExtra("DESCRIPTION", announcement.description)
@@ -105,7 +105,7 @@ class AnnouncementAdapter(
 
     override fun getItemCount(): Int = announcements.size
 
-    fun updateList(newList: List<Announcement>) {
+    fun updateList(newList: List<AnnouncementModel>) {
         announcements = newList
         notifyDataSetChanged()
     }

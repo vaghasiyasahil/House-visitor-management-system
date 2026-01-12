@@ -8,19 +8,19 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.TextView
 import com.example.housevisitormanagementsystem.R
-import model.House
+import model.HouseModel
 import java.util.Locale
 
 class HouseSearchAdapter(
     context: Context,
-    private val allHouses: List<House>
-) : ArrayAdapter<House>(context, android.R.layout.simple_dropdown_item_1line, allHouses) {
+    private val allHouses: List<HouseModel>
+) : ArrayAdapter<HouseModel>(context, android.R.layout.simple_dropdown_item_1line, allHouses) {
 
-    private var filteredHouses: List<House> = allHouses
+    private var filteredHouses: List<HouseModel> = allHouses
 
     override fun getCount(): Int = filteredHouses.size
 
-    override fun getItem(position: Int): House? = filteredHouses[position]
+    override fun getItem(position: Int): HouseModel? = filteredHouses[position]
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(
@@ -54,7 +54,7 @@ class HouseSearchAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                filteredHouses = results?.values as? List<House> ?: emptyList()
+                filteredHouses = results?.values as? List<HouseModel> ?: emptyList()
                 if (results?.count ?: 0 > 0) {
                     notifyDataSetChanged()
                 } else {
@@ -63,7 +63,7 @@ class HouseSearchAdapter(
             }
 
             override fun convertResultToString(resultValue: Any?): CharSequence {
-                return (resultValue as? House)?.houseNo ?: ""
+                return (resultValue as? HouseModel)?.houseNo ?: ""
             }
         }
     }

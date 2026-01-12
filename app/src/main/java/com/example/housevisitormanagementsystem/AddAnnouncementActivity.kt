@@ -12,10 +12,9 @@ import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.Announcement
+import model.AnnouncementModel
 import java.util.Calendar
 import java.util.Locale
-import java.util.UUID
 
 class AddAnnouncementActivity : AppCompatActivity() {
 
@@ -52,7 +51,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
     }
     
     private fun checkForEditMode() {
-        val announcement = intent.getSerializableExtra("announcement") as? Announcement
+        val announcement = intent.getSerializableExtra("announcement") as? AnnouncementModel
         if (announcement != null) {
             isEditMode = true
             announcementId = announcement.id
@@ -130,7 +129,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
         binding.btnSendNotification.text = if (isEditMode) "Updating..." else "Sending..."
 
         val id = if (isEditMode && announcementId != null) announcementId!! else generateUniqueId()
-        val announcement = Announcement(
+        val announcement = AnnouncementModel(
             id = id,
             title = title,
             category = category,

@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class SecurityGuard(
+data class SecurityGuardModel(
     var id: String = "",
     var name: String = "",
     var email: String = "",

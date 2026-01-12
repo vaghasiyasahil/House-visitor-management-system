@@ -1,9 +1,6 @@
 package com.example.housevisitormanagementsystem
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Data
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +13,7 @@ import com.example.housevisitormanagementsystem.utils.Validators
 import types.UserRole
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
-import model.House
-import java.util.UUID
+import model.HouseModel
 
 class AddHouseActivity : AppCompatActivity() {
 
@@ -39,7 +35,7 @@ class AddHouseActivity : AppCompatActivity() {
 
         // Check for Edit Mode
         if (intent.hasExtra("houseData")) {
-            val house = intent.getSerializableExtra("houseData") as House
+            val house = intent.getSerializableExtra("houseData") as HouseModel
             houseId = house.id
             isEditMode = true
             preFillData(house)
@@ -79,7 +75,7 @@ class AddHouseActivity : AppCompatActivity() {
         }
     }
 
-    private fun preFillData(house: House) {
+    private fun preFillData(house: HouseModel) {
         binding.etHouseNumber.editText?.setText(house.houseNo)
         binding.etOwnerName.editText?.setText(house.ownerName)
         binding.etOwnerEmail.editText?.setText(house.ownerEmail)
@@ -163,7 +159,7 @@ class AddHouseActivity : AppCompatActivity() {
     private fun saveData(houseNo: String, email: String, name: String, password: String, members: Int) {
         val id = if (isEditMode && houseId != null) houseId!! else generateUniqueId()
         
-        val house = House(
+        val house = HouseModel(
             id = id,
             houseNo = houseNo,
             ownerName = name,
