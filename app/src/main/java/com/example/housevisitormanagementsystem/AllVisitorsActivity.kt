@@ -1,6 +1,5 @@
 package com.example.housevisitormanagementsystem
 
-import adapter.AllVisitorsAdapter
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -15,7 +14,6 @@ class AllVisitorsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAllVisitorsBinding
     private val visitorList = mutableListOf<VisitorModel>()
-    private lateinit var adapter: AllVisitorsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,14 +27,7 @@ class AllVisitorsActivity : AppCompatActivity() {
             insets
         }
 
-        setupRecyclerView()
         setupClickListeners()
-    }
-
-    private fun setupRecyclerView() {
-        adapter = AllVisitorsAdapter(this, visitorList)
-        binding.rvAllVisitors.layoutManager = LinearLayoutManager(this)
-        binding.rvAllVisitors.adapter = adapter
     }
 
     private fun setupClickListeners() {

@@ -18,7 +18,7 @@
 
         <!-- Visitor Photo -->
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivVisitorPhoto"
+            android:id="@+id/visitorImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="centerCrop"
@@ -30,7 +30,7 @@
 
         <!-- Visitor Name & House -->
         <TextView
-            android:id="@+id/tvVisitorName"
+            android:id="@+id/visitorName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
@@ -38,42 +38,42 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/statusBadge"
-            app:layout_constraintStart_toEndOf="@id/ivVisitorPhoto"
-            app:layout_constraintTop_toTopOf="@id/ivVisitorPhoto" />
+            app:layout_constraintEnd_toStartOf="@id/visitorStatus"
+            app:layout_constraintStart_toEndOf="@id/visitorImage"
+            app:layout_constraintTop_toTopOf="@id/visitorImage" />
 
         <TextView
-            android:id="@+id/tvHouseInfo"
+            android:id="@+id/visitorHouseInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="House #101 - Block A"
+            android:text="House #101"
             android:textColor="@color/text_grey"
             android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@id/tvTimeDate"
-            app:layout_constraintStart_toStartOf="@id/tvVisitorName"
-            app:layout_constraintTop_toBottomOf="@id/tvVisitorName" />
+            app:layout_constraintEnd_toStartOf="@id/visitorCheckIn"
+            app:layout_constraintStart_toStartOf="@id/visitorName"
+            app:layout_constraintTop_toBottomOf="@id/visitorName" />
 
         <TextView
-            android:id="@+id/tvVisitType"
+            android:id="@+id/visitorPurpose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Guest Visit"
+            android:text="Service"
             android:textColor="@color/bright_azure_blue"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/tvVisitorName"
-            app:layout_constraintTop_toBottomOf="@id/tvHouseInfo" />
+            app:layout_constraintStart_toStartOf="@id/visitorName"
+            app:layout_constraintTop_toBottomOf="@id/visitorHouseInfo" />
 
         <!-- Status & Time -->
         <TextView
-            android:id="@+id/statusBadge"
+            android:id="@+id/visitorStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_valid_badge"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
-            android:text="ENTRY"
+            android:text="Pending"
             android:textColor="@color/status_green"
             android:textSize="11sp"
             android:textStyle="bold"
@@ -81,15 +81,25 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvTimeDate"
+            android:id="@+id/visitorCheckIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Oct 12, 10:42 AM"
+            android:text="Check In : Oct 12, 10:42 AM"
             android:textColor="@color/text_grey"
             android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statusBadge" />
+            app:layout_constraintTop_toBottomOf="@id/visitorStatus" />
+
+        <TextView
+            android:id="@+id/visitorCheckOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check Out : Oct 12, 10:42 AM"
+            android:textColor="@color/text_grey"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/visitorCheckIn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
