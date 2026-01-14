@@ -14,6 +14,10 @@ import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.VisitorModel
 import types.VisitorStatus
+import android.graphics.BitmapFactory
+import android.util.Base64
+import com.google.android.material.imageview.ShapeableImageView
+import services.setBase64Image
 
 class SecurityGuardDashboardActivity : AppCompatActivity() {
 
@@ -90,6 +94,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
             itemView.findViewById<TextView>(R.id.visitorDetails).text = "Checked in to Unit ${visitor.houseNo}"
             itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
             val timeAgoText = visitor.entryTime?.let {
                 val diffMillis = nowMillis - it.toDate().time
                 getTimeAgo(diffMillis)

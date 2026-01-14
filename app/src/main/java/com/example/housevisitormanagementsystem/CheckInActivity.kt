@@ -30,6 +30,7 @@ import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.HouseModel
 import model.VisitorModel
+import services.base64Service
 import types.VisitorStatus
 
 class CheckInActivity : AppCompatActivity() {
@@ -185,7 +186,7 @@ class CheckInActivity : AppCompatActivity() {
             mobile = binding.etMobileNumber.text.toString(),
             purpose = binding.etPurpose.text.toString(),
             status = VisitorStatus.Pending,
-            visitorPhoto = bitmapToBase64(capturedImage!!),
+            visitorPhoto = base64Service.bitmapToBase64(capturedImage!!),
             entryTime = Timestamp.now()
         );
         lifecycleScope.launch{
@@ -207,13 +208,6 @@ class CheckInActivity : AppCompatActivity() {
                 binding.btnCheckInVisitor.isEnabled = true
             }
         }
-    }
-
-    private fun bitmapToBase64(bitmap: Bitmap): String {
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
-        val bytes = baos.toByteArray()
-        return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
     private fun setupHouseSelector() {
