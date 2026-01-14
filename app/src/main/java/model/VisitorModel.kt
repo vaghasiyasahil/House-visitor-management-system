@@ -35,9 +35,7 @@ data class VisitorModel(
                 id = map["id"] as? String ?: "",
                 name = map["name"] as? String ?: "",
                 mobile = map["mobile"] as? String ?: "",
-                status = VisitorStatus.valueOf(
-                    map["status"] as? String ?: VisitorStatus.Inside.name
-                ),
+                status = VisitorStatus.fromString(map["status"] as? String?:"inside")?:VisitorStatus.Inside,
                 entryTime = map["entryTime"] as? Timestamp,
                 exitTime = map["exitTime"] as? Timestamp,
                 visitorPhoto = map["visitorPhoto"] as? String ?: "",
