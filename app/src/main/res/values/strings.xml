@@ -53,6 +53,7 @@
     <string name="morning_shift">Morning Shift</string>
     <string name="night_shift">Night Shift</string>
     <string name="add_guard">Add Guard</string>
+    <string name="pending_request">Pending Request</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
