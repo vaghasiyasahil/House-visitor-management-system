@@ -16,7 +16,10 @@ import model.VisitorModel
 import types.VisitorStatus
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.api.internal.LifecycleActivity
 import com.google.android.material.imageview.ShapeableImageView
+import kotlinx.coroutines.launch
 import services.setBase64Image
 
 class SecurityGuardDashboardActivity : AppCompatActivity() {
@@ -27,7 +30,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
 
     private val timeUpdater = object : Runnable {
         override fun run() {
-            displayPendingVisitors(pendingVisitors)
+            getPendingRequest()
             handler.postDelayed(this, 60_000) // 1 minute
         }
     }
@@ -58,6 +61,9 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
         }
+        binding.tvViewAllActivity.setOnClickListener {
+            startActivity(Intent(this, AllVisitorsActivity::class.java))
+        }
         getPendingRequest()
     }
 
@@ -74,12 +80,20 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
                     val diffMillis = now.toDate().time - visitor.entryTime!!.toDate().time
                     if (diffMillis in 0..tenMinutesInMillis) {
                         visitorList.add(visitor)
+                    }else{
+                        setExpireStatus(visitor.id);
                     }
                 }
             }
             pendingVisitors = visitorList
             displayPendingVisitors(visitorList)
         };
+    }
+
+    private fun setExpireStatus(docId:String){
+        lifecycleScope.launch {
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Expired.name));
+        }
     }
 
     private fun displayPendingVisitors(visitorList: List<VisitorModel>) {

@@ -413,6 +413,17 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/tvViewAllActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="View All"
+                    android:textColor="@color/bright_azure_blue"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
 
             </RelativeLayout>
 

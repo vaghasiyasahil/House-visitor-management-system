@@ -91,7 +91,7 @@ class FirestoreService {
     suspend fun updateDocument(
         collectionName: String,
         docId: String,
-        data: HashMap<String, Any>
+        data: Map<String, Any>
     ): Boolean {
         return try {
             firestore.collection(collectionName).document(docId).update(data).await()
