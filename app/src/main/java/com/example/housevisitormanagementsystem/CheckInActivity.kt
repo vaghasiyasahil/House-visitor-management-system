@@ -180,7 +180,7 @@ class CheckInActivity : AppCompatActivity() {
             houseNo = binding.etHouseNo.text.toString(),
             mobile = binding.etMobileNumber.text.toString(),
             purpose = binding.etPurpose.text.toString(),
-            status = VisitorStatus.Inside,
+            status = VisitorStatus.Pending,
             visitorPhoto = bitmapToBase64(capturedImage!!),
             entryTime = Timestamp.now()
         );

@@ -7,12 +7,12 @@ data class VisitorModel(
     var id: String = "",
     var name: String = "",
     var mobile: String = "",
-    var status: VisitorStatus = VisitorStatus.Inside,
+    var status: VisitorStatus = VisitorStatus.Pending,
     var entryTime: Timestamp? = null,
     var exitTime: Timestamp? = null,
     var visitorPhoto: String = "",
     var houseNo: String = "",
-    var purpose: String? = ""
+    var purpose: String? = "",
 ) {
 
     fun toHashMap(): HashMap<String, Any?> {
@@ -35,7 +35,7 @@ data class VisitorModel(
                 id = map["id"] as? String ?: "",
                 name = map["name"] as? String ?: "",
                 mobile = map["mobile"] as? String ?: "",
-                status = VisitorStatus.fromString(map["status"] as? String?:"inside")?:VisitorStatus.Inside,
+                status = VisitorStatus.fromString(map["status"] as? String?:"pending")?:VisitorStatus.Pending,
                 entryTime = map["entryTime"] as? Timestamp,
                 exitTime = map["exitTime"] as? Timestamp,
                 visitorPhoto = map["visitorPhoto"] as? String ?: "",

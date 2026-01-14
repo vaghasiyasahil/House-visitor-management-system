@@ -65,23 +65,28 @@ class FirestoreService {
     }
 
 
-    fun getDocumentsWithCondition(
+    fun getDocumentsWithEqualToConditions(
         collectionName: String,
-        field: String,
-        isEqualTo: Any,
+        conditions: Map<String, Any>,
         callback: (QuerySnapshot?) -> Unit
     ): ListenerRegistration {
-        return firestore.collection(collectionName)
-            .whereEqualTo(field, isEqualTo)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.e("FirestoreService", "Condition Error: ${e.message}")
-                    callback(null)
-                } else {
-                    callback(snapshot)
-                }
+
+        var query: Query = firestore.collection(collectionName)
+
+        conditions.forEach { (field, value) ->
+            query = query.whereEqualTo(field, value)
+        }
+
+        return query.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.e("FirestoreService", "Condition Error: ${e.message}")
+                callback(null)
+            } else {
+                callback(snapshot)
             }
+        }
     }
+
 
     suspend fun updateDocument(
         collectionName: String,
