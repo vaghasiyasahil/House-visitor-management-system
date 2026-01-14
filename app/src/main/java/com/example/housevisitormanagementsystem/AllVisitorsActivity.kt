@@ -8,7 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.example.housevisitormanagementsystem.databinding.ActivityAllVisitorsBinding
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.Timestamp
@@ -35,6 +35,7 @@ class AllVisitorsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        
         setupClickListeners()
         getAllVisitor()
     }
@@ -46,34 +47,39 @@ class AllVisitorsActivity : AppCompatActivity() {
     private fun getAllVisitor(){
         FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf()) {
                 snapshot ->
+            visitorList.clear()
             snapshot?.documents?.forEach {
                 visitorList.add(VisitorModel.fromHashMap(it.data ?: emptyMap()))
-                runOnUiThread {
-                    if (visitorList.isEmpty()) {
-                        binding.rvAllVisitors.visibility = View.GONE
-                        binding.emptyStateLayout.visibility = View.VISIBLE
-                    } else {
-                        binding.emptyStateLayout.visibility = View.GONE
-                        binding.rvAllVisitors.visibility = View.VISIBLE
-                        displayVisitors()
-                    }
+            }
+            runOnUiThread {
+                if (visitorList.isEmpty()) {
+                    binding.llVisitorList.visibility = View.GONE
+                    binding.emptyStateLayout.visibility = View.VISIBLE
+                } else {
+                    binding.emptyStateLayout.visibility = View.GONE
+                    binding.llVisitorList.visibility = View.VISIBLE
+                    displayVisitors()
                 }
             }
         };
     }
+
     private fun displayVisitors() {
-        binding.rvAllVisitors.removeAllViews()
+        binding.llVisitorList.removeAllViews()
         for (visitor in visitorList) {
             val itemView = layoutInflater.inflate(
                 R.layout.item_all_visitor,
-                binding.rvAllVisitors,
+                binding.llVisitorList,
                 false
             )
             itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
             itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<TextView>(R.id.visitorHouseInfo).text = "House #${visitor.houseNo}"
+            itemView.findViewById<TextView>(R.id.visitorPurpose).text = visitor.purpose
+            itemView.findViewById<TextView>(R.id.visitorCheckIn).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
+            itemView.findViewById<TextView>(R.id.visitorCheckOut).text = TimeAndDateUtils.formatShortDateTime(visitor.exitTime)
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
-
-            binding.rvAllVisitors.addView(itemView)
+            binding.llVisitorList.addView(itemView)
         }
     }
 }

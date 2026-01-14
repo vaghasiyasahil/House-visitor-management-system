@@ -42,18 +42,21 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Visitor List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAllVisitors"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingVertical="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBar"
-        tools:listitem="@layout/item_all_visitor" />
+        app:layout_constraintTop_toBottomOf="@id/appBar">
 
-    <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/llVisitorList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="8dp"/>
+
+    </androidx.core.widget.NestedScrollView>
+
     <LinearLayout
         android:id="@+id/emptyStateLayout"
         android:layout_width="wrap_content"
