@@ -18,6 +18,15 @@ import types.VisitorStatus
 class SecurityGuardDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecurityGuardDashboardBinding
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var pendingVisitors: List<VisitorModel> = emptyList()
+
+    private val timeUpdater = object : Runnable {
+        override fun run() {
+            displayPendingVisitors(pendingVisitors)
+            handler.postDelayed(this, 60_000) // 1 minute
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +73,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
                     }
                 }
             }
+            pendingVisitors = visitorList
             displayPendingVisitors(visitorList)
         };
     }
@@ -128,4 +138,15 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    override fun onStart() {
+        super.onStart()
+        handler.post(timeUpdater)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        handler.removeCallbacks(timeUpdater)
+    }
+
 }

@@ -109,6 +109,10 @@ class CheckInActivity : AppCompatActivity() {
         binding.btnCapturePhoto.setOnClickListener {
             checkCameraPermission()
         }
+
+        binding.main.setOnClickListener {
+            KeyboardUtils.hideKeyboard(this);
+        }
     }
 
     private fun checkCameraPermission() {
