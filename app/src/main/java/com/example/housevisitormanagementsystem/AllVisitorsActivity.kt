@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -74,6 +75,9 @@ class AllVisitorsActivity : AppCompatActivity() {
             )
             itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
             itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(
+                ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
+            )
             itemView.findViewById<TextView>(R.id.visitorHouseInfo).text = "House #${visitor.houseNo}"
             itemView.findViewById<TextView>(R.id.visitorPurpose).text = visitor.purpose
             itemView.findViewById<TextView>(R.id.visitorCheckIn).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
