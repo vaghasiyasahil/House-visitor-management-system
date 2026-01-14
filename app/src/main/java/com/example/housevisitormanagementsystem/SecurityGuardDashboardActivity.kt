@@ -2,11 +2,15 @@ package com.example.housevisitormanagementsystem
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivitySecurityGuardDashboardBinding
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
+import model.VisitorModel
 
 class SecurityGuardDashboardActivity : AppCompatActivity() {
 
@@ -35,13 +39,27 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.btnAnnouncements.setOnClickListener {
             startActivity(Intent(this, ViewAnnouncementActivity::class.java))
         }
-
-        binding.tvViewAllActivity.setOnClickListener {
-            startActivity(Intent(this, AllVisitorsActivity::class.java))
-        }
         binding.ivProfile.setOnClickListener {
             showLogoutDialog()
         }
+        getPendingRequest()
+    }
+
+    private fun getPendingRequest(){
+        FirestoreService().getAllDocuments(DatabaseTableName.VISITOR) {
+                snapshot ->
+            val visitorList = mutableListOf<VisitorModel>()
+
+            snapshot?.documents?.forEach {
+                visitorList.add(
+                    VisitorModel.fromHashMap(it.data ?: emptyMap())
+                )
+            }
+
+            visitorList.forEach {
+                Log.d("TAG", "Visitor => $it")
+            }
+        };
     }
 
     private fun showLogoutDialog() {

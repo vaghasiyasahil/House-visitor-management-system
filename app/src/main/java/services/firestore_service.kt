@@ -50,14 +50,20 @@ class FirestoreService {
         }
     }
 
-    fun getAllDocuments(collectionName: String): ListenerRegistration {
+    fun getAllDocuments(
+        collectionName: String,
+        callback: (QuerySnapshot?) -> Unit
+    ): ListenerRegistration {
         return firestore.collection(collectionName)
-            .addSnapshotListener { _, e ->
+            .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("FirestoreService", "Listen failed: ${e.message}")
+                    callback(null)
+                } else {
+                    callback(snapshot)
                 }
             }
     }
+
 
     fun getDocumentsWithCondition(
         collectionName: String,
