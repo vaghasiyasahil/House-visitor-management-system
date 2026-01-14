@@ -428,6 +428,25 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/llEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="30dp">
+
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:text="No pending requests"
+                    android:textColor="@color/text_grey"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/llRecentActivityContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

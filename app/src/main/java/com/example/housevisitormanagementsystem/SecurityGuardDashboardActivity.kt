@@ -16,11 +16,12 @@ import model.VisitorModel
 import types.VisitorStatus
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.api.internal.LifecycleActivity
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import services.setBase64Image
+import utils.TimeAndDateUtils
 
 class SecurityGuardDashboardActivity : AppCompatActivity() {
 
@@ -98,6 +99,13 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
 
     private fun displayPendingVisitors(visitorList: List<VisitorModel>) {
         binding.llRecentActivityContainer.removeAllViews()
+        if (visitorList.isEmpty()) {
+            binding.llEmptyState.visibility = View.VISIBLE
+            binding.llRecentActivityContainer.visibility = View.GONE
+            return
+        }
+        binding.llEmptyState.visibility = View.GONE
+        binding.llRecentActivityContainer.visibility = View.VISIBLE
         val nowMillis = System.currentTimeMillis()
         for (visitor in visitorList) {
             val itemView = layoutInflater.inflate(
@@ -111,7 +119,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
             val timeAgoText = visitor.entryTime?.let {
                 val diffMillis = nowMillis - it.toDate().time
-                getTimeAgo(diffMillis)
+                TimeAndDateUtils.getTimeAgo(diffMillis)
             } ?: "just now"
             itemView.findViewById<TextView>(R.id.visitorTimeAgo).text = timeAgoText
 
@@ -119,16 +127,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTimeAgo(diffMillis: Long): String {
-        val seconds = diffMillis / 1000
-        val minutes = seconds / 60
 
-        return when {
-            minutes < 1 -> "just now"
-            minutes < 60 -> "${minutes}m ago"
-            else -> "Just Now"
-        }
-    }
 
     private fun showLogoutDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
