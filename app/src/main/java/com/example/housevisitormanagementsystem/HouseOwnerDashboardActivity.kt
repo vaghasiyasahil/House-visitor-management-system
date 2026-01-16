@@ -2,15 +2,29 @@ package com.example.housevisitormanagementsystem
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityHouseOwnerDashboardBinding
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.Timestamp
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
+import kotlinx.coroutines.launch
+import model.VisitorModel
+import services.setBase64Image
+import types.VisitorStatus
+import utils.TimeAndDateUtils
 
 class HouseOwnerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHouseOwnerDashboardBinding
+    private var pendingVisitors: List<VisitorModel> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +39,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
 
         setupClickListeners()
+        getPendingRequest()
     }
 
     private fun setupClickListeners() {
@@ -63,9 +78,76 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         binding.btnGenerateQR.setOnClickListener {
             startActivity(Intent(this,AddQrCodeActivity::class.java))
         }
-
-
     }
+
+    private fun getPendingRequest(){
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name)) {
+                snapshot ->
+            val visitorList = mutableListOf<VisitorModel>()
+            val now = Timestamp.now()
+            val tenMinutesInMillis = 10 * 60 * 1000
+
+            snapshot?.documents?.forEach {
+                val visitor = VisitorModel.fromHashMap(it.data ?: emptyMap())
+                if (visitor.entryTime != null) {
+                    val diffMillis = now.toDate().time - visitor.entryTime!!.toDate().time
+                    if (diffMillis in 0..tenMinutesInMillis) {
+                        visitorList.add(visitor)
+                    }else{
+                        setExpireStatus(visitor.id);
+                    }
+                }
+            }
+            pendingVisitors = visitorList
+            displayPendingVisitors(visitorList)
+        };
+    }
+
+    private fun setExpireStatus(docId:String){
+        lifecycleScope.launch {
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Expired.name));
+        }
+    }
+
+    private fun setInsideStatus(docId:String){
+        lifecycleScope.launch {
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Inside.name));
+        }
+    }
+
+    private fun displayPendingVisitors(visitorList: List<VisitorModel>) {
+        binding.llRecentActivityContainer.removeAllViews()
+        if (visitorList.isEmpty()) {
+            binding.llEmptyState.visibility = View.VISIBLE
+            binding.llRecentActivityContainer.visibility = View.GONE
+            return
+        }
+        binding.llEmptyState.visibility = View.GONE
+        binding.llRecentActivityContainer.visibility = View.VISIBLE
+        val nowMillis = System.currentTimeMillis()
+        for (visitor in visitorList) {
+            val itemView = layoutInflater.inflate(
+                R.layout.item_pending_visitor,
+                binding.llRecentActivityContainer,
+                false
+            )
+            itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
+            itemView.findViewById<TextView>(R.id.visitorDetails).text = "Checked in to Unit ${visitor.houseNo}"
+            itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status)))
+            itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
+            val timeAgoText = visitor.entryTime?.let {
+                val diffMillis = nowMillis - it.toDate().time
+                TimeAndDateUtils.getTimeAgo(diffMillis)
+            } ?: "just now"
+            itemView.findViewById<TextView>(R.id.visitorTimeAgo).text = timeAgoText
+            itemView.findViewById<TextView>(R.id.visitorStatus).setOnClickListener {
+                setInsideStatus(visitor.id)
+            }
+            binding.llRecentActivityContainer.addView(itemView)
+        }
+    }
+
 
     private fun showLogoutDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
