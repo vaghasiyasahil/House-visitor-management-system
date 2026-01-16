@@ -22,6 +22,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityCheckInBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.Timestamp
 import java.io.ByteArrayOutputStream
 import com.google.firebase.firestore.FirebaseFirestore
@@ -163,9 +164,28 @@ class CheckInActivity : AppCompatActivity() {
         val houseNo = binding.etHouseNo.text.toString().trim()
         val purpose = binding.etPurpose.text.toString().trim()
 
-        if (name.isEmpty() || mobile.isEmpty() || houseNo.isEmpty() || purpose.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
-            return
+        if(Validators.validateName(name,"Name")!=null){
+            Toast.makeText(this,Validators.validateName(name,"Name"),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Validators.validateMobile(mobile)!=null){
+            Toast.makeText(this,Validators.validateMobile(mobile),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Validators.validateRequired(houseNo, "House No")!=null){
+            Toast.makeText(this,Validators.validateRequired(houseNo, "House No"),Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        val houseExist = houseList.any { it.houseNo == houseNo }
+        if(!houseExist){
+            Toast.makeText(this,"House No Invalid",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(Validators.validateRequired(purpose, "Purpose")!=null){
+            Toast.makeText(this,Validators.validateRequired(purpose, "Purpose"),Toast.LENGTH_SHORT).show();
+            return;
         }
 
         if (capturedImage == null) {

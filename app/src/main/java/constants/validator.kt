@@ -7,7 +7,11 @@ import java.util.regex.Pattern
 object Validators {
 
     fun validateMobile(value: String): String? {
-        return if (value.isEmpty()) "Mobile Number is Required" else null
+        return when {
+            value.isEmpty() -> "Mobile Number is Required"
+            !value.matches(Regex("^[0-9]{10}$")) -> "Mobile Number must be 10 digits"
+            else -> null
+        }
     }
 
     fun validateName(value: String, type: String): String? {
