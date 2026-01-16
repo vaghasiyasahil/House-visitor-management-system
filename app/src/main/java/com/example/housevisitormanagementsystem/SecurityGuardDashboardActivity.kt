@@ -17,6 +17,7 @@ import types.VisitorStatus
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
@@ -116,6 +117,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
             itemView.findViewById<TextView>(R.id.visitorDetails).text = "Checked in to Unit ${visitor.houseNo}"
             itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status)))
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
             val timeAgoText = visitor.entryTime?.let {
                 val diffMillis = nowMillis - it.toDate().time
