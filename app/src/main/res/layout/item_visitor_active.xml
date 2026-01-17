@@ -43,26 +43,26 @@
 
         <!-- Visitor Info -->
         <TextView
-            android:id="@+id/tvVisitorName"
+            android:id="@+id/visitorName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="John Doe"
+            android:text="Sahil Vaghasiya"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tvEntryTime"
+            app:layout_constraintEnd_toStartOf="@id/visitorStatus"
             app:layout_constraintStart_toEndOf="@id/avatarContainer"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvEntryTime"
+            android:id="@+id/visitorStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_active_badge"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
-            android:text="10:42 AM"
+            android:text="Inside"
             android:textColor="@color/text_grey"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,21 +76,21 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvVisitorName"
-            app:layout_constraintTop_toBottomOf="@id/tvVisitorName">
+            app:layout_constraintStart_toStartOf="@id/visitorName"
+            app:layout_constraintTop_toBottomOf="@id/visitorName">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/ic_car"
+                android:src="@drawable/ic_phone"
                 app:tint="@color/text_grey" />
 
             <TextView
-                android:id="@+id/tvVehiclePlate"
+                android:id="@+id/visitorPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="9601749106"
                 android:layout_marginStart="8dp"
-                android:text="ABC - 1234"
                 android:textColor="@color/text_grey"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -102,7 +102,7 @@
             android:layout_marginTop="2dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvVisitorName"
+            app:layout_constraintStart_toStartOf="@id/visitorName"
             app:layout_constraintTop_toBottomOf="@id/vehicleLayout">
 
             <TextView
@@ -113,20 +113,20 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tvVisitingUnit"
+                android:id="@+id/visitorHouseNo"
                 android:layout_width="wrap_content"
+                android:text="100"
                 android:layout_height="wrap_content"
-                android:text="Unit 402"
                 android:textColor="@color/bright_azure_blue"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tvOwnerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" (Mr. Smith)"
-                android:textColor="@color/text_grey"
-                android:textSize="14sp" />
+<!--            <TextView-->
+<!--                android:id="@+id/tvOwnerName"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text=" (Mr. Smith)"-->
+<!--                android:textColor="@color/text_grey"-->
+<!--                android:textSize="14sp" />-->
         </LinearLayout>
 
         <View
@@ -138,12 +138,12 @@
             app:layout_constraintTop_toBottomOf="@id/avatarContainer" />
 
         <TextView
-            android:id="@+id/tvEntryPoint"
+            android:id="@+id/visitorEntryTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Entry: Main Gate"
             android:textColor="@color/text_grey"
+            android:text="14 Jan 2026, 09:43 PM"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/btnCheckOut"
             app:layout_constraintEnd_toStartOf="@id/btnCheckOut"
