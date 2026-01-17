@@ -65,25 +65,33 @@ class CheckOutActivity : AppCompatActivity() {
 
     private fun displayInsideVisitors() {
         binding.visitorContainer.removeAllViews()
-        for (visitor in insideVisitors) {
-            val itemView = layoutInflater.inflate(
-                R.layout.item_visitor_active,
-                binding.visitorContainer,
-                false
-            )
-            itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
-            itemView.findViewById<TextView>(R.id.visitorPhone).text = visitor.mobile
-            itemView.findViewById<TextView>(R.id.visitorHouseNo).text = visitor.houseNo
-            itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name
-            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(
-                ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
-            )
-            itemView.findViewById<TextView>(R.id.visitorEntryTime).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
-            itemView.findViewById<View>(R.id.btnCheckOut).setOnClickListener {
-                setCheckedOutStatus(visitor.id)
-            }
+        binding.activeCount.text = "${insideVisitors.size} Active"
+        if (insideVisitors.isEmpty()) {
+            binding.visitorContainer.visibility = View.GONE
+            binding.tvNoData.visibility = View.VISIBLE
+        } else {
+            binding.visitorContainer.visibility = View.VISIBLE
+            binding.tvNoData.visibility = View.GONE
+            for (visitor in insideVisitors) {
+                val itemView = layoutInflater.inflate(
+                    R.layout.item_visitor_active,
+                    binding.visitorContainer,
+                    false
+                )
+                itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
+                itemView.findViewById<TextView>(R.id.visitorPhone).text = visitor.mobile
+                itemView.findViewById<TextView>(R.id.visitorHouseNo).text = visitor.houseNo
+                itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name
+                itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(
+                    ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
+                )
+                itemView.findViewById<TextView>(R.id.visitorEntryTime).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
+                itemView.findViewById<View>(R.id.btnCheckOut).setOnClickListener {
+                    setCheckedOutStatus(visitor.id)
+                }
 
-            binding.visitorContainer.addView(itemView)
+                binding.visitorContainer.addView(itemView)
+            }
         }
     }
 
