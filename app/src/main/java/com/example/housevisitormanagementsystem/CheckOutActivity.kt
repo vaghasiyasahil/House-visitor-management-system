@@ -45,6 +45,9 @@ class CheckOutActivity : AppCompatActivity() {
             insets
         }
         getInsideRequest()
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun getInsideRequest(){
@@ -76,7 +79,7 @@ class CheckOutActivity : AppCompatActivity() {
                 ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
             )
             itemView.findViewById<TextView>(R.id.visitorEntryTime).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
-            itemView.findViewById<TextView>(R.id.btnCheckOut).setOnClickListener {
+            itemView.findViewById<View>(R.id.btnCheckOut).setOnClickListener {
                 setCheckedOutStatus(visitor.id)
             }
 
@@ -86,7 +89,14 @@ class CheckOutActivity : AppCompatActivity() {
 
     private fun setCheckedOutStatus(docId:String){
         lifecycleScope.launch {
-            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.CheckedOut.name,"exitTime" to Timestamp.now()));
+            FirestoreService().updateDocument(
+                DatabaseTableName.VISITOR,
+                docId,
+                mapOf(
+                    "status" to VisitorStatus.CheckedOut.name,
+                    "exitTime" to Timestamp.now(),
+                )
+            );
         }
     }
 
