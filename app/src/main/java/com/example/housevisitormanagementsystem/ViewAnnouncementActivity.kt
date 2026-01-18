@@ -22,7 +22,6 @@ import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnounce
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Loader
-import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
@@ -273,7 +272,6 @@ class ViewAnnouncementActivity : AppCompatActivity() {
                 page = pdfDocument.startPage(pageInfo)
                 canvas = page.canvas
                 yPos = 50f
-                
                 // Redraw table headers on new page
                 paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
                 paint.color = Color.LTGRAY
