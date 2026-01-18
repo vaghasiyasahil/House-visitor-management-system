@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.Layout
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -23,16 +22,13 @@ import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnounce
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Loader
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.AnnouncementModel
-import services.setBase64Image
 import types.AnnouncementsType
 import types.UserRole
-import types.VisitorStatus
 import utils.TimeAndDateUtils
 import java.io.File
 import java.io.FileOutputStream
@@ -180,74 +176,6 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             binding.announcementsContainer.addView(itemView)
         }
     }
-
-
-//    private fun setupRecyclerView() {
-//        adapter = AnnouncementAdapter(this, allAnnouncements,
-//            onEditClick = { announcement ->
-//                val intent = Intent(this, AddAnnouncementActivity::class.java)
-//                intent.putExtra("announcement", announcement)
-//                startActivity(intent)
-//            },
-//            onDeleteClick = { announcement ->
-//                showDeleteDialog(announcement)
-//            }
-//        )
-//    }
-
-
-
-
-//    private fun filterList(query: String, filterType: String) {
-//        val filtered = allAnnouncements.filter { announcement ->
-//            val matchesSearch = announcement.title.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT)) ||
-//                                announcement.description.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT))
-//
-//            val matchesFilter = when (filterType) {
-//                "Urgent" -> announcement.category.equals("Urgent", ignoreCase = true)
-//                "Maintenance" -> announcement.category.equals("Maintenance", ignoreCase = true)
-//                "Event" -> announcement.category.equals("Event", ignoreCase = true)
-//                else -> true
-//            }
-//            matchesSearch && matchesFilter
-//        }
-//
-//        if (filtered.isEmpty()) {
-//            binding.tvEmptyState.visibility = View.VISIBLE
-//            binding.rvAnnouncements.visibility = View.GONE
-//        } else {
-//            binding.tvEmptyState.visibility = View.GONE
-//            binding.rvAnnouncements.visibility = View.VISIBLE
-//        }
-//
-//        adapter.updateList(filtered)
-//    }
-
-//    private fun fetchAnnouncements() {
-//        db.collection(DatabaseTableName.ANNOUNCEMENTS)
-//            .addSnapshotListener { value, error ->
-//                if (error != null) {
-//                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
-//                    return@addSnapshotListener
-//                }
-//
-//                allAnnouncements.clear()
-//                if (value != null) {
-//                    for (doc in value) {
-//                        try {
-//                            val announcement = doc.toObject(AnnouncementModel::class.java)
-//                            allAnnouncements.add(announcement)
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//                }
-//
-//                val currentQuery = binding.etSearch.text.toString()
-//                val currentFilter = getCurrentFilter()
-//                filterList(currentQuery, currentFilter)
-//            }
-//    }
 
     private fun showDeleteDialog(announcement: AnnouncementModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
