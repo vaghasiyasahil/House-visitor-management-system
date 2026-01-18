@@ -3,6 +3,7 @@ package model
 import com.google.firebase.Timestamp
 import types.AnnouncementsType
 import types.VisitorStatus
+import java.io.Serializable
 
 data class AnnouncementModel(
     var id: String = "",
@@ -13,7 +14,7 @@ data class AnnouncementModel(
     var date: String = "",
     var time: String = "",
     var timestamp: Timestamp? = null
-) {
+) : Serializable {
 
     fun toHashMap(): HashMap<String, Any?> {
         return hashMapOf(

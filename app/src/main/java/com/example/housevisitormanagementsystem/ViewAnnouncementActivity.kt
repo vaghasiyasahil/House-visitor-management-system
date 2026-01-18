@@ -18,12 +18,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnouncementBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import model.AnnouncementModel
 import services.setBase64Image
 import types.AnnouncementsType
@@ -36,6 +39,7 @@ import java.io.FileOutputStream
 class ViewAnnouncementActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewAnnouncementBinding
+    private val db = FirebaseFirestore.getInstance()
     private var allAnnouncementsList: List<AnnouncementModel> = emptyList()
     private var filterAnnouncementsList: List<AnnouncementModel> = emptyList()
     private  var selectedAnnouncementsType : AnnouncementsType?=null;
@@ -150,6 +154,27 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             itemView.findViewById<View>(R.id.announcementsLeftBorder).setBackgroundColor(ContextCompat.getColor(itemView.context, AnnouncementsType.getColor(announcements.category)))
             if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
                 itemView.findViewById<ImageView>(R.id.announcementsBtnOptions).visibility = View.GONE
+            } else {
+                itemView.findViewById<ImageView>(R.id.announcementsBtnOptions).setOnClickListener { view ->
+                    val popup = android.widget.PopupMenu(this, view)
+                    popup.menuInflater.inflate(R.menu.menu_guard_options, popup.menu)
+                    popup.setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.action_edit -> {
+                                val intent = Intent(this, AddAnnouncementActivity::class.java)
+                                intent.putExtra("announcement", announcements)
+                                startActivity(intent)
+                                true
+                            }
+                            R.id.action_delete -> {
+                                showDeleteDialog(announcements)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    popup.show()
+                }
             }
             binding.announcementsContainer.addView(itemView)
         }
@@ -235,14 +260,14 @@ class ViewAnnouncementActivity : AppCompatActivity() {
     }
 
     private fun deleteAnnouncement(announcement: AnnouncementModel) {
-//        db.collection(DatabaseTableName.ANNOUNCEMENTS).document(announcement.id)
-//            .delete()
-//            .addOnSuccessListener {
-//                Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show()
-//            }
-//            .addOnFailureListener { e ->
-//                Toast.makeText(this, "Error deleting: ${e.message}", Toast.LENGTH_SHORT).show()
-//            }
+        lifecycleScope.launch {
+            val success  = FirestoreService().deleteDocument(DatabaseTableName.ANNOUNCEMENTS, announcement.id)
+            if(success){
+                Toast.makeText(this@ViewAnnouncementActivity, "Deleted successfully", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@ViewAnnouncementActivity, "Delete failed", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun generatePDF() {
