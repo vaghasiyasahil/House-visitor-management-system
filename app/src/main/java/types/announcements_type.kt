@@ -30,7 +30,7 @@ enum class AnnouncementsType {
         fun getBackground(status: AnnouncementsType): Int {
             return when (status) {
                 Urgent -> R.drawable.bg_badge_urgent
-                Maintenance -> R.drawable.bg_badge_urgent
+                Maintenance -> R.drawable.bg_badge_maintenance
                 Event -> R.drawable.bg_badge_event
                 Other -> R.drawable.bg_badge_green
             }

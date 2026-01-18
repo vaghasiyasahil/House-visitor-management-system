@@ -161,7 +161,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             itemView.findViewById<ImageView>(R.id.announcementsIcon).setColorFilter(ContextCompat.getColor(itemView.context, AnnouncementsType.getColor(announcements.category)))
             itemView.findViewById<View>(R.id.announcementsLeftBorder).setBackgroundColor(ContextCompat.getColor(itemView.context, AnnouncementsType.getColor(announcements.category)))
             if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
-                itemView.findViewById<ImageView>(R.id.announcementsBtnOptions).visibility = View.GONE
+                itemView.findViewById<ImageView>(R.id.announcementsBtnOptions).visibility = View.INVISIBLE
             } else {
                 itemView.findViewById<ImageView>(R.id.announcementsBtnOptions).setOnClickListener { view ->
                     val popup = android.widget.PopupMenu(this, view)

@@ -66,7 +66,8 @@
             android:src="@drawable/ic_menu_dots"
             app:tint="@color/text_grey"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/announcementsTitle" />
+            app:layout_constraintTop_toTopOf="@id/announcementsTitle"
+            app:layout_constraintBottom_toBottomOf="@id/announcementsTitle" />
 
         <!-- Badge -->
         <TextView
@@ -82,9 +83,9 @@
             android:textStyle="bold"
             android:visibility="gone"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/announcementsBtnOptions"
+            app:layout_constraintBottom_toBottomOf="@id/announcementsTitle"
             app:layout_constraintEnd_toStartOf="@id/announcementsBtnOptions"
-            app:layout_constraintTop_toTopOf="@id/announcementsBtnOptions" />
+            app:layout_constraintTop_toTopOf="@id/announcementsTitle" />
 
         <!-- Description -->
         <TextView
