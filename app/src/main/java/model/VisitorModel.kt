@@ -12,7 +12,7 @@ data class VisitorModel(
     var exitTime: Timestamp? = null,
     var visitorPhoto: String = "",
     var houseNo: String = "",
-    var purpose: String? = "",
+    var purpose: String = "",
 ) {
 
     fun toHashMap(): HashMap<String, Any?> {
@@ -40,7 +40,7 @@ data class VisitorModel(
                 exitTime = map["exitTime"] as? Timestamp,
                 visitorPhoto = map["visitorPhoto"] as? String ?: "",
                 houseNo = map["houseNo"] as? String ?: "",
-                purpose = map["purpose"] as? String
+                purpose = map["purpose"] as? String?:""
             )
         }
     }
