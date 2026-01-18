@@ -32,6 +32,11 @@ import types.UserRole
 import utils.TimeAndDateUtils
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
+import android.graphics.Typeface
+import android.graphics.Color
+import android.net.Uri
+import androidx.core.content.FileProvider
 
 class ViewAnnouncementActivity : AppCompatActivity() {
 
@@ -64,7 +69,11 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         }
 
         binding.btnGenerateReport.setOnClickListener {
-            generatePDF()
+            if (filterAnnouncementsList.isEmpty()) {
+                Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show()
+            } else {
+                generatePDF()
+            }
         }
 
         binding.btnFilter.setOnClickListener {
@@ -203,98 +212,145 @@ class ViewAnnouncementActivity : AppCompatActivity() {
 
     private fun generatePDF() {
         val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-        val page = pdfDocument.startPage(pageInfo)
-        val canvas = page.canvas
         val paint = Paint()
         val titlePaint = Paint()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        var page = pdfDocument.startPage(pageInfo)
+        var canvas = page.canvas
+        var yPos = 50f
 
+        titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         titlePaint.textSize = 20f
-        titlePaint.isFakeBoldText = true
+        titlePaint.color = Color.BLACK
         titlePaint.textAlign = Paint.Align.CENTER
-        canvas.drawText("Announcements Report", 595f / 2, 50f, titlePaint)
+        canvas.drawText("Announcements Report", 595f / 2, yPos, titlePaint)
 
+        yPos += 30f
+        paint.textSize = 12f
+        canvas.drawText("Generated on: ${TimeAndDateUtils.formatShortDateTime(com.google.firebase.Timestamp.now())}", 40f, yPos, paint)
+
+        yPos += 20f
+        val filterText = if (binding.announcementsSearch.text.isNullOrBlank()) "All" else binding.announcementsSearch.text.toString()
+        val categoryText = selectedAnnouncementsType?.name ?: "All"
+        canvas.drawText("Filters - Category: $categoryText, Search: $filterText", 40f, yPos, paint)
+
+        yPos += 30f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        paint.textSize = 12f
+        
         val startX = 20f
         val endX = 575f
-        var yPos = 100f
-        val rowHeight = 25f
-        val padding = 5f
-
+        
         val colSn = startX
         val colTitle = colSn + 30f
-        val colCategory = colTitle + 120f
-        val colDate = colCategory + 80f
-        val colTime = colDate + 80f
-        val colAuthor = colTime + 80f
-        val colDesc = colAuthor + 70f
+        val colCategory = colTitle + 140f
+        val colDate = colCategory + 90f
+        val colTime = colDate + 90f
+        val colAuthor = colTime + 90f
 
-        paint.color = android.graphics.Color.LTGRAY
+        paint.color = Color.LTGRAY
         canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
 
-        paint.color = android.graphics.Color.BLACK
-        paint.textSize = 12f
-        paint.isFakeBoldText = true
-        canvas.drawText("#", colSn + padding, yPos, paint)
-        canvas.drawText("Title", colTitle + padding, yPos, paint)
-        canvas.drawText("Category", colCategory + padding, yPos, paint)
-        canvas.drawText("Date", colDate + padding, yPos, paint)
-        canvas.drawText("Time", colTime + padding, yPos, paint)
-        canvas.drawText("Author", colAuthor + padding, yPos, paint)
+        paint.color = Color.BLACK
+        canvas.drawText("#", colSn + 5, yPos, paint)
+        canvas.drawText("Title", colTitle + 5, yPos, paint)
+        canvas.drawText("Category", colCategory + 5, yPos, paint)
+        canvas.drawText("Date", colDate + 5, yPos, paint)
+        canvas.drawText("Time", colTime + 5, yPos, paint)
+        canvas.drawText("Author", colAuthor + 5, yPos, paint)
 
         canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
         
-        yPos += rowHeight
-        paint.isFakeBoldText = false
+        yPos += 30f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
 
         for ((index, item) in filterAnnouncementsList.withIndex()) {
-            if (yPos > 800) break
+            if (yPos > 800) {
+                pdfDocument.finishPage(page)
+                page = pdfDocument.startPage(pageInfo)
+                canvas = page.canvas
+                yPos = 50f
+                
+                // Redraw table headers on new page
+                paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                paint.color = Color.LTGRAY
+                canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+                paint.color = Color.BLACK
+                canvas.drawText("#", colSn + 5, yPos, paint)
+                canvas.drawText("Title", colTitle + 5, yPos, paint)
+                canvas.drawText("Category", colCategory + 5, yPos, paint)
+                canvas.drawText("Date", colDate + 5, yPos, paint)
+                canvas.drawText("Time", colTime + 5, yPos, paint)
+                canvas.drawText("Author", colAuthor + 5, yPos, paint)
+                canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+                yPos += 30f
+                paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            }
 
-            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
-            canvas.drawText(item.title.take(18), colTitle + padding, yPos, paint)
-            canvas.drawText(item.category.name, colCategory + padding, yPos, paint)
-            canvas.drawText(item.date, colDate + padding, yPos, paint)
-            canvas.drawText(item.time, colTime + padding, yPos, paint)
-            canvas.drawText(item.author, colAuthor + padding, yPos, paint)
+            canvas.drawText((index + 1).toString(), colSn + 5, yPos, paint)
+            canvas.drawText(shortenText(item.title, 20), colTitle + 5, yPos, paint)
+            canvas.drawText(item.category.name, colCategory + 5, yPos, paint)
+            canvas.drawText(item.date, colDate + 5, yPos, paint)
+            canvas.drawText(item.time, colTime + 5, yPos, paint)
+            canvas.drawText(item.author, colAuthor + 5, yPos, paint)
             
             canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
-            
-            yPos += rowHeight
+            yPos += 30f
         }
 
-        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colTitle, 100f - 18f, colTitle, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colCategory, 100f - 18f, colCategory, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colDate, 100f - 18f, colDate, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colTime, 100f - 18f, colTime, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colAuthor, 100f - 18f, colAuthor, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
-
         pdfDocument.finishPage(page)
+        savePdf(pdfDocument)
+    }
 
+    private fun shortenText(text: String, maxLength: Int): String {
+        return if (text.length > maxLength) text.substring(0, maxLength - 3) + "..." else text
+    }
+
+    private fun savePdf(pdfDocument: PdfDocument) {
         val fileName = "Announcements_Report_${System.currentTimeMillis()}.pdf"
-
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val values = ContentValues().apply {
+                val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
                 }
-                val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
                 if (uri != null) {
-                    contentResolver.openOutputStream(uri)?.use { pdfDocument.writeTo(it) }
-                    Toast.makeText(this, "PDF saved to Downloads", Toast.LENGTH_LONG).show()
+                    val outputStream: OutputStream? = contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        pdfDocument.writeTo(outputStream)
+                        outputStream.close()
+                        Toast.makeText(this, "PDF saved to Downloads", Toast.LENGTH_LONG).show()
+                        openPdf(uri)
+                    }
                 }
             } else {
-                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+                val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file = File(directory, fileName)
                 pdfDocument.writeTo(FileOutputStream(file))
-                Toast.makeText(this, "PDF saved to ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "PDF saved: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                
+                val uri = FileProvider.getUriForFile(this, "${packageName}.provider", file)
+                openPdf(uri)
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Error generating PDF: ${e.message}", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
+            Toast.makeText(this, "Failed to save PDF: ${e.message}", Toast.LENGTH_SHORT).show()
         } finally {
             pdfDocument.close()
+        }
+    }
+
+    private fun openPdf(uri: Uri) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show()
         }
     }
 }
