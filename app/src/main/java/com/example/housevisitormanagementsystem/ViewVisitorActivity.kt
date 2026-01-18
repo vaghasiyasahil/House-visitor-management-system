@@ -22,12 +22,14 @@ import constants.DatabaseTableName
 import services.setBase64Image
 import types.VisitorStatus
 import utils.TimeAndDateUtils
+import java.util.Calendar
 
 class ViewVisitorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewVisitorBinding
     private var selectedVisitorFilter: VisitorStatus? = null;
     private var visitorsList: List<VisitorModel> = emptyList()
     private var filterVisitorsList: List<VisitorModel> = emptyList()
+    private var selectedDate: Calendar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +72,35 @@ class ViewVisitorActivity : AppCompatActivity() {
         binding.visitorLogsSearch.addTextChangedListener {
             setupFilters()
         }
+        binding.btnCalendar.setOnClickListener {
+            showDatePickerDialog()
+        }
+    }
+
+    private fun showDatePickerDialog() {
+        val calendar = selectedDate ?: Calendar.getInstance()
+        val datePickerDialog = android.app.DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                selectedDate = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, year)
+                    set(Calendar.MONTH, month)
+                    set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                }
+                setupFilters()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        
+        // Add a "Clear" button to the dialog
+        datePickerDialog.setButton(android.app.DatePickerDialog.BUTTON_NEUTRAL, "Clear") { _, _ ->
+            selectedDate = null
+            setupFilters()
+        }
+        
+        datePickerDialog.show()
     }
 
     private fun getVisitor(){
@@ -89,13 +120,37 @@ class ViewVisitorActivity : AppCompatActivity() {
         filterVisitorsList = visitorsList.filter {
                 visitorModel ->
             val statusMatch = selectedVisitorFilter == null || visitorModel.status == selectedVisitorFilter
+            
             val searchMatch =
                 searchText.isEmpty() ||
                         visitorModel.name.lowercase().contains(searchText) ||
                         visitorModel.mobile.lowercase().contains(searchText) ||
                         visitorModel.houseNo.lowercase().contains(searchText)
-            statusMatch && searchMatch
+            
+            val dateMatch = selectedDate == null || visitorModel.entryTime?.let {
+                val visitorCalendar = Calendar.getInstance()
+                visitorCalendar.time = it.toDate()
+                visitorCalendar.get(Calendar.YEAR) == selectedDate?.get(Calendar.YEAR) &&
+                        visitorCalendar.get(Calendar.MONTH) == selectedDate?.get(Calendar.MONTH) &&
+                        visitorCalendar.get(Calendar.DAY_OF_MONTH) == selectedDate?.get(Calendar.DAY_OF_MONTH)
+            } ?: false || visitorModel.exitTime?.let {
+                val visitorCalendar = Calendar.getInstance()
+                visitorCalendar.time = it.toDate()
+                visitorCalendar.get(Calendar.YEAR) == selectedDate?.get(Calendar.YEAR) &&
+                        visitorCalendar.get(Calendar.MONTH) == selectedDate?.get(Calendar.MONTH) &&
+                        visitorCalendar.get(Calendar.DAY_OF_MONTH) == selectedDate?.get(Calendar.DAY_OF_MONTH)
+            } ?: false
+
+            statusMatch && searchMatch && dateMatch
         }
+        
+        if (selectedDate != null) {
+            val sdf = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
+            binding.tvDateLabel.text = "Visitors on ${sdf.format(selectedDate!!.time)}"
+        } else {
+            binding.tvDateLabel.text = "Visitor Logs"
+        }
+        
         binding.visitorEntriesCount.text = "${filterVisitorsList.size} Entries"
         displayFilteredVisitors()
     }
