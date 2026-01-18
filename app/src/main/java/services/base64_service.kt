@@ -14,6 +14,16 @@ object base64Service {
         val bytes = baos.toByteArray()
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
+
+    fun base64ToBitmap(base64Str: String): Bitmap? {
+        return try {
+            val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 }
 fun ShapeableImageView.setBase64Image(base64: String?) {
     if (base64.isNullOrEmpty()) {
