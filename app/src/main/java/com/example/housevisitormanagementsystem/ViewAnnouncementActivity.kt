@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityViewAnnouncementBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Loader
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
@@ -261,12 +262,14 @@ class ViewAnnouncementActivity : AppCompatActivity() {
 
     private fun deleteAnnouncement(announcement: AnnouncementModel) {
         lifecycleScope.launch {
+            Loader.showLoader(this@ViewAnnouncementActivity)
             val success  = FirestoreService().deleteDocument(DatabaseTableName.ANNOUNCEMENTS, announcement.id)
             if(success){
                 Toast.makeText(this@ViewAnnouncementActivity, "Deleted successfully", Toast.LENGTH_SHORT).show()
             }else{
                 Toast.makeText(this@ViewAnnouncementActivity, "Delete failed", Toast.LENGTH_SHORT).show()
             }
+            Loader.closeLoader()
         }
     }
 
