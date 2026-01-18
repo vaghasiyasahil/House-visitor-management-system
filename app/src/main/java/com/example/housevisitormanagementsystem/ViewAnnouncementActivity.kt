@@ -98,6 +98,10 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             selectedAnnouncementsType=AnnouncementsType.Event;
             setupFilters()
         }
+        binding.chipOther.setOnClickListener {
+            selectedAnnouncementsType=AnnouncementsType.Other;
+            setupFilters()
+        }
         binding.announcementsSearch.addTextChangedListener {
             setupFilters()
         }

@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginVertical="16dp"
         android:background="@drawable/bg_generate_report"
         android:gravity="center"
         android:orientation="horizontal"
@@ -169,6 +169,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Events"
+            android:textColor="@color/chip_text_selector"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/chip_bg_selector"
+            app:chipStrokeWidth="0dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOther"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Other"
             android:textColor="@color/chip_text_selector"
             app:checkedIconVisible="false"
             app:chipBackgroundColor="@color/chip_bg_selector"

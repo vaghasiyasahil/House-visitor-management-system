@@ -23,7 +23,7 @@ enum class AnnouncementsType {
                 Urgent -> R.color.red
                 Maintenance -> R.color.orange
                 Event -> R.color.bright_azure_blue
-                Other -> R.color.bright_azure_blue
+                Other -> R.color.teal
             }
         }
 
@@ -32,7 +32,7 @@ enum class AnnouncementsType {
                 Urgent -> R.drawable.bg_badge_urgent
                 Maintenance -> R.drawable.bg_badge_urgent
                 Event -> R.drawable.bg_badge_event
-                Other -> R.drawable.bg_badge_event
+                Other -> R.drawable.bg_badge_green
             }
         }
 
