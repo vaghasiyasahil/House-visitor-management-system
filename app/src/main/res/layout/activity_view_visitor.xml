@@ -109,7 +109,7 @@
         app:startIconTint="@color/text_grey">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
+            android:id="@+id/visitorLogsSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search visitor name or unit..."
@@ -149,6 +149,17 @@
                 app:chipStrokeWidth="0dp" />
 
             <com.google.android.material.chip.Chip
+                android:id="@+id/chipPending"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipCornerRadius="20dp"
+                app:chipStrokeWidth="0dp" />
+
+            <com.google.android.material.chip.Chip
                 android:id="@+id/chipInside"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
@@ -171,11 +182,11 @@
                 app:chipStrokeWidth="0dp" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipDelivery"
+                android:id="@+id/chipExpired"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delivery"
+                android:text="Expired"
                 android:textColor="@color/white"
                 app:chipBackgroundColor="@color/chip_bg_selector"
                 app:chipCornerRadius="20dp"
@@ -197,7 +208,7 @@
             android:id="@+id/tvDateLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All Visitor Logs"
+            android:text="Visitor Logs"
             android:textColor="@color/text_grey"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -205,7 +216,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvEntriesCount"
+            android:id="@+id/visitorEntriesCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12 Entries"
@@ -218,17 +229,48 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvVisitorLogs"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvVisitorLogs"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        android:paddingBottom="16dp"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/subHeaderLayout"-->
+<!--        tools:listitem="@layout/item_all_visitor" />-->
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/subHeaderLayout"
-        tools:listitem="@layout/item_visitor_log" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/visitorContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Visitor Available"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/subHeaderLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
