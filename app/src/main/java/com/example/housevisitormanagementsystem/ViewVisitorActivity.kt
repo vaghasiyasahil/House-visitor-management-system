@@ -38,6 +38,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import services.base64Service
+import android.content.Intent
+import androidx.core.content.FileProvider
 
 class ViewVisitorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewVisitorBinding
@@ -315,6 +317,7 @@ class ViewVisitorActivity : AppCompatActivity() {
                         pdfDocument.writeTo(outputStream)
                         outputStream.close()
                         Toast.makeText(this, "PDF saved to Downloads", Toast.LENGTH_LONG).show()
+                        openPdf(uri)
                     }
                 }
             } else {
@@ -322,12 +325,31 @@ class ViewVisitorActivity : AppCompatActivity() {
                 val file = java.io.File(directory, fileName)
                 pdfDocument.writeTo(java.io.FileOutputStream(file))
                 Toast.makeText(this, "PDF saved: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                
+                val uri = FileProvider.getUriForFile(
+                    this,
+                    "${packageName}.provider",
+                    file
+                )
+                openPdf(uri)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Failed to save PDF: ${e.message}", Toast.LENGTH_SHORT).show()
         } finally {
             pdfDocument.close()
+        }
+    }
+
+    private fun openPdf(uri: Uri) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show()
         }
     }
 }
