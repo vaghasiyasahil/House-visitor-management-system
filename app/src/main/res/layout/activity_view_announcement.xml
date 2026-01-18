@@ -108,7 +108,7 @@
         app:startIconTint="@color/text_grey">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
+            android:id="@+id/announcementsSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search notices, dates..."
@@ -176,33 +176,48 @@
 
     </com.google.android.material.chip.ChipGroup>
 
-    <!-- Empty State View -->
+    <!-- Announcements List -->
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvAnnouncements"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        android:paddingHorizontal="16dp"-->
+<!--        android:paddingBottom="16dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"-->
+<!--        tools:listitem="@layout/item_announcement" />-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/announcementsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
+
+
     <TextView
-        android:id="@+id/tvEmptyState"
+        android:id="@+id/tvNoData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No Announcements Available"
-        android:textColor="@color/text_grey"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Announcements List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAnnouncements"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
-        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
-        tools:listitem="@layout/item_announcement" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

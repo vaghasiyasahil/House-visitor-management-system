@@ -15,5 +15,4 @@ enum class UserRole {
             }
         }
     }
-
 }

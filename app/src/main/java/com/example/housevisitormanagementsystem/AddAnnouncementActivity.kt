@@ -10,9 +10,11 @@ import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityAddAnnouncementBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
 import model.AnnouncementModel
+import types.AnnouncementsType
 import java.util.Calendar
 import java.util.Locale
 
@@ -57,7 +59,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
             announcementId = announcement.id
             
             binding.etTitle.setText(announcement.title)
-            binding.actvCategory.setText(announcement.category, false) // false to filter
+            binding.actvCategory.setText(announcement.category.name, false) // false to filter
             binding.etDescription.setText(announcement.description)
             binding.etDate.setText(announcement.date)
             binding.etTime.setText(announcement.time)
@@ -132,14 +134,12 @@ class AddAnnouncementActivity : AppCompatActivity() {
         val announcement = AnnouncementModel(
             id = id,
             title = title,
-            category = category,
+            category = AnnouncementsType.fromString(category)?:AnnouncementsType.Other,
             description = description,
             date = date,
             time = time,
-            timestamp = "$date $time",
+            timestamp = Timestamp.now(),
             author = "Admin", // Preserving default
-            iconRes = R.drawable.ic_announcement,
-            showReadMore = description.length > 50
         )
 
         db.collection(DatabaseTableName.ANNOUNCEMENTS).document(id)

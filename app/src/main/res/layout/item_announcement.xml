@@ -15,7 +15,7 @@
 
         <!-- Left Border Indicator -->
         <View
-            android:id="@+id/leftBorder"
+            android:id="@+id/announcementsLeftBorder"
             android:layout_width="4dp"
             android:layout_height="0dp"
             android:background="@color/bright_azure_blue"
@@ -25,16 +25,16 @@
 
         <!-- Icon -->
         <FrameLayout
-            android:id="@+id/iconContainer"
+            android:id="@+id/announcementsIconContainer"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/circle_dark_bg"
-            app:layout_constraintStart_toEndOf="@id/leftBorder"
+            app:layout_constraintStart_toEndOf="@id/announcementsLeftBorder"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/ivIcon"
+                android:id="@+id/announcementsIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
@@ -44,7 +44,7 @@
 
         <!-- Title and Badge -->
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/announcementsTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -53,24 +53,24 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tvBadge"
-            app:layout_constraintStart_toEndOf="@id/iconContainer"
-            app:layout_constraintTop_toTopOf="@id/iconContainer" />
+            app:layout_constraintEnd_toStartOf="@id/announcementsCategory"
+            app:layout_constraintStart_toEndOf="@id/announcementsIconContainer"
+            app:layout_constraintTop_toTopOf="@id/announcementsIconContainer" />
 
         <!-- Options Button -->
         <ImageView
-            android:id="@+id/btnOptions"
+            android:id="@+id/announcementsBtnOptions"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:padding="2dp"
             android:src="@drawable/ic_menu_dots"
             app:tint="@color/text_grey"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvTitle" />
+            app:layout_constraintTop_toTopOf="@id/announcementsTitle" />
 
         <!-- Badge -->
         <TextView
-            android:id="@+id/tvBadge"
+            android:id="@+id/announcementsCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_urgent"
@@ -82,13 +82,13 @@
             android:textStyle="bold"
             android:visibility="gone"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/btnOptions"
-            app:layout_constraintEnd_toStartOf="@id/btnOptions"
-            app:layout_constraintTop_toTopOf="@id/btnOptions" />
+            app:layout_constraintBottom_toBottomOf="@id/announcementsBtnOptions"
+            app:layout_constraintEnd_toStartOf="@id/announcementsBtnOptions"
+            app:layout_constraintTop_toTopOf="@id/announcementsBtnOptions" />
 
         <!-- Description -->
         <TextView
-            android:id="@+id/tvDescription"
+            android:id="@+id/announcementsDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -100,8 +100,8 @@
             android:textColor="@color/text_grey"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iconContainer"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            app:layout_constraintStart_toEndOf="@id/announcementsIconContainer"
+            app:layout_constraintTop_toBottomOf="@id/announcementsTitle" />
 
         <!-- Author Info -->
         <ImageView
@@ -111,12 +111,12 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/ic_person_outline"
-            app:layout_constraintStart_toEndOf="@id/iconContainer"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription"
+            app:layout_constraintStart_toEndOf="@id/announcementsIconContainer"
+            app:layout_constraintTop_toBottomOf="@id/announcementsDescription"
             app:tint="@color/text_grey" />
 
         <TextView
-            android:id="@+id/tvAuthorInfo"
+            android:id="@+id/announcementsInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
@@ -138,9 +138,9 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tvAuthorInfo"
+            app:layout_constraintBottom_toBottomOf="@id/announcementsInfo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvAuthorInfo" />
+            app:layout_constraintTop_toTopOf="@id/announcementsInfo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
