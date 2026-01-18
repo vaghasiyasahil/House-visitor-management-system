@@ -41,7 +41,6 @@ import androidx.core.content.FileProvider
 class ViewAnnouncementActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewAnnouncementBinding
-    private val db = FirebaseFirestore.getInstance()
     private var allAnnouncementsList: List<AnnouncementModel> = emptyList()
     private var filterAnnouncementsList: List<AnnouncementModel> = emptyList()
     private  var selectedAnnouncementsType : AnnouncementsType?=null;
