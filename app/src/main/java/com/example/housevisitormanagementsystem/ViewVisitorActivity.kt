@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -39,7 +40,9 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import services.base64Service
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.core.content.FileProvider
+import types.UserRole
 
 class ViewVisitorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewVisitorBinding
@@ -128,7 +131,13 @@ class ViewVisitorActivity : AppCompatActivity() {
     }
 
     private fun getVisitor(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf()) {
+        val filter: Map<String, Any>
+        if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
+            filter = mapOf("houseNo" to SharedPreferencesService.getUserHouseNo())
+        }else{
+            filter = mapOf()
+        }
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, filter) {
                 snapshot ->
             val visitorList = mutableListOf<VisitorModel>()
             snapshot?.documents?.forEach {

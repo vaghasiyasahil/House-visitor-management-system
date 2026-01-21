@@ -80,10 +80,14 @@ class LoginActivity : AppCompatActivity() {
 
                 for (document in documents) {
                     val dbPassword = document.getString("password")
-                    val role = document.getString("role")
                     if (dbPassword == value) {
+                        val role = document.getString("role")
+                        val userEmail = document.getString("email")
+                        val userId = document.getString("id")
                         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                         SharedPreferencesService.setIsLogin(true);
+                        SharedPreferencesService.setUserId(userId);
+                        SharedPreferencesService.setUserEmail(userEmail);
                         if (UserRole.fromString(role?:"")==UserRole.Admin) {
                             SharedPreferencesService.setUserRole(UserRole.Admin.name)
                             startActivity(Intent(this, AdminDashboardActivity::class.java))

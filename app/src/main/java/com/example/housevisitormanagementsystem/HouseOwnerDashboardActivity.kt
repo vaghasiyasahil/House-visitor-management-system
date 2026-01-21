@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,6 +18,7 @@ import com.google.firebase.Timestamp
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
+import model.HouseModel
 import model.VisitorModel
 import services.setBase64Image
 import types.VisitorStatus
@@ -38,8 +40,8 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             insets
         }
 
+        getLoginUserHouseNo()
         setupClickListeners()
-        getPendingRequest()
     }
 
     private fun setupClickListeners() {
@@ -81,7 +83,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     }
 
     private fun getPendingRequest(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name)) {
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name,"houseNo" to SharedPreferencesService.getUserHouseNo())) {
                 snapshot ->
             val visitorList = mutableListOf<VisitorModel>()
             val now = Timestamp.now()
@@ -175,5 +177,16 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun getLoginUserHouseNo(){
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf()) {
+                snapshot ->
+            snapshot?.documents?.forEach {
+                val houseModel = HouseModel.fromHashMap(it.data ?: emptyMap());
+                SharedPreferencesService.setUserHouseNo(houseModel.houseNo)
+            }
+            getPendingRequest()
+        };
     }
 }

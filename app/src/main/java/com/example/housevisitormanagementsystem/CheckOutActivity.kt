@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.os.Bundle
 import android.view.View
 import android.util.Log
@@ -19,6 +20,7 @@ import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.VisitorModel
 import services.setBase64Image
+import types.UserRole
 import types.VisitorStatus
 import utils.TimeAndDateUtils
 
@@ -66,7 +68,13 @@ class CheckOutActivity : AppCompatActivity() {
     }
 
     private fun getInsideRequest(){
-        listenerRegistration = FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Inside.name)) {
+        val filter :Map<String, Any>
+        if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
+            filter = mapOf("status" to VisitorStatus.Inside.name,"houseNo" to SharedPreferencesService.getUserHouseNo())
+        }else{
+            filter = mapOf("status" to VisitorStatus.Inside.name)
+        }
+        listenerRegistration = FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, filter) {
                 snapshot ->
             val visitorList = mutableListOf<VisitorModel>()
             snapshot?.documents?.forEach {

@@ -76,14 +76,23 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
     private fun showLogoutDialog() {
-        android.app.AlertDialog.Builder(this)
-            .setTitle("Logout")
-            .setMessage("Are you sure you want to logout?")
-            .setPositiveButton("Yes") { _, _ ->
-                performLogout()
-            }
-            .setNegativeButton("No", null)
-            .show()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnYes).setOnClickListener {
+            dialog.dismiss()
+            performLogout()
+        }
+
+        dialog.show()
     }
 
     private fun performLogout() {
