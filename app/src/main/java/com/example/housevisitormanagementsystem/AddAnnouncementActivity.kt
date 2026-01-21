@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityAddAnnouncementBinding
@@ -37,13 +38,8 @@ class AddAnnouncementActivity : AppCompatActivity() {
 
         setupCategoryDropdown()
         setupClickListeners()
-        setupValidation()
-        
+
         checkForEditMode()
-        
-        binding.main.setOnClickListener {
-            KeyboardUtils.hideKeyboard(this)
-        }
     }
 
     private fun setupCategoryDropdown() {
@@ -53,7 +49,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
     }
     
     private fun checkForEditMode() {
-        val announcement = intent.getSerializableExtra(DatabaseTableName.ANNOUNCEMENTS) as? AnnouncementModel
+        val announcement = IntentCompat.getParcelableExtra(intent, DatabaseTableName.ANNOUNCEMENTS, AnnouncementModel::class.java)
         if (announcement != null) {
             isEditMode = true
             announcementId = announcement.id
@@ -64,18 +60,18 @@ class AddAnnouncementActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupValidation() {
-        binding.etTitle.addTextChangedListener { binding.tilTitle.error = null }
-        binding.actvCategory.addTextChangedListener { binding.tilCategory.error = null }
-        binding.etDescription.addTextChangedListener { binding.tilDescription.error = null }
-    }
-
     private fun setupClickListeners() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnCancel.setOnClickListener { finish() }
         binding.btnSendNotification.setOnClickListener {
             validateAndSave()
         }
+        binding.main.setOnClickListener {
+            KeyboardUtils.hideKeyboard(this)
+        }
+        binding.etTitle.addTextChangedListener { binding.tilTitle.error = null }
+        binding.actvCategory.addTextChangedListener { binding.tilCategory.error = null }
+        binding.etDescription.addTextChangedListener { binding.tilDescription.error = null }
     }
 
     private fun validateAndSave() {
@@ -132,16 +128,16 @@ class AddAnnouncementActivity : AppCompatActivity() {
         }else{
             lifecycleScope.launch {
                 try{
-                    announcement.copy(
+                    val updatedAnnouncement = announcement.copy(
                         updatedAt = Timestamp.now()
                     )
-                    FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, announcement.toHashMap())
-                }catch (e:Exception){
-                    Log.d("Updated Successfully","Fail To Updated Announcement = $e")
+                    FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, updatedAnnouncement.toHashMap())
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Updated", Toast.LENGTH_LONG).show()
                     finish()
-                }finally {
+                }catch (e:Exception){
+                    Log.d("Update Error","Fail To Update Announcement = $e")
                     Toast.makeText(this@AddAnnouncementActivity, "Fail To Update Announcement", Toast.LENGTH_SHORT).show()
+                }finally {
                     binding.btnSendNotification.isEnabled = true
                     binding.btnSendNotification.text = if (isEditMode) "Update Announcement" else "Send Notification"
                 }

@@ -1,11 +1,12 @@
 package model
 
 import com.google.firebase.Timestamp
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import types.AnnouncementsType
 import types.UserRole
-import types.VisitorStatus
-import java.io.Serializable
 
+@Parcelize
 data class AnnouncementModel(
     var id: String = "",
     var title: String = "",
@@ -14,7 +15,7 @@ data class AnnouncementModel(
     var createdRole: UserRole = UserRole.Admin,
     var createdAt : Timestamp? = null,
     var updatedAt : Timestamp? = null
-) : Serializable {
+) : Parcelable {
 
     fun toHashMap(): HashMap<String, Any?> {
         return hashMapOf(
