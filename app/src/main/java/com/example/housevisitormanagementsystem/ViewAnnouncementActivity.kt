@@ -151,7 +151,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             )
             itemView.findViewById<TextView>(R.id.announcementsTitle).text = announcements.title
             itemView.findViewById<TextView>(R.id.announcementsDescription).text = announcements.description
-            itemView.findViewById<TextView>(R.id.announcementsInfo).text = "Admin • ${TimeAndDateUtils.formatShortDateTime(announcements.timestamp)}"
+            itemView.findViewById<TextView>(R.id.announcementsInfo).text = "${announcements.createdRole.name} • ${TimeAndDateUtils.formatShortDateTime(announcements.createdAt)}"
             val categoryTv = itemView.findViewById<TextView>(R.id.announcementsCategory)
             categoryTv.visibility = View.VISIBLE
             categoryTv.text = announcements.category.name
@@ -170,7 +170,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
                         when (item.itemId) {
                             R.id.action_edit -> {
                                 val intent = Intent(this, AddAnnouncementActivity::class.java)
-                                intent.putExtra("announcement", announcements)
+                                intent.putExtra(DatabaseTableName.ANNOUNCEMENTS, announcements)
                                 startActivity(intent)
                                 true
                             }
@@ -257,8 +257,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         canvas.drawText("#", colSn + 5, yPos, paint)
         canvas.drawText("Title", colTitle + 5, yPos, paint)
         canvas.drawText("Category", colCategory + 5, yPos, paint)
-        canvas.drawText("Date", colDate + 5, yPos, paint)
-        canvas.drawText("Time", colTime + 5, yPos, paint)
+        canvas.drawText("Date & Time", colDate + 5, yPos, paint)
         canvas.drawText("Author", colAuthor + 5, yPos, paint)
 
         canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
@@ -281,7 +280,6 @@ class ViewAnnouncementActivity : AppCompatActivity() {
                 canvas.drawText("Title", colTitle + 5, yPos, paint)
                 canvas.drawText("Category", colCategory + 5, yPos, paint)
                 canvas.drawText("Date", colDate + 5, yPos, paint)
-                canvas.drawText("Time", colTime + 5, yPos, paint)
                 canvas.drawText("Author", colAuthor + 5, yPos, paint)
                 canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
                 yPos += 30f
@@ -291,9 +289,8 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             canvas.drawText((index + 1).toString(), colSn + 5, yPos, paint)
             canvas.drawText(shortenText(item.title, 20), colTitle + 5, yPos, paint)
             canvas.drawText(item.category.name, colCategory + 5, yPos, paint)
-            canvas.drawText(item.date, colDate + 5, yPos, paint)
-            canvas.drawText(item.time, colTime + 5, yPos, paint)
-            canvas.drawText(item.author, colAuthor + 5, yPos, paint)
+            canvas.drawText(TimeAndDateUtils.formatShortDateTime(item.createdAt), colDate + 5, yPos, paint)
+            canvas.drawText(item.createdRole.name, colAuthor + 5, yPos, paint)
             
             canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
             yPos += 30f

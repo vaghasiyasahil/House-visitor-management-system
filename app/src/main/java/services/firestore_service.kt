@@ -92,7 +92,21 @@ class FirestoreService {
         collectionName: String,
         docId: String,
         data: Map<String, Any>
-    ): Boolean {
+        ): Boolean {
+        return try {
+            firestore.collection(collectionName).document(docId).update(data).await()
+            true
+        } catch (e: Exception) {
+            Log.e("FirestoreService", "Update Document Error: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun updateDocument(
+        collectionName: String,
+        docId: String,
+        data: HashMap<String, Any?>,
+        ): Boolean {
         return try {
             firestore.collection(collectionName).document(docId).update(data).await()
             true
