@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemPendingVisitor"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,6 +26,7 @@
 
         <TextView
             android:id="@+id/visitorName"
+            android:text="Sahil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -33,6 +35,7 @@
 
         <TextView
             android:id="@+id/visitorDetails"
+            android:text="Checked to Unit 100"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_grey"
@@ -46,6 +49,7 @@
 
         <TextView
             android:id="@+id/visitorStatus"
+            android:text="PENDING"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_green"
@@ -57,6 +61,7 @@
 
         <TextView
             android:id="@+id/visitorTimeAgo"
+            android:text="Just now"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"

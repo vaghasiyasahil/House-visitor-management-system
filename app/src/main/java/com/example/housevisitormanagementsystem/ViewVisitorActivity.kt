@@ -74,6 +74,10 @@ class ViewVisitorActivity : AppCompatActivity() {
             selectedVisitorFilter=VisitorStatus.Pending
             setupFilters()
         }
+        binding.chipReject.setOnClickListener {
+            selectedVisitorFilter=VisitorStatus.Reject
+            setupFilters()
+        }
         binding.chipInside.setOnClickListener {
             selectedVisitorFilter=VisitorStatus.Inside
             setupFilters()

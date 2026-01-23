@@ -4,6 +4,7 @@ import SharedPreferencesService
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -117,6 +118,12 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun setRejectStatus(docId:String){
+        lifecycleScope.launch {
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Reject.name));
+        }
+    }
+
     private fun displayPendingVisitors(visitorList: List<VisitorModel>) {
         binding.llRecentActivityContainer.removeAllViews()
         if (visitorList.isEmpty()) {
@@ -145,6 +152,14 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.visitorTimeAgo).text = timeAgoText
             itemView.findViewById<TextView>(R.id.visitorStatus).setOnClickListener {
                 setInsideStatus(visitor.id)
+            }
+            itemView.findViewById<LinearLayout>(R.id.itemPendingVisitor).setOnClickListener {
+              show dialog approve and reject
+              if(if approve){
+                  setInsideStatus(visitor.id)
+              }else{
+                  setRejectStatus(visitor.id)
+              }
             }
             binding.llRecentActivityContainer.addView(itemView)
         }
