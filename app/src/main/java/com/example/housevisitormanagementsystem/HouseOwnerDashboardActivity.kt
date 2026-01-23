@@ -154,15 +154,48 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
                 setInsideStatus(visitor.id)
             }
             itemView.findViewById<LinearLayout>(R.id.itemPendingVisitor).setOnClickListener {
-              show dialog approve and reject
-              if(if approve){
-                  setInsideStatus(visitor.id)
-              }else{
-                  setRejectStatus(visitor.id)
-              }
+                showVisitorRequestDialog(visitor)
             }
             binding.llRecentActivityContainer.addView(itemView)
         }
+    }
+
+    private fun showVisitorRequestDialog(visitor: VisitorModel) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_visitor_request, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.imgVisitor).setBase64Image(visitor.visitorPhoto)
+        dialogView.findViewById<TextView>(R.id.tvVisitorName).text = visitor.name
+        dialogView.findViewById<TextView>(R.id.tvPurpose).text = visitor.purpose
+        
+        visitor.entryTime?.let {
+            val date = it.toDate()
+            val format = java.text.SimpleDateFormat("dd MMM, hh:mm a", java.util.Locale.getDefault())
+            dialogView.findViewById<TextView>(R.id.tvTime).text = format.format(date)
+        } ?: run {
+             dialogView.findViewById<TextView>(R.id.tvTime).text = "N/A"
+        }
+
+
+        dialogView.findViewById<View>(R.id.btnClose).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnReject).setOnClickListener {
+            setRejectStatus(visitor.id)
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnApprove).setOnClickListener {
+            setInsideStatus(visitor.id)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
 
