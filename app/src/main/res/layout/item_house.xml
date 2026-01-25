@@ -31,7 +31,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/houseCardHouseNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -43,15 +43,15 @@
             app:layout_constraintTop_toTopOf="@id/iconContainer" />
 
         <TextView
-            android:id="@+id/tvSubtitle"
+            android:id="@+id/houseCardHouseOwner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Owned by Michael Chen"
+            android:text="Owner by Sahil Vaghasiya"
             android:textColor="@color/steel_blue_gray"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/iconContainer"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            app:layout_constraintTop_toBottomOf="@id/houseCardHouseNo" />
 
         <View
             android:id="@+id/separator"
@@ -62,11 +62,11 @@
             app:layout_constraintTop_toBottomOf="@id/iconContainer" />
 
         <TextView
-            android:id="@+id/tvEmail"
+            android:id="@+id/houseCardEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="michael.c@example.com"
+            android:text="sahil@example.com"
             android:textColor="@color/slate_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
             app:layout_constraintTop_toBottomOf="@id/separator">
 
             <TextView
-                android:id="@+id/tvMembers"
+                android:id="@+id/houseCardMembers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
@@ -97,7 +97,7 @@
                 android:textSize="12sp" />
 
             <FrameLayout
-                android:id="@+id/btnEdit"
+                android:id="@+id/houseCardBtnEdit"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="8dp"
@@ -115,7 +115,7 @@
             </FrameLayout>
 
             <FrameLayout
-                android:id="@+id/btnDelete"
+                android:id="@+id/houseCardBtnDelete"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/circle_dark_bg"

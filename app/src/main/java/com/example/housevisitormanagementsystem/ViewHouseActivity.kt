@@ -1,6 +1,5 @@
 package com.example.housevisitormanagementsystem
 
-import adapter.HouseAdapter
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Paint
@@ -10,27 +9,30 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityViewHouseBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.housevisitormanagementsystem.utils.Loader
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import model.HouseModel
 import java.io.File
 import java.io.FileOutputStream
 
 class ViewHouseActivity : AppCompatActivity() {
-
     lateinit var binding: ActivityViewHouseBinding
-    private val db = FirebaseFirestore.getInstance()
-    private lateinit var houseAdapter: HouseAdapter
-    private var houseList = ArrayList<HouseModel>()
+    private var houseList: List<HouseModel> = emptyList()
+    private var filterHouseList: List<HouseModel> = emptyList()
+    private var searchText = "";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,93 +44,95 @@ class ViewHouseActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        setupRecyclerView()
         setupListeners()
-        fetchHouses()
-    }
-
-    private fun setupRecyclerView() {
-        houseAdapter = HouseAdapter(houseList, 
-            onEditClick = { house ->
-                val intent = Intent(this, AddHouseActivity::class.java)
-                intent.putExtra("houseData", house)
-                startActivity(intent)
-            },
-            onDeleteClick = { house ->
-                showDeleteDialog(house)
-            }
-        )
-        binding.rvHouses.layoutManager = LinearLayoutManager(this)
-        binding.rvHouses.adapter = houseAdapter
+        getHouses()
     }
 
     private fun setupListeners() {
         binding.btnBack.setOnClickListener {
             finish()
         }
-
         binding.fabAddHouse.setOnClickListener {
             startActivity(Intent(this, AddHouseActivity::class.java))
         }
-
         binding.btnGenerateReport.setOnClickListener {
             generatePDF()
         }
-
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                houseAdapter.filter.filter(query)
-                return false
+                searchText = query ?: ""
+                setupFilters()
+                return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
-                houseAdapter.filter.filter(newText)
-                return false
+                searchText = newText ?: ""
+                setupFilters()
+                return true
             }
         })
     }
 
-    private fun fetchHouses() {
-        binding.progressBar.visibility = View.VISIBLE
-        
-        db.collection(DatabaseTableName.HOUSES)
-            .addSnapshotListener { value, error ->
-                binding.progressBar.visibility = View.GONE
-                if (error != null) {
-                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                houseList.clear()
-                if (value != null) {
-                    for (doc in value) {
-                        val house = doc.toObject(HouseModel::class.java)
-                        houseList.add(house)
-                    }
-                }
-                
-                houseAdapter.updateList(houseList)
-                updateEmptyState()
+    private fun getHouses(){
+        FirestoreService().getDocumentsQuery(DatabaseTableName.HOUSES) {
+                snapshot ->
+            val tempHouseList = mutableListOf<HouseModel>()
+            snapshot?.documents?.forEach {
+                tempHouseList.add(HouseModel.fromHashMap(it.data ?: emptyMap()))
             }
+            houseList = tempHouseList
+            setupFilters()
+        };
     }
 
-    private fun updateEmptyState() {
-        if (houseList.isEmpty()) {
-            binding.rvHouses.visibility = View.GONE
+    private fun setupFilters() {
+        filterHouseList = houseList.filter {
+                houseModel ->
+            val searchMatch =
+                searchText.isEmpty() ||
+                        houseModel.ownerName.lowercase().contains(searchText) ||
+                        houseModel.ownerEmail.lowercase().contains(searchText) ||
+                        houseModel.houseNo.lowercase().contains(searchText)
+            searchMatch
+        }
+        binding.tvTotalBadge.text = "${filterHouseList.size} Total"
+        displayFilteredHouse()
+    }
+
+    private fun displayFilteredHouse() {
+        binding.houseContainer.removeAllViews()
+        if (filterHouseList.isEmpty()) {
+            binding.houseContainer.visibility = View.GONE
             binding.tvEmptyState.visibility = View.VISIBLE
-            binding.tvTotalBadge.text = "0 Total"
-        } else {
-            binding.rvHouses.visibility = View.VISIBLE
-            binding.tvEmptyState.visibility = View.GONE
-            binding.tvTotalBadge.text = "${houseList.size} Total"
+            return
+        }
+        binding.houseContainer.visibility = View.VISIBLE
+        binding.tvEmptyState.visibility = View.GONE
+        for (house in filterHouseList) {
+            val itemView = layoutInflater.inflate(
+                R.layout.item_house,
+                binding.houseContainer,
+                false
+            )
+            itemView.findViewById<TextView>(R.id.houseCardHouseNo).text = house.houseNo
+            itemView.findViewById<TextView>(R.id.houseCardHouseOwner).text = "Owner by ${house.ownerName}"
+            itemView.findViewById<TextView>(R.id.houseCardEmail).text = house.ownerEmail
+            itemView.findViewById<TextView>(R.id.houseCardMembers).text = "${house.members} Members"
+            itemView.findViewById<FrameLayout>(R.id.houseCardBtnEdit).setOnClickListener {
+                intent = Intent(this,AddHouseActivity::class.java)
+                intent.putExtra("houseData",house)
+                startActivity(intent)
+            }
+            itemView.findViewById<FrameLayout>(R.id.houseCardBtnDelete).setOnClickListener {
+                showDeleteDialog(house)
+            }
+            binding.houseContainer.addView(itemView)
         }
     }
 
     private fun showDeleteDialog(house: HouseModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
             title = "Delete House?",
-            message = "Are you sure you want to remove House ${house.houseNo}? This process is irreversible.",
+            message = "Are you sure you want to remove House ${house.houseNo}?",
             onConfirm = {
                 deleteHouse(house)
             }
@@ -137,14 +141,16 @@ class ViewHouseActivity : AppCompatActivity() {
     }
 
     private fun deleteHouse(house: HouseModel) {
-        db.collection(DatabaseTableName.HOUSES).document(house.id)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(this, "House deleted successfully", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            Loader.showLoader(this@ViewHouseActivity)
+            val success  = FirestoreService().deleteDocument(DatabaseTableName.HOUSES, house.id)
+            if(success){
+                Toast.makeText(this@ViewHouseActivity, "House deleted successfully", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@ViewHouseActivity, "House Delete failed", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error deleting house: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            Loader.closeLoader()
+        }
     }
 
     private fun generatePDF() {

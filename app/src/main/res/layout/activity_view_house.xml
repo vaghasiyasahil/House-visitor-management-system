@@ -117,17 +117,22 @@
         app:searchIcon="@drawable/ic_search"
         app:layout_constraintTop_toBottomOf="@id/appBar" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHouses"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:clipToPadding="false"
         android:padding="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/searchView"
-        tools:listitem="@layout/item_house" />
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport">
+
+        <LinearLayout
+            android:id="@+id/houseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
 
     <TextView
         android:id="@+id/tvEmptyState"

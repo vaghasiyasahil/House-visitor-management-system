@@ -12,6 +12,7 @@ import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import types.UserRole
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.HouseModel
 
@@ -33,7 +34,6 @@ class AddHouseActivity : AppCompatActivity() {
             insets
         }
 
-        // Check for Edit Mode
         if (intent.hasExtra("houseData")) {
             val house = intent.getSerializableExtra("houseData") as HouseModel
             houseId = house.id
@@ -209,6 +209,6 @@ class AddHouseActivity : AppCompatActivity() {
 
     private fun resetButtonState() {
         binding.btnAddHouse.isEnabled = true
-        binding.btnAddHouse.text = if (isEditMode) "Update House" else "Add House"
+        binding.btnAddHouse.text = if (isEditMode) "Update" else "Add House"
     }
 }
