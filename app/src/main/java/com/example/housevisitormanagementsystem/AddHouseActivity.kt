@@ -137,21 +137,21 @@ class AddHouseActivity : AppCompatActivity() {
             binding.btnAddHouse.isEnabled = false
             binding.btnAddHouse.text = "Checking..."
             try{
-                FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.HOUSES, mapOf("houseNo" to houseNo)){
+                FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.HOUSES, mapOf("houseNo" to houseNo)){
                         houseSnap ->
                     if(houseSnap != null && !isEditMode && !houseSnap.isEmpty){
                         Toast.makeText(this@AddHouseActivity,"House Number already exists",Toast.LENGTH_LONG);
                         binding.etHouseNumber.error = "House Number already exists"
                         resetButtonState()
-                        return@getDocumentsWithEqualToConditions
+                        return@getDocumentsWithEqualToConditionsOnce
                     }else{
-                        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.USER, mapOf("email" to email)){
+                        FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER, mapOf("email" to email)){
                                 userSnap ->
                             if(userSnap!=null && !isEditMode && !userSnap.isEmpty){
                                 Toast.makeText(this@AddHouseActivity,"Email already registered",Toast.LENGTH_LONG);
                                 binding.etOwnerEmail.error = "Email already registered"
                                 resetButtonState()
-                                return@getDocumentsWithEqualToConditions
+                                return@getDocumentsWithEqualToConditionsOnce
                             }else{
                                 saveData(houseNo, email, name, password, members)
                             }
