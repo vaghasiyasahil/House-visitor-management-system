@@ -161,7 +161,6 @@ class AddHouseActivity : AppCompatActivity() {
             }catch (e:Exception){
                 Log.d("Checking House Error","Fail To Checking houseNo and User email = $e")
                 Toast.makeText(this@AddHouseActivity, "Fail To Checking House", Toast.LENGTH_SHORT).show()
-            }finally {
                 resetButtonState();
             }
         }
