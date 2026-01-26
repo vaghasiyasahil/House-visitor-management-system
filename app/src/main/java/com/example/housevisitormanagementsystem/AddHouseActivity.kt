@@ -1,20 +1,27 @@
 package com.example.housevisitormanagementsystem
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityAddHouseBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Loader
 import com.example.housevisitormanagementsystem.utils.Validators
+import com.google.firebase.Timestamp
 import types.UserRole
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
+import model.AnnouncementModel
 import model.HouseModel
+import types.AnnouncementsType
 
 class AddHouseActivity : AppCompatActivity() {
 
@@ -116,8 +123,6 @@ class AddHouseActivity : AppCompatActivity() {
         }
         if (!isValid) return
         val members = memberStr.toIntOrNull() ?: 0
-        binding.btnAddHouse.isEnabled = false
-        binding.btnAddHouse.text = "Checking..."
         checkUniquenessAndSave(houseNo, ownerEmail, ownerName, password, members)
     }
 
@@ -128,83 +133,82 @@ class AddHouseActivity : AppCompatActivity() {
         password: String, 
         members: Int
     ) {
-        val houseQuery = db.collection(DatabaseTableName.HOUSES).whereEqualTo("houseNo", houseNo)
-        houseQuery.get().addOnSuccessListener { houseSnap ->
-            if (!isEditMode && !houseSnap.isEmpty) {
-                Toast.makeText(this,"House Number already exists",Toast.LENGTH_LONG);
-                binding.etHouseNumber.error = "House Number already exists"
-                resetButtonState()
-                return@addOnSuccessListener
-            }
-            val userQuery = db.collection(DatabaseTableName.USER).whereEqualTo("email", email)
-            userQuery.get().addOnSuccessListener { userSnap ->
-                var emailExistsOtherUser = false
-                if (!userSnap.isEmpty) {
-                    if (!isEditMode) {
-                         emailExistsOtherUser = true
-                    } else {
+        lifecycleScope.launch {
+            binding.btnAddHouse.isEnabled = false
+            binding.btnAddHouse.text = "Checking..."
+            try{
+                FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.HOUSES, mapOf("houseNo" to houseNo)){
+                        houseSnap ->
+                    if(houseSnap != null && !isEditMode && !houseSnap.isEmpty){
+                        Toast.makeText(this@AddHouseActivity,"House Number already exists",Toast.LENGTH_LONG);
+                        binding.etHouseNumber.error = "House Number already exists"
+                        resetButtonState()
+                        return@getDocumentsWithEqualToConditions
+                    }else{
+                        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.USER, mapOf("email" to email)){
+                                userSnap ->
+                            if(userSnap!=null && !isEditMode && !userSnap.isEmpty){
+                                Toast.makeText(this@AddHouseActivity,"Email already registered",Toast.LENGTH_LONG);
+                                binding.etOwnerEmail.error = "Email already registered"
+                                resetButtonState()
+                                return@getDocumentsWithEqualToConditions
+                            }else{
+                                saveData(houseNo, email, name, password, members)
+                            }
+                        }
                     }
                 }
-
-                if (emailExistsOtherUser) {
-                    binding.etOwnerEmail.error = "Email already registered"
-                    resetButtonState()
-                    return@addOnSuccessListener
-                }
-                saveData(houseNo, email, name, password, members)
+            }catch (e:Exception){
+                Log.d("Checking House Error","Fail To Checking houseNo and User email = $e")
+                Toast.makeText(this@AddHouseActivity, "Fail To Checking House", Toast.LENGTH_SHORT).show()
+            }finally {
+                resetButtonState();
             }
         }
     }
 
     private fun saveData(houseNo: String, email: String, name: String, password: String, members: Int) {
-        val id = if (isEditMode && houseId != null) houseId!! else generateUniqueId()
-        
+        binding.btnAddHouse.text = if (isEditMode) "Updating..." else "Saving..."
         val house = HouseModel(
-            id = id,
             houseNo = houseNo,
             ownerName = name,
             ownerEmail = email,
             password = password,
             members = members
         )
-
-        val batch = db.batch()
-
-        val houseRef = db.collection(DatabaseTableName.HOUSES).document(id)
-        batch.set(houseRef, house)
-
-        val userMap = hashMapOf(
-            "name" to name,
-            "email" to email,
-            "password" to password,
-            "role" to UserRole.HouseOwner.name,
-            "id" to id
-        )
-
-        db.collection(DatabaseTableName.USER).whereEqualTo("houseId", id).get()
-            .addOnSuccessListener { userSnap ->
-                val userRef = if (!userSnap.isEmpty) {
-                    userSnap.documents[0].reference
-                } else {
-                     db.collection(DatabaseTableName.USER).document(id)
-                }
-                
-                batch.set(userRef, userMap)
-                batch.commit().addOnSuccessListener {
-                    Toast.makeText(this, if (isEditMode) "House Updated" else "House Added", Toast.LENGTH_SHORT).show()
+        if(!isEditMode){
+            lifecycleScope.launch {
+                try{
+                    val houseData = house.copy(
+                        createdAt = Timestamp.now()
+                    )
+                    FirestoreService().addDocument(DatabaseTableName.HOUSES,houseData.toHashMap());
+                    Toast.makeText(this@AddHouseActivity, "House Add Successfully", Toast.LENGTH_LONG).show()
                     finish()
-                }.addOnFailureListener { e ->
-                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }catch (e:Exception){
+                    Log.d("Add House Error","Fail To Add House = $e")
+                    Toast.makeText(this@AddHouseActivity, "Fail To Add House", Toast.LENGTH_SHORT).show()
+                }finally {
                     resetButtonState()
                 }
             }
-    }
-    
-    private fun generateUniqueId(): String {
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        return (1..20)
-            .map { chars.random() }
-            .joinToString("")
+        }else{
+            lifecycleScope.launch {
+                try{
+                    val updatedHouse = house.copy(
+                        updatedAt = Timestamp.now()
+                    )
+                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,houseId!!, updatedHouse.toHashMap())
+                    Toast.makeText(this@AddHouseActivity, "House Updated", Toast.LENGTH_LONG).show()
+                    finish()
+                }catch (e:Exception){
+                    Log.d("Update House Error","Fail To Update House = $e")
+                    Toast.makeText(this@AddHouseActivity, "Fail To Update House", Toast.LENGTH_SHORT).show()
+                }finally {
+                    resetButtonState()
+                }
+            }
+        }
     }
 
     private fun resetButtonState() {
