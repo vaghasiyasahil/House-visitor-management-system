@@ -12,16 +12,29 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.housevisitormanagementsystem.databinding.ActivityViewSecurityGuardBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
+import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.SecurityGuardModel
+import model.VisitorModel
+import services.setBase64Image
+import types.SecurityGuardShiftType
+import types.UserRole
+import types.VisitorStatus
+import utils.TimeAndDateUtils
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Calendar
 import java.util.Locale
 
 class ViewSecurityGuardActivity : AppCompatActivity() {
@@ -30,112 +43,129 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     private lateinit var adapter: SecurityGuardAdapter
     private val db = FirebaseFirestore.getInstance()
     private var allGuards = ArrayList<SecurityGuardModel>()
+    private var searchText = "";
+    private var selectedSecurityGuardFilter: SecurityGuardShiftType? = null;
+    private var securityGuardList: List<SecurityGuardModel> = emptyList()
+    private var filterSecurityGuardList: List<SecurityGuardModel> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewSecurityGuardBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.night_blue)
-
-        setupRecyclerView()
         setupListeners()
-        fetchGuards()
+        getSecurityGuard()
     }
-
-    private fun setupRecyclerView() {
-        adapter = SecurityGuardAdapter(this, allGuards,
-            onEditClick = { guard ->
-                val intent = Intent(this, AddSecurityGuardsActivity::class.java)
-                intent.putExtra("guardData", guard)
-                startActivity(intent)
-            },
-            onDeleteClick = { guard ->
-                showDeleteDialog(guard)
-            }
-        )
-        binding.rvGuards.layoutManager = LinearLayoutManager(this)
-        binding.rvGuards.adapter = adapter
-    }
-
     private fun setupListeners() {
+        binding.main.setOnClickListener {
+            KeyboardUtils.hideKeyboard(this);
+        }
         binding.btnBack.setOnClickListener { finish() }
-        
+
         binding.fabAddGuard.setOnClickListener {
             startActivity(Intent(this, AddSecurityGuardsActivity::class.java))
         }
-
         binding.btnGenerateReport.setOnClickListener {
             generatePDF()
         }
 
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter.filter.filter(s)
+        binding.etSearch.addTextChangedListener {
+            setupFilters();
+        }
+        binding.chipAll.setOnClickListener {
+            selectedSecurityGuardFilter=null
+            setupFilters()
+        }
+        binding.chipMorning.setOnClickListener {
+            selectedSecurityGuardFilter=SecurityGuardShiftType.Morning
+            setupFilters()
+        }
+        binding.chipNight.setOnClickListener {
+            selectedSecurityGuardFilter=SecurityGuardShiftType.Night
+            setupFilters()
+        }
+    }
+
+    private fun getSecurityGuard(){
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.SECURITY_GUARDS,
+            mapOf()
+        ) {
+                snapshot ->
+            val securityList = mutableListOf<SecurityGuardModel>()
+            snapshot?.documents?.forEach {
+                securityList.add(SecurityGuardModel.fromHashMap(it.data ?: emptyMap()))
             }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        // Chip Filters
-        binding.chipGroupFilters.setOnCheckedChangeListener { _, checkedId ->
-            val query = binding.etSearch.text.toString()
-            filterList(query, idToFilterName(checkedId))
-        }
-    }
-    
-    private fun idToFilterName(id: Int): String {
-        return when (id) {
-            R.id.chipMorning -> "Morning"
-            R.id.chipNight -> "Night"
-            else -> "All"
-        }
+            securityGuardList = securityList
+            setupFilters()
+        };
     }
 
-    private fun filterList(query: String, filterType: String) {
-        val filtered = allGuards.filter { guard ->
-            val matchesSearch = guard.name.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT)) ||
-                                guard.email.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT))
-            
-            val matchesFilter = when (filterType) {
-                "Morning" -> guard.shift.equals("Morning", ignoreCase = true)
-                "Night" -> guard.shift.equals("Night", ignoreCase = true)
-                else -> true
-            }
-            matchesSearch && matchesFilter
+    private fun setupFilters() {
+        val searchText = binding.etSearch.text.toString().trim().lowercase()
+        filterSecurityGuardList = securityGuardList.filter {
+                securityGuardModel ->
+            val statusMatch = selectedSecurityGuardFilter == null || securityGuardModel.shift == selectedSecurityGuardFilter
+
+            val searchMatch =
+                searchText.isEmpty() ||
+                        securityGuardModel.name.lowercase().contains(searchText) ||
+                        securityGuardModel.email.lowercase().contains(searchText) ||
+                        securityGuardModel.phoneNumber.lowercase().contains(searchText)
+
+            statusMatch && searchMatch
         }
-        
-        if (filtered.isEmpty()) {
-            binding.tvEmptyState.visibility = View.VISIBLE
-            binding.rvGuards.visibility = View.GONE
-        } else {
-            binding.tvEmptyState.visibility = View.GONE
-            binding.rvGuards.visibility = View.VISIBLE
-        }
-        
-        adapter.updateList(ArrayList(filtered))
+        displayFilteredSecurityGuard()
     }
 
-    private fun fetchGuards() {
-        db.collection(DatabaseTableName.SECURITY_GUARDS)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                allGuards.clear()
-                if (value != null) {
-                    for (doc in value) {
-                        val guard = doc.toObject(SecurityGuardModel::class.java)
-                        allGuards.add(guard)
-                    }
-                }
-                val currentFilter = idToFilterName(binding.chipGroupFilters.checkedChipId)
-                val currentQuery = binding.etSearch.text.toString()
-                filterList(currentQuery, currentFilter)
-            }
+    private fun displayFilteredSecurityGuard() {
+        binding.visitorContainer.removeAllViews()
+        if (filterVisitorsList.isEmpty()) {
+            binding.visitorContainer.visibility = View.GONE
+            binding.tvNoData.visibility = View.VISIBLE
+            return
+        }
+        binding.visitorContainer.visibility = View.VISIBLE
+        binding.tvNoData.visibility = View.GONE
+        for (visitor in filterVisitorsList) {
+            val itemView = layoutInflater.inflate(
+                R.layout.item_all_visitor,
+                binding.visitorContainer,
+                false
+            )
+            itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
+            itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
+            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(
+                ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
+            )
+            itemView.findViewById<TextView>(R.id.visitorHouseInfo).text = "House #${visitor.houseNo}"
+            itemView.findViewById<TextView>(R.id.visitorPurpose).text = visitor.purpose
+            itemView.findViewById<TextView>(R.id.visitorCheckIn).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
+            itemView.findViewById<TextView>(R.id.visitorCheckOut).text = TimeAndDateUtils.formatShortDateTime(visitor.exitTime)
+            itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
+            binding.visitorContainer.addView(itemView)
+        }
     }
+
+//    private fun fetchGuards() {
+//        db.collection(DatabaseTableName.SECURITY_GUARDS)
+//            .addSnapshotListener { value, error ->
+//                if (error != null) {
+//                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
+//                    return@addSnapshotListener
+//                }
+//
+//                allGuards.clear()
+//                if (value != null) {
+//                    for (doc in value) {
+//                        val guard = doc.toObject(SecurityGuardModel::class.java)
+//                        allGuards.add(guard)
+//                    }
+//                }
+//                val currentFilter = idToFilterName(binding.chipGroupFilters.checkedChipId)
+//                val currentQuery = binding.etSearch.text.toString()
+//                filterList(currentQuery, currentFilter)
+//            }
+//    }
 
     private fun showDeleteDialog(guard: SecurityGuardModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
