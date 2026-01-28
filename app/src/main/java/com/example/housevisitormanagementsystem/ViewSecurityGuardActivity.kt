@@ -14,13 +14,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityViewSecurityGuardBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
+import com.example.housevisitormanagementsystem.utils.Loader
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import model.SecurityGuardModel
 import services.setBase64Image
 import types.SecurityGuardShiftType
@@ -126,6 +129,28 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             )
             itemView.findViewById<TextView>(R.id.securityGuardMobile).text = "• ${visitor.phoneNumber}"
             itemView.findViewById<ShapeableImageView>(R.id.securityGuardProfile).setBase64Image(visitor.image)
+
+            itemView.findViewById<android.widget.ImageView>(R.id.btnMore).setOnClickListener { view ->
+                val popup = android.widget.PopupMenu(this, view)
+                popup.menuInflater.inflate(R.menu.menu_guard_options, popup.menu)
+                popup.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_edit -> {
+                            val intent = Intent(this, AddSecurityGuardsActivity::class.java)
+                            intent.putExtra("guardData", visitor)
+                            startActivity(intent)
+                            true
+                        }
+                        R.id.action_delete -> {
+                            showDeleteDialog(visitor)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popup.show()
+            }
+
             binding.securityGuardsContainer.addView(itemView)
         }
     }
@@ -133,7 +158,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     private fun showDeleteDialog(guard: SecurityGuardModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
             title = "Delete Guard?",
-            message = "Are you sure you want to remove ${guard.name}? This process is irreversible.",
+            message = "Are you sure you want to remove ${guard.name}?",
             onConfirm = {
                 deleteGuard(guard)
             }
@@ -141,15 +166,17 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "DeleteGuardDialog")
     }
 
-    private fun deleteGuard(guard: SecurityGuardModel) {
-//        db.collection(DatabaseTableName.SECURITY_GUARDS).document(guard.id)
-//            .delete()
-//            .addOnSuccessListener {
-//                Toast.makeText(this, "Guard deleted successfully", Toast.LENGTH_SHORT).show()
-//            }
-//            .addOnFailureListener { e ->
-//                Toast.makeText(this, "Error deleting: ${e.message}", Toast.LENGTH_SHORT).show()
-//            }
+    private fun deleteGuard(securityGuard: SecurityGuardModel) {
+        lifecycleScope.launch {
+            Loader.showLoader(this@ViewSecurityGuardActivity)
+            val success  = FirestoreService().deleteDocument(DatabaseTableName.SECURITY_GUARDS, securityGuard.id)
+            if(success){
+                Toast.makeText(this@ViewSecurityGuardActivity, "Security Guard deleted successfully", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@ViewSecurityGuardActivity, "Security Guard Delete failed", Toast.LENGTH_SHORT).show()
+            }
+            Loader.closeLoader()
+        }
     }
 
     private fun generatePDF() {
