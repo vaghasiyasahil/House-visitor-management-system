@@ -115,20 +115,20 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         }
         binding.securityGuardsContainer.visibility = View.VISIBLE
         binding.securityGuardsEmptyState.visibility = View.GONE
-        for (visitor in filterSecurityGuardList) {
+        for (securityGuard in filterSecurityGuardList) {
             val itemView = layoutInflater.inflate(
                 R.layout.item_security_guard,
                 binding.securityGuardsContainer,
                 false
             )
-            itemView.findViewById<TextView>(R.id.securityGuardName).text = visitor.name
-            itemView.findViewById<TextView>(R.id.securityGuardEmail).text = visitor.email
-            itemView.findViewById<TextView>(R.id.securityGuardShift).text = visitor.shift.name
+            itemView.findViewById<TextView>(R.id.securityGuardName).text = securityGuard.name
+            itemView.findViewById<TextView>(R.id.securityGuardEmail).text = securityGuard.email
+            itemView.findViewById<TextView>(R.id.securityGuardShift).text = securityGuard.shift.name
             itemView.findViewById<TextView>(R.id.securityGuardShift).setTextColor(
-                ContextCompat.getColor(itemView.context, SecurityGuardShiftType.getColor(visitor.shift))
+                ContextCompat.getColor(itemView.context, SecurityGuardShiftType.getColor(securityGuard.shift))
             )
-            itemView.findViewById<TextView>(R.id.securityGuardMobile).text = "• ${visitor.phoneNumber}"
-            itemView.findViewById<ShapeableImageView>(R.id.securityGuardProfile).setBase64Image(visitor.image)
+            itemView.findViewById<TextView>(R.id.securityGuardMobile).text = "• ${securityGuard.phoneNumber}"
+            itemView.findViewById<ShapeableImageView>(R.id.securityGuardProfile).setBase64Image(securityGuard.image)
 
             itemView.findViewById<android.widget.ImageView>(R.id.btnMore).setOnClickListener { view ->
                 val popup = android.widget.PopupMenu(this, view)
@@ -137,12 +137,12 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
                     when (item.itemId) {
                         R.id.action_edit -> {
                             val intent = Intent(this, AddSecurityGuardsActivity::class.java)
-                            intent.putExtra("guardData", visitor)
+                            intent.putExtra("guardData", securityGuard)
                             startActivity(intent)
                             true
                         }
                         R.id.action_delete -> {
-                            showDeleteDialog(visitor)
+                            showDeleteDialog(securityGuard)
                             true
                         }
                         else -> false

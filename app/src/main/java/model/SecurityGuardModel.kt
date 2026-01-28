@@ -2,8 +2,10 @@ package model
 
 import com.google.firebase.Timestamp
 import types.SecurityGuardShiftType
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class SecurityGuardModel(
     var id: String = "",
     var name: String = "",
@@ -15,7 +17,7 @@ data class SecurityGuardModel(
     var shift: SecurityGuardShiftType = SecurityGuardShiftType.Morning,
     var createdAt : Timestamp? = null,
     var updatedAt : Timestamp? = null
-)  : Serializable {
+)  : Parcelable {
     fun toHashMap(): HashMap<String, Any?> {
         return hashMapOf(
             "id" to id,

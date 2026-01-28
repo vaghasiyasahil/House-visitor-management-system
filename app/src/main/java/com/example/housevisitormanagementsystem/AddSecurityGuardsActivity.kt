@@ -10,7 +10,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -18,21 +18,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityAddSecurityGuardBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
+import model.HouseModel
 import model.SecurityGuardModel
 import services.base64Service
 import types.SecurityGuardShiftType
 import types.UserRole
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class AddSecurityGuardsActivity : AppCompatActivity() {
@@ -110,12 +113,14 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         setupDropdowns()
         
         if (intent.hasExtra("guardData")) {
-            val guard = intent.getSerializableExtra("guardData") as SecurityGuardModel
-            guardId = guard.id
-            isEditMode = true
-            preFillData(guard)
-            binding.btnSaveGuard.text = "Update Guard"
-            binding.etEmail.isEnabled = false
+            val guard = IntentCompat.getParcelableExtra(intent, "guardData", SecurityGuardModel::class.java)
+            if (guard != null) {
+                guardId = guard.id
+                isEditMode = true
+                preFillData(guard)
+                binding.btnSaveGuard.text = "Update Guard"
+                binding.etEmail.isEnabled = false
+            }
         }
 
         setupClickListeners()
@@ -123,7 +128,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
     }
 
     private fun setupDropdowns() {
-        val shifts = arrayOf("Morning", "Night")
+        val shifts = SecurityGuardShiftType.values().map { it.name }
         val shiftAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, shifts)
         binding.actvShift.setAdapter(shiftAdapter)
     }
@@ -246,35 +251,36 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         }
 
         if (!isValid) return
-
-        binding.btnSaveGuard.isEnabled = false
-        binding.btnSaveGuard.text = "Checking..."
-        
         checkUniquenessAndSave(name, email, phone, salary, password, shift)
     }
 
     private fun checkUniquenessAndSave(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
-        db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
-            .addOnSuccessListener { userSnap ->
-                if (!isEditMode && !userSnap.isEmpty) {
-                    binding.etEmail.error = "Email already registered"
-                    resetButtonState()
-                    return@addOnSuccessListener
+
+        lifecycleScope.launch {
+            binding.btnSaveGuard.isEnabled = false
+            binding.btnSaveGuard.text = "Saving..."
+            try{
+                FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER, mapOf("email" to email)){
+                        userSnap ->
+                    if(userSnap!=null && !isEditMode && !userSnap.isEmpty){
+                        Toast.makeText(this@AddSecurityGuardsActivity,"Email already registered",Toast.LENGTH_LONG);
+                        binding.etEmail.error = "Email already registered"
+                        resetButtonState()
+                        return@getDocumentsWithEqualToConditionsOnce
+                    }else{
+                        saveGuard(name, email, phone, salary, password, shift)
+                    }
                 }
-                
-                saveGuard(name, email, phone, salary, password, shift)
+            }catch (e:Exception){
+                Log.d("Checking Security Guard Error","Fail To Checking Security Guard = $e")
+                Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Checking Security Guard", Toast.LENGTH_SHORT).show()
+                resetButtonState();
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error checking uniqueness: ${it.message}", Toast.LENGTH_SHORT).show()
-                resetButtonState()
-            }
+        }
     }
 
     private fun saveGuard(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
-        val id = if (isEditMode && guardId != null) guardId!! else generateUniqueId()
-        
         val guard = SecurityGuardModel(
-            id = id,
             name = name,
             email = email,
             phoneNumber = phone,
@@ -282,46 +288,40 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             password = password,
             image = if (capturedImage != null) base64Service.bitmapToBase64(capturedImage!!) else "",
             shift = SecurityGuardShiftType.fromString(shift)?:SecurityGuardShiftType.Morning,
-            createdAt = if (isEditMode) null else Timestamp.now(),
-            updatedAt = if (isEditMode) Timestamp.now() else null
         )
-        
-        val batch = db.batch()
-        
-        val guardRef = db.collection(DatabaseTableName.SECURITY_GUARDS).document(id)
-        batch.set(guardRef, guard)
-        
-        val userMap = hashMapOf(
-            "name" to name,
-            "email" to email,
-            "password" to password,
-            "role" to UserRole.SecurityGuard.name,
-            "id" to id
-        )
-        
-        db.collection(DatabaseTableName.USER).whereEqualTo("email", email).get()
-            .addOnSuccessListener { userSnap ->
-                val userRef = if (!userSnap.isEmpty) {
-                    userSnap.documents[0].reference
-                } else {
-                    db.collection(DatabaseTableName.USER).document(id)
-                }
-
-                batch.set(userRef, userMap)
-                
-                batch.commit().addOnSuccessListener {
-                    Toast.makeText(this, if (isEditMode) "Guard Updated" else "Guard Saved", Toast.LENGTH_SHORT).show()
+        if(!isEditMode){
+            lifecycleScope.launch {
+                try{
+                    val securityGuard = guard.copy(
+                        createdAt = Timestamp.now()
+                    )
+                    FirestoreService().addDocument(DatabaseTableName.SECURITY_GUARDS,securityGuard.toHashMap());
+                    Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Add Successfully", Toast.LENGTH_LONG).show()
                     finish()
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Error saving: ${it.message}", Toast.LENGTH_SHORT).show()
+                }catch (e:Exception){
+                    Log.d("Add Security Guard Error","Fail To Add Security Guard = $e")
+                    Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Add Security Guard", Toast.LENGTH_SHORT).show()
+                }finally {
                     resetButtonState()
                 }
             }
-    }
-
-    private fun generateUniqueId(): String {
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        return (1..20).map { chars.random() }.joinToString("")
+        }else{
+            lifecycleScope.launch {
+                try{
+                    val securityGuard = guard.copy(
+                        updatedAt = Timestamp.now()
+                    )
+                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,guardId!!, securityGuard.toHashMap())
+                    Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Updated", Toast.LENGTH_LONG).show()
+                    finish()
+                }catch (e:Exception){
+                    Log.d("Update Security Guard Error","Fail To Update Security Guard = $e")
+                    Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Update Security Guard", Toast.LENGTH_SHORT).show()
+                }finally {
+                    resetButtonState()
+                }
+            }
+        }
     }
 
     private fun resetButtonState() {
