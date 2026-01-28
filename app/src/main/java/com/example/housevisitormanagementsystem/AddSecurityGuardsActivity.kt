@@ -1,21 +1,39 @@
 package com.example.housevisitormanagementsystem
 
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Base64
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityAddSecurityGuardBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import model.SecurityGuardModel
+import services.base64Service
 import types.SecurityGuardShiftType
 import types.UserRole
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 class AddSecurityGuardsActivity : AppCompatActivity() {
 
@@ -23,6 +41,58 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private var guardId: String? = null
     private var isEditMode = false
+    private var capturedImage: Bitmap? = null
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            launchCamera()
+        } else {
+            Toast.makeText(this, "Camera permission is required to capture photo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                result.data?.extras?.getParcelable("data", Bitmap::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                result.data?.extras?.get("data") as? Bitmap
+            }
+            
+            if (imageBitmap != null) {
+                setCapturedImage(imageBitmap)
+            }
+        }
+    }
+
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageUri: Uri? = result.data?.data
+            if (imageUri != null) {
+                try {
+                    val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    setCapturedImage(bitmap)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun setCapturedImage(bitmap: Bitmap) {
+        capturedImage = bitmap
+        binding.ivGuardPhoto.setImageBitmap(bitmap)
+        binding.ivGuardPhoto.visibility = View.VISIBLE
+        binding.pickContent.visibility = View.GONE
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +135,12 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         binding.etSalary.editText?.setText(guard.salary)
         binding.etPassword.editText?.setText(guard.password)
         binding.actvShift.setText(guard.shift.name, false)
+        if (guard.image.isNotEmpty()) {
+            val bitmap = base64Service.base64ToBitmap(guard.image)
+            if (bitmap != null) {
+                setCapturedImage(bitmap)
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -75,6 +151,48 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             KeyboardUtils.hideKeyboard(this)
             validateAndSave()
         }
+        binding.btnPickPhoto.setOnClickListener {
+            showImagePickOptions()
+        }
+    }
+
+    private fun showImagePickOptions() {
+        val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add Photo")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> checkCameraPermission()
+                1 -> launchGallery()
+                2 -> dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+    private fun checkCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                launchCamera()
+            }
+            else -> {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+    private fun launchCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            cameraLauncher.launch(takePictureIntent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Camera not found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun launchGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryLauncher.launch(intent)
     }
     
     private fun setupTextWatchers() {
@@ -122,6 +240,11 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             isValid = false
         }
 
+        if (capturedImage == null && !isEditMode) {
+            Toast.makeText(this, "Please select guard photo", Toast.LENGTH_SHORT).show()
+            isValid = false
+        }
+
         if (!isValid) return
 
         binding.btnSaveGuard.isEnabled = false
@@ -157,7 +280,10 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             phoneNumber = phone,
             salary = salary,
             password = password,
-            shift = SecurityGuardShiftType.fromString(shift)?:SecurityGuardShiftType.Morning
+            image = if (capturedImage != null) base64Service.bitmapToBase64(capturedImage!!) else "",
+            shift = SecurityGuardShiftType.fromString(shift)?:SecurityGuardShiftType.Morning,
+            createdAt = if (isEditMode) null else Timestamp.now(),
+            updatedAt = if (isEditMode) Timestamp.now() else null
         )
         
         val batch = db.batch()
