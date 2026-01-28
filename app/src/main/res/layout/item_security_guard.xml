@@ -41,7 +41,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnMore"
             app:layout_constraintStart_toEndOf="@id/securityGuardProfile"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="John Doe" />
+            tools:text="Sahil Vaghasiya" />
 
         <!-- ID -->
         <TextView
@@ -54,7 +54,7 @@
             app:layout_constraintEnd_toEndOf="@id/securityGuardName"
             app:layout_constraintStart_toStartOf="@id/securityGuardName"
             app:layout_constraintTop_toBottomOf="@id/securityGuardName"
-            tools:text="ID: #GD-8821" />
+            tools:text="sahil@gmail.com" />
 
         <!-- Shift Badge -->
         <TextView
@@ -70,7 +70,7 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/securityGuardName"
             app:layout_constraintTop_toBottomOf="@id/securityGuardEmail"
-            tools:text="Morning Shift" />
+            tools:text="Morning" />
 
         <!-- Location -->
         <TextView
@@ -83,7 +83,7 @@
             app:layout_constraintBottom_toBottomOf="@id/securityGuardShift"
             app:layout_constraintStart_toEndOf="@id/securityGuardShift"
             app:layout_constraintTop_toTopOf="@id/securityGuardShift"
-            tools:text="• Block A" />
+            tools:text="• 9000000000" />
 
         <!-- More Button -->
         <ImageView
