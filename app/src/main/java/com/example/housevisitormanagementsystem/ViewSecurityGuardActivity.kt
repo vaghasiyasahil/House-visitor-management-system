@@ -1,6 +1,5 @@
 package com.example.housevisitormanagementsystem
 
-import adapter.SecurityGuardAdapter
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Paint
@@ -9,15 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.housevisitormanagementsystem.databinding.ActivityViewSecurityGuardBinding
 import com.example.housevisitormanagementsystem.dialogs.DeleteConfirmationDialogFragment
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
@@ -26,24 +22,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.SecurityGuardModel
-import model.VisitorModel
 import services.setBase64Image
 import types.SecurityGuardShiftType
-import types.UserRole
 import types.VisitorStatus
-import utils.TimeAndDateUtils
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Calendar
-import java.util.Locale
 
 class ViewSecurityGuardActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityViewSecurityGuardBinding
-    private lateinit var adapter: SecurityGuardAdapter
-    private val db = FirebaseFirestore.getInstance()
-    private var allGuards = ArrayList<SecurityGuardModel>()
-    private var searchText = "";
     private var selectedSecurityGuardFilter: SecurityGuardShiftType? = null;
     private var securityGuardList: List<SecurityGuardModel> = emptyList()
     private var filterSecurityGuardList: List<SecurityGuardModel> = emptyList()
@@ -118,54 +104,31 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     }
 
     private fun displayFilteredSecurityGuard() {
-        binding.visitorContainer.removeAllViews()
-        if (filterVisitorsList.isEmpty()) {
-            binding.visitorContainer.visibility = View.GONE
-            binding.tvNoData.visibility = View.VISIBLE
+        binding.securityGuardsContainer.removeAllViews()
+        if (filterSecurityGuardList.isEmpty()) {
+            binding.securityGuardsContainer.visibility = View.GONE
+            binding.securityGuardsEmptyState.visibility = View.VISIBLE
             return
         }
-        binding.visitorContainer.visibility = View.VISIBLE
-        binding.tvNoData.visibility = View.GONE
-        for (visitor in filterVisitorsList) {
+        binding.securityGuardsContainer.visibility = View.VISIBLE
+        binding.securityGuardsEmptyState.visibility = View.GONE
+        for (visitor in filterSecurityGuardList) {
             val itemView = layoutInflater.inflate(
-                R.layout.item_all_visitor,
-                binding.visitorContainer,
+                R.layout.item_security_guard,
+                binding.securityGuardsContainer,
                 false
             )
-            itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
-            itemView.findViewById<TextView>(R.id.visitorStatus).text = visitor.status.name.uppercase()
-            itemView.findViewById<TextView>(R.id.visitorStatus).setTextColor(
-                ContextCompat.getColor(itemView.context, VisitorStatus.getColor(visitor.status))
+            itemView.findViewById<TextView>(R.id.securityGuardName).text = visitor.name
+            itemView.findViewById<TextView>(R.id.securityGuardEmail).text = visitor.email
+            itemView.findViewById<TextView>(R.id.securityGuardShift).text = visitor.shift.name
+            itemView.findViewById<TextView>(R.id.securityGuardShift).setTextColor(
+                ContextCompat.getColor(itemView.context, SecurityGuardShiftType.getColor(visitor.shift))
             )
-            itemView.findViewById<TextView>(R.id.visitorHouseInfo).text = "House #${visitor.houseNo}"
-            itemView.findViewById<TextView>(R.id.visitorPurpose).text = visitor.purpose
-            itemView.findViewById<TextView>(R.id.visitorCheckIn).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
-            itemView.findViewById<TextView>(R.id.visitorCheckOut).text = TimeAndDateUtils.formatShortDateTime(visitor.exitTime)
-            itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
-            binding.visitorContainer.addView(itemView)
+            itemView.findViewById<TextView>(R.id.securityGuardMobile).text = "• ${visitor.phoneNumber}"
+            itemView.findViewById<ShapeableImageView>(R.id.securityGuardProfile).setBase64Image(visitor.image)
+            binding.securityGuardsContainer.addView(itemView)
         }
     }
-
-//    private fun fetchGuards() {
-//        db.collection(DatabaseTableName.SECURITY_GUARDS)
-//            .addSnapshotListener { value, error ->
-//                if (error != null) {
-//                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
-//                    return@addSnapshotListener
-//                }
-//
-//                allGuards.clear()
-//                if (value != null) {
-//                    for (doc in value) {
-//                        val guard = doc.toObject(SecurityGuardModel::class.java)
-//                        allGuards.add(guard)
-//                    }
-//                }
-//                val currentFilter = idToFilterName(binding.chipGroupFilters.checkedChipId)
-//                val currentQuery = binding.etSearch.text.toString()
-//                filterList(currentQuery, currentFilter)
-//            }
-//    }
 
     private fun showDeleteDialog(guard: SecurityGuardModel) {
         val dialog = DeleteConfirmationDialogFragment.newInstance(
@@ -179,14 +142,14 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     }
 
     private fun deleteGuard(guard: SecurityGuardModel) {
-        db.collection(DatabaseTableName.SECURITY_GUARDS).document(guard.id)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(this, "Guard deleted successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error deleting: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+//        db.collection(DatabaseTableName.SECURITY_GUARDS).document(guard.id)
+//            .delete()
+//            .addOnSuccessListener {
+//                Toast.makeText(this, "Guard deleted successfully", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener { e ->
+//                Toast.makeText(this, "Error deleting: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
     }
 
     private fun generatePDF() {
@@ -238,14 +201,14 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         yPos += rowHeight
         paint.isFakeBoldText = false
 
-        for ((index, item) in allGuards.withIndex()) {
+        for ((index, item) in filterSecurityGuardList.withIndex()) {
             if (yPos > 800) break
 
             canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
             canvas.drawText(item.name.take(18), colName + padding, yPos, paint)
             canvas.drawText(item.email.take(22), colEmail + padding, yPos, paint)
             canvas.drawText(item.phoneNumber, colPhone + padding, yPos, paint)
-            canvas.drawText(item.shift, colShift + padding, yPos, paint)
+            canvas.drawText(item.shift.name, colShift + padding, yPos, paint)
             canvas.drawText(item.salary.toString(), colSalary + padding, yPos, paint)
             
             canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)

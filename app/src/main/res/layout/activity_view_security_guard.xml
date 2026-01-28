@@ -154,7 +154,7 @@
 
     <!-- Empty State View -->
     <TextView
-        android:id="@+id/tvEmptyState"
+        android:id="@+id/securityGuardsEmptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Security Guards not available"
@@ -169,16 +169,31 @@
     <!-- Section Title -->
 
     <!-- Guard List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvGuards"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/filterScrollView"
-        tools:listitem="@layout/item_security_guard" />
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport">
+
+        <LinearLayout
+            android:id="@+id/securityGuardsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvGuards"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/filterScrollView"-->
+<!--        tools:listitem="@layout/item_security_guard" />-->
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

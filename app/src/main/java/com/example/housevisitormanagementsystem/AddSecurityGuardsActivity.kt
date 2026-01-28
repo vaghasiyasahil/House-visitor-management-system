@@ -14,6 +14,7 @@ import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.firestore.FirebaseFirestore
 import constants.DatabaseTableName
 import model.SecurityGuardModel
+import types.SecurityGuardShiftType
 import types.UserRole
 
 class AddSecurityGuardsActivity : AppCompatActivity() {
@@ -63,14 +64,13 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         binding.etPhoneNumber.editText?.setText(guard.phoneNumber)
         binding.etSalary.editText?.setText(guard.salary)
         binding.etPassword.editText?.setText(guard.password)
-        binding.actvShift.setText(guard.shift, false)
+        binding.actvShift.setText(guard.shift.name, false)
     }
 
     private fun setupClickListeners() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnCancel.setOnClickListener { finish() }
         binding.main.setOnClickListener { KeyboardUtils.hideKeyboard(this) }
-
         binding.btnSaveGuard.setOnClickListener {
             KeyboardUtils.hideKeyboard(this)
             validateAndSave()
@@ -157,7 +157,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             phoneNumber = phone,
             salary = salary,
             password = password,
-            shift = shift
+            shift = SecurityGuardShiftType.fromString(shift)?:SecurityGuardShiftType.Morning
         )
         
         val batch = db.batch()
