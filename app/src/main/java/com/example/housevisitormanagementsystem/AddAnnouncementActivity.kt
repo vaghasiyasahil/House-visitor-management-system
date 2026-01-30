@@ -104,17 +104,20 @@ class AddAnnouncementActivity : AppCompatActivity() {
         binding.btnSendNotification.text = if (isEditMode) "Updating..." else "Sending..."
 
         val announcement = AnnouncementModel(
+            id = announcementId ?: "",
             title = title,
             category = AnnouncementsType.fromString(category)?:AnnouncementsType.Other,
             description = description,
-            createdAt = Timestamp.now(),
             createdRole = UserRole.fromString(SharedPreferencesService.getUserRole())?:UserRole.Admin
         )
 
         if(!isEditMode){
             lifecycleScope.launch {
                 try{
-                    FirestoreService().addDocument(DatabaseTableName.ANNOUNCEMENTS,announcement.toHashMap());
+                    val announcementData = announcement.copy(
+                        createdAt = Timestamp.now()
+                    )
+                    FirestoreService().addDocument(DatabaseTableName.ANNOUNCEMENTS,announcementData.toHashMap());
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Sent Successfully", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
@@ -129,7 +132,8 @@ class AddAnnouncementActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try{
                     val updatedAnnouncement = announcement.copy(
-                        updatedAt = Timestamp.now()
+                        updatedAt = Timestamp.now(),
+                        id = announcementId!!,
                     )
                     FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, updatedAnnouncement.toHashMap())
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Updated", Toast.LENGTH_LONG).show()
