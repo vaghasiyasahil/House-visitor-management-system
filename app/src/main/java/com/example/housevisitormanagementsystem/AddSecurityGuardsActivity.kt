@@ -41,9 +41,9 @@ import java.io.InputStream
 class AddSecurityGuardsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddSecurityGuardBinding
-    private val db = FirebaseFirestore.getInstance()
     private var guardId: String? = null
     private var isEditMode = false
+    private var originalGuard: SecurityGuardModel? = null
     private var capturedImage: Bitmap? = null
 
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -115,6 +115,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
         if (intent.hasExtra("guardData")) {
             val guard = IntentCompat.getParcelableExtra(intent, "guardData", SecurityGuardModel::class.java)
             if (guard != null) {
+                originalGuard = guard
                 guardId = guard.id
                 isEditMode = true
                 preFillData(guard)
@@ -280,44 +281,53 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
     }
 
     private fun saveGuard(name: String, email: String, phone: String, salary: String, password: String, shift: String) {
-        val guard = SecurityGuardModel(
-            name = name,
-            email = email,
-            phoneNumber = phone,
-            salary = salary,
-            password = password,
-            image = if (capturedImage != null) base64Service.bitmapToBase64(capturedImage!!) else "",
-            shift = SecurityGuardShiftType.fromString(shift)?:SecurityGuardShiftType.Morning,
-        )
-        if(!isEditMode){
+        val guard = if (isEditMode) {
+            originalGuard?.copy(
+                name = name,
+                email = email,
+                phoneNumber = phone,
+                salary = salary,
+                password = password,
+                shift = SecurityGuardShiftType.fromString(shift) ?: SecurityGuardShiftType.Morning,
+                image = if (capturedImage != null) base64Service.bitmapToBase64(capturedImage!!) else originalGuard?.image ?: "",
+                updatedAt = Timestamp.now()
+            )
+        } else {
+            SecurityGuardModel(
+                name = name,
+                email = email,
+                phoneNumber = phone,
+                salary = salary,
+                password = password,
+                image = if (capturedImage != null) base64Service.bitmapToBase64(capturedImage!!) else "",
+                shift = SecurityGuardShiftType.fromString(shift) ?: SecurityGuardShiftType.Morning,
+                createdAt = Timestamp.now()
+            )
+        }
+
+        if (!isEditMode) {
             lifecycleScope.launch {
-                try{
-                    val securityGuard = guard.copy(
-                        createdAt = Timestamp.now()
-                    )
-                    FirestoreService().addDocument(DatabaseTableName.SECURITY_GUARDS,securityGuard.toHashMap());
+                try {
+                    FirestoreService().addDocument(DatabaseTableName.SECURITY_GUARDS, guard!!.toHashMap());
                     Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Add Successfully", Toast.LENGTH_LONG).show()
                     finish()
-                }catch (e:Exception){
-                    Log.d("Add Security Guard Error","Fail To Add Security Guard = $e")
+                } catch (e: Exception) {
+                    Log.d("Add Security Guard Error", "Fail To Add Security Guard = $e")
                     Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Add Security Guard", Toast.LENGTH_SHORT).show()
-                }finally {
+                } finally {
                     resetButtonState()
                 }
             }
-        }else{
+        } else {
             lifecycleScope.launch {
-                try{
-                    val securityGuard = guard.copy(
-                        updatedAt = Timestamp.now()
-                    )
-                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,guardId!!, securityGuard.toHashMap())
+                try {
+                    FirestoreService().updateDocument(DatabaseTableName.SECURITY_GUARDS, guardId!!, guard!!.toHashMap())
                     Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Updated", Toast.LENGTH_LONG).show()
                     finish()
-                }catch (e:Exception){
-                    Log.d("Update Security Guard Error","Fail To Update Security Guard = $e")
+                } catch (e: Exception) {
+                    Log.d("Update Security Guard Error", "Fail To Update Security Guard = $e")
                     Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Update Security Guard", Toast.LENGTH_SHORT).show()
-                }finally {
+                } finally {
                     resetButtonState()
                 }
             }
