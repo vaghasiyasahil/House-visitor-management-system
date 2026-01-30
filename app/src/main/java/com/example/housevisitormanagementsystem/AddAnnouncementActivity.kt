@@ -27,6 +27,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddAnnouncementBinding
     private var isEditMode = false
     private var announcementId: String? = null
+    private var originalAnnouncement: AnnouncementModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
         val announcement = IntentCompat.getParcelableExtra(intent, DatabaseTableName.ANNOUNCEMENTS, AnnouncementModel::class.java)
         if (announcement != null) {
             isEditMode = true
+            originalAnnouncement = announcement
             announcementId = announcement.id
             binding.etTitle.setText(announcement.title)
             binding.actvCategory.setText(announcement.category.name, false) // false to filter
@@ -103,21 +105,27 @@ class AddAnnouncementActivity : AppCompatActivity() {
         binding.btnSendNotification.isEnabled = false
         binding.btnSendNotification.text = if (isEditMode) "Updating..." else "Sending..."
 
-        val announcement = AnnouncementModel(
-            id = announcementId ?: "",
-            title = title,
-            category = AnnouncementsType.fromString(category)?:AnnouncementsType.Other,
-            description = description,
-            createdRole = UserRole.fromString(SharedPreferencesService.getUserRole())?:UserRole.Admin
-        )
+        val announcement = if (isEditMode) {
+            originalAnnouncement?.copy(
+                title = title,
+                category = AnnouncementsType.fromString(category) ?: AnnouncementsType.Other,
+                description = description,
+                updatedAt = Timestamp.now()
+            )
+        } else {
+            AnnouncementModel(
+                title = title,
+                category = AnnouncementsType.fromString(category) ?: AnnouncementsType.Other,
+                description = description,
+                createdRole = UserRole.fromString(SharedPreferencesService.getUserRole()) ?: UserRole.Admin,
+                createdAt = Timestamp.now()
+            )
+        }
 
         if(!isEditMode){
             lifecycleScope.launch {
                 try{
-                    val announcementData = announcement.copy(
-                        createdAt = Timestamp.now()
-                    )
-                    FirestoreService().addDocument(DatabaseTableName.ANNOUNCEMENTS,announcementData.toHashMap());
+                    FirestoreService().addDocument(DatabaseTableName.ANNOUNCEMENTS,announcement!!.toHashMap());
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Sent Successfully", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
@@ -131,11 +139,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
         }else{
             lifecycleScope.launch {
                 try{
-                    val updatedAnnouncement = announcement.copy(
-                        updatedAt = Timestamp.now(),
-                        id = announcementId!!,
-                    )
-                    FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, updatedAnnouncement.toHashMap())
+                    FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, announcement!!.toHashMap())
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Updated", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
