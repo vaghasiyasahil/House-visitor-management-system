@@ -26,9 +26,9 @@ import types.AnnouncementsType
 class AddHouseActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAddHouseBinding
-    private val db = FirebaseFirestore.getInstance()
     private var houseId: String? = null
     private var isEditMode = false
+    private var originalHouse: HouseModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +43,7 @@ class AddHouseActivity : AppCompatActivity() {
 
         if (intent.hasExtra("houseData")) {
             val house = intent.getSerializableExtra("houseData") as HouseModel
+            originalHouse = house
             houseId = house.id
             isEditMode = true
             preFillData(house)
@@ -168,20 +169,29 @@ class AddHouseActivity : AppCompatActivity() {
 
     private fun saveData(houseNo: String, email: String, name: String, password: String, members: Int) {
         binding.btnAddHouse.text = if (isEditMode) "Updating..." else "Saving..."
-        val house = HouseModel(
-            houseNo = houseNo,
-            ownerName = name,
-            ownerEmail = email,
-            password = password,
-            members = members
-        )
+        val house = if (isEditMode) {
+            originalHouse?.copy(
+                houseNo = houseNo,
+                ownerName = name,
+                ownerEmail = email,
+                password = password,
+                members = members,
+                updatedAt = Timestamp.now()
+            )
+        } else {
+            HouseModel(
+                houseNo = houseNo,
+                ownerName = name,
+                ownerEmail = email,
+                password = password,
+                members = members,
+                createdAt = Timestamp.now()
+            )
+        }
         if(!isEditMode){
             lifecycleScope.launch {
                 try{
-                    val houseData = house.copy(
-                        createdAt = Timestamp.now()
-                    )
-                    FirestoreService().addDocument(DatabaseTableName.HOUSES,houseData.toHashMap());
+                    FirestoreService().addDocument(DatabaseTableName.HOUSES,house!!.toHashMap());
                     Toast.makeText(this@AddHouseActivity, "House Add Successfully", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
@@ -194,10 +204,7 @@ class AddHouseActivity : AppCompatActivity() {
         }else{
             lifecycleScope.launch {
                 try{
-                    val updatedHouse = house.copy(
-                        updatedAt = Timestamp.now()
-                    )
-                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,houseId!!, updatedHouse.toHashMap())
+                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,houseId!!, house!!.toHashMap())
                     Toast.makeText(this@AddHouseActivity, "House Updated", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
