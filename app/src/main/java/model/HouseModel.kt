@@ -1,8 +1,10 @@
 package model
 
 import com.google.firebase.Timestamp
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class HouseModel(
     var id: String = "",
     var houseNo: String = "",
@@ -12,7 +14,7 @@ data class HouseModel(
     var members: Int = 0,
     var createdAt : Timestamp? = null,
     var updatedAt : Timestamp? = null
-) : Serializable {
+) : Parcelable {
 
     fun toHashMap(): HashMap<String, Any?> {
         return hashMapOf(

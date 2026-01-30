@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.core.content.IntentCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityAddHouseBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Loader
@@ -42,12 +43,14 @@ class AddHouseActivity : AppCompatActivity() {
         }
 
         if (intent.hasExtra("houseData")) {
-            val house = intent.getSerializableExtra("houseData") as HouseModel
-            originalHouse = house
-            houseId = house.id
-            isEditMode = true
-            preFillData(house)
-            binding.btnAddHouse.text = "Update House"
+            val house = IntentCompat.getParcelableExtra(intent, "houseData", HouseModel::class.java)
+            if (house != null) {
+                originalHouse = house
+                houseId = house.id
+                isEditMode = true
+                preFillData(house)
+                binding.btnAddHouse.text = "Update House"
+            }
         }
 
         binding.main.setOnClickListener {

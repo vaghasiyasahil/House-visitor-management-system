@@ -118,9 +118,9 @@ class ViewHouseActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.houseCardEmail).text = house.ownerEmail
             itemView.findViewById<TextView>(R.id.houseCardMembers).text = "${house.members} Members"
             itemView.findViewById<FrameLayout>(R.id.houseCardBtnEdit).setOnClickListener {
-                intent = Intent(this,AddHouseActivity::class.java)
-                intent.putExtra("houseData",house)
-                startActivity(intent)
+                val editIntent = Intent(this, AddHouseActivity::class.java)
+                editIntent.putExtra("houseData", house)
+                startActivity(editIntent)
             }
             itemView.findViewById<FrameLayout>(R.id.houseCardBtnDelete).setOnClickListener {
                 showDeleteDialog(house)
