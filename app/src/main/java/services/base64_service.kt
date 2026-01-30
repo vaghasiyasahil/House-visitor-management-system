@@ -9,8 +9,9 @@ import java.io.ByteArrayOutputStream
 
 object base64Service {
     fun bitmapToBase64(bitmap: Bitmap): String {
+        val compressedBitmap = compressBitmap(bitmap)
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
         val bytes = baos.toByteArray()
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
@@ -22,6 +23,23 @@ object base64Service {
         } catch (e: Exception) {
             null
         }
+    }
+    fun compressBitmap(bitmap: Bitmap): Bitmap {
+        val maxWidth = 800
+        val maxHeight = 800
+
+        val ratioBitmap = bitmap.width.toFloat() / bitmap.height.toFloat()
+        val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
+
+        var finalWidth = maxWidth
+        var finalHeight = maxHeight
+
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (maxHeight * ratioBitmap).toInt()
+        } else {
+            finalHeight = (maxWidth / ratioBitmap).toInt()
+        }
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
     }
 
 }
