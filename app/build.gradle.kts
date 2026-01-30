@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.messaging)
     
     // CameraX and ML Kit
     implementation(libs.androidx.camera.core)
