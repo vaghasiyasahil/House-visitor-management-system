@@ -191,31 +191,48 @@ class AddHouseActivity : AppCompatActivity() {
                 createdAt = Timestamp.now()
             )
         }
-        if(!isEditMode){
-            lifecycleScope.launch {
-                try{
-                    FirestoreService().addDocument(DatabaseTableName.HOUSES,house!!.toHashMap());
-                    Toast.makeText(this@AddHouseActivity, "House Add Successfully", Toast.LENGTH_LONG).show()
-                    finish()
-                }catch (e:Exception){
-                    Log.d("Add House Error","Fail To Add House = $e")
-                    Toast.makeText(this@AddHouseActivity, "Fail To Add House", Toast.LENGTH_SHORT).show()
-                }finally {
-                    resetButtonState()
+
+        lifecycleScope.launch {
+            try {
+                if (!isEditMode) {
+                    val addedHouseId = FirestoreService().addDocument(DatabaseTableName.HOUSES, house!!.toHashMap())
+                    if (addedHouseId != null) {
+                        val userData = hashMapOf<String, Any?>(
+                            "id" to addedHouseId,
+                            "email" to email,
+                            "password" to password,
+                            "role" to UserRole.HouseOwner.name,
+                            "name" to name,
+                            "createdAt" to Timestamp.now()
+                        )
+                        FirestoreService().addDocument(DatabaseTableName.USER, userData, addedHouseId)
+                        Toast.makeText(this@AddHouseActivity, "House Add Successfully", Toast.LENGTH_LONG).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@AddHouseActivity, "Fail To Add House", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val success = FirestoreService().updateDocument(DatabaseTableName.HOUSES, houseId!!, house!!.toHashMap())
+                    if (success) {
+                        val userData = hashMapOf<String, Any?>(
+                            "email" to email,
+                            "password" to password,
+                            "role" to UserRole.HouseOwner.name,
+                            "name" to name,
+                            "updatedAt" to Timestamp.now()
+                        )
+                        FirestoreService().updateDocument(DatabaseTableName.USER, houseId!!, userData)
+                        Toast.makeText(this@AddHouseActivity, "House Updated", Toast.LENGTH_LONG).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@AddHouseActivity, "Fail To Update House", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        }else{
-            lifecycleScope.launch {
-                try{
-                    FirestoreService().updateDocument(DatabaseTableName.HOUSES,houseId!!, house!!.toHashMap())
-                    Toast.makeText(this@AddHouseActivity, "House Updated", Toast.LENGTH_LONG).show()
-                    finish()
-                }catch (e:Exception){
-                    Log.d("Update House Error","Fail To Update House = $e")
-                    Toast.makeText(this@AddHouseActivity, "Fail To Update House", Toast.LENGTH_SHORT).show()
-                }finally {
-                    resetButtonState()
-                }
+            } catch (e: Exception) {
+                Log.d(if (isEditMode) "Update House Error" else "Add House Error", "Error: $e")
+                Toast.makeText(this@AddHouseActivity, "Error saving house", Toast.LENGTH_SHORT).show()
+            } finally {
+                resetButtonState()
             }
         }
     }

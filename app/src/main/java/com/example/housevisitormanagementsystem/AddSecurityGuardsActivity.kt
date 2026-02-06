@@ -305,31 +305,47 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
             )
         }
 
-        if (!isEditMode) {
-            lifecycleScope.launch {
-                try {
-                    FirestoreService().addDocument(DatabaseTableName.SECURITY_GUARDS, guard!!.toHashMap());
-                    Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Add Successfully", Toast.LENGTH_LONG).show()
-                    finish()
-                } catch (e: Exception) {
-                    Log.d("Add Security Guard Error", "Fail To Add Security Guard = $e")
-                    Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Add Security Guard", Toast.LENGTH_SHORT).show()
-                } finally {
-                    resetButtonState()
+        lifecycleScope.launch {
+            try {
+                if (!isEditMode) {
+                    val addedGuardId = FirestoreService().addDocument(DatabaseTableName.SECURITY_GUARDS, guard!!.toHashMap())
+                    if (addedGuardId != null) {
+                        val userData = hashMapOf<String, Any?>(
+                            "id" to addedGuardId,
+                            "email" to email,
+                            "password" to password,
+                            "role" to UserRole.SecurityGuard.name,
+                            "name" to name,
+                            "createdAt" to Timestamp.now()
+                        )
+                        FirestoreService().addDocument(DatabaseTableName.USER, userData, addedGuardId)
+                        Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Add Successfully", Toast.LENGTH_LONG).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Add Security Guard", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val success = FirestoreService().updateDocument(DatabaseTableName.SECURITY_GUARDS, guardId!!, guard!!.toHashMap())
+                    if (success) {
+                        val userData = hashMapOf<String, Any?>(
+                            "email" to email,
+                            "password" to password,
+                            "role" to UserRole.SecurityGuard.name,
+                            "name" to name,
+                            "updatedAt" to Timestamp.now()
+                        )
+                        FirestoreService().updateDocument(DatabaseTableName.USER, guardId!!, userData)
+                        Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Updated", Toast.LENGTH_LONG).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Update Security Guard", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        } else {
-            lifecycleScope.launch {
-                try {
-                    FirestoreService().updateDocument(DatabaseTableName.SECURITY_GUARDS, guardId!!, guard!!.toHashMap())
-                    Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Updated", Toast.LENGTH_LONG).show()
-                    finish()
-                } catch (e: Exception) {
-                    Log.d("Update Security Guard Error", "Fail To Update Security Guard = $e")
-                    Toast.makeText(this@AddSecurityGuardsActivity, "Fail To Update Security Guard", Toast.LENGTH_SHORT).show()
-                } finally {
-                    resetButtonState()
-                }
+            } catch (e: Exception) {
+                Log.d(if (isEditMode) "Update Security Guard Error" else "Add Security Guard Error", "Error: $e")
+                Toast.makeText(this@AddSecurityGuardsActivity, "Error saving security guard", Toast.LENGTH_SHORT).show()
+            } finally {
+                resetButtonState()
             }
         }
     }
