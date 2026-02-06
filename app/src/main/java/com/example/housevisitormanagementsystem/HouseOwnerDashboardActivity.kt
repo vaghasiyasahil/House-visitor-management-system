@@ -30,7 +30,9 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHouseOwnerDashboardBinding
     private var pendingVisitors: List<VisitorModel> = emptyList()
     private var isInitialLoad = true
+    private var isAnnouncementInitialLoad = true
     private val processedVisitorIds = mutableSetOf<String>()
+    private val processedAnnouncementIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
 
         checkNotificationPermission()
         getLoginUserHouseNo()
+        listenToAnnouncements()
         setupClickListeners()
     }
 
@@ -97,6 +100,41 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
 
         binding.btnGenerateQR.setOnClickListener {
             startActivity(Intent(this,AddQrCodeActivity::class.java))
+        }
+    }
+
+    private fun listenToAnnouncements() {
+        FirestoreService().getDocumentsQuery(DatabaseTableName.ANNOUNCEMENTS, "createdAt", true) { snapshot ->
+            snapshot?.documentChanges?.forEach { change ->
+                val announcement = model.AnnouncementModel.fromHashMap(change.document.data ?: emptyMap())
+                if (announcement.id.isNotEmpty()) {
+                    when (change.type) {
+                        com.google.firebase.firestore.DocumentChange.Type.ADDED -> {
+                            if (!isAnnouncementInitialLoad && announcement.notifyResidents) {
+                                Log.d("NotificationDebug", "New announcement ADDED: ${announcement.title}")
+                                services.NotificationService.sendLocalNotification(
+                                    this,
+                                    "New Announcement: ${announcement.title}",
+                                    announcement.description
+                                )
+                            }
+                            processedAnnouncementIds.add(announcement.id)
+                        }
+                        com.google.firebase.firestore.DocumentChange.Type.MODIFIED -> {
+                            if (announcement.notifyResidents) {
+                                Log.d("NotificationDebug", "Announcement MODIFIED: ${announcement.title}")
+                                services.NotificationService.sendLocalNotification(
+                                    this,
+                                    "Announcement Update: ${announcement.title}",
+                                    announcement.description
+                                )
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+            isAnnouncementInitialLoad = false
         }
     }
 

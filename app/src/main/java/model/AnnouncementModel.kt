@@ -14,7 +14,8 @@ data class AnnouncementModel(
     var category: AnnouncementsType = AnnouncementsType.Other,
     var createdRole: UserRole = UserRole.Admin,
     var createdAt : Timestamp? = null,
-    var updatedAt : Timestamp? = null
+    var updatedAt : Timestamp? = null,
+    var notifyResidents: Boolean = true
 ) : Parcelable {
 
     fun toHashMap(): HashMap<String, Any?> {
@@ -25,7 +26,8 @@ data class AnnouncementModel(
             "category" to category,
             "createdRole" to createdRole,
             "createdAt" to createdAt,
-            "updatedAt" to updatedAt
+            "updatedAt" to updatedAt,
+            "notifyResidents" to notifyResidents
         )
     }
 
@@ -39,6 +41,7 @@ data class AnnouncementModel(
                 createdRole= UserRole.fromString(map["createdRole"] as? String ?: "")?:UserRole.Admin,
                 createdAt = map["createdAt"] as? Timestamp,
                 updatedAt = map["updatedAt"] as? Timestamp,
+                notifyResidents = map["notifyResidents"] as? Boolean ?: true
             )
         }
     }

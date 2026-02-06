@@ -58,6 +58,7 @@ class AddAnnouncementActivity : AppCompatActivity() {
             binding.etTitle.setText(announcement.title)
             binding.actvCategory.setText(announcement.category.name, false) // false to filter
             binding.etDescription.setText(announcement.description)
+            binding.switchNotify.isChecked = announcement.notifyResidents
             binding.btnSendNotification.text = "Update Announcement"
         }
     }
@@ -110,7 +111,8 @@ class AddAnnouncementActivity : AppCompatActivity() {
                 title = title,
                 category = AnnouncementsType.fromString(category) ?: AnnouncementsType.Other,
                 description = description,
-                updatedAt = Timestamp.now()
+                updatedAt = Timestamp.now(),
+                notifyResidents = binding.switchNotify.isChecked
             )
         } else {
             AnnouncementModel(
@@ -118,7 +120,8 @@ class AddAnnouncementActivity : AppCompatActivity() {
                 category = AnnouncementsType.fromString(category) ?: AnnouncementsType.Other,
                 description = description,
                 createdRole = UserRole.fromString(SharedPreferencesService.getUserRole()) ?: UserRole.Admin,
-                createdAt = Timestamp.now()
+                createdAt = Timestamp.now(),
+                notifyResidents = binding.switchNotify.isChecked
             )
         }
 
