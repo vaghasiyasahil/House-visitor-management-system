@@ -2,6 +2,7 @@ package com.example.housevisitormanagementsystem
 
 import SharedPreferencesService
 import android.content.Intent
+import android.util.Log
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -28,6 +29,8 @@ import utils.TimeAndDateUtils
 class HouseOwnerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHouseOwnerDashboardBinding
     private var pendingVisitors: List<VisitorModel> = emptyList()
+    private var isInitialLoad = true
+    private val processedVisitorIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +44,22 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             insets
         }
 
+        checkNotificationPermission()
         getLoginUserHouseNo()
         setupClickListeners()
+    }
+
+    private fun checkNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != 
+                android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(
+                    this, 
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 
+                    101
+                )
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -84,23 +101,39 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     }
 
     private fun getPendingRequest(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name,"houseNo" to SharedPreferencesService.getUserHouseNo())) {
+        val currentHouseNo = SharedPreferencesService.getUserHouseNo()
+        Log.d("NotificationDebug", "Starting getPendingRequest with HouseNo: $currentHouseNo")
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name,"houseNo" to currentHouseNo)) {
                 snapshot ->
             val visitorList = mutableListOf<VisitorModel>()
             val now = Timestamp.now()
             val tenMinutesInMillis = 10 * 60 * 1000
 
-            snapshot?.documents?.forEach {
-                val visitor = VisitorModel.fromHashMap(it.data ?: emptyMap())
+            snapshot?.documents?.forEach { doc ->
+                val visitor = VisitorModel.fromHashMap(doc.data ?: emptyMap())
+                Log.d("NotificationDebug", "Checking visitor: ${visitor.name}, ID: ${visitor.id}, status: ${visitor.status}")
                 if (visitor.entryTime != null) {
                     val diffMillis = now.toDate().time - visitor.entryTime!!.toDate().time
                     if (diffMillis in 0..tenMinutesInMillis) {
                         visitorList.add(visitor)
-                    }else{
-                        setExpireStatus(visitor.id);
+                        
+                        Log.d("NotificationDebug", "New visitor in time window. isInitialLoad: $isInitialLoad, alreadyProcessed: ${processedVisitorIds.contains(visitor.id)}")
+                        // Notify if it's a new visitor after the initial load
+                        if (!isInitialLoad && !processedVisitorIds.contains(visitor.id)) {
+                            Log.d("NotificationDebug", "Triggering local notification for ${visitor.name}")
+                            services.NotificationService.sendLocalNotification(
+                                this,
+                                "New Visitor Arrival",
+                                "${visitor.name} has arrived for Unit ${visitor.houseNo} - Name: ${visitor.name} - Purpose: ${visitor.purpose}"
+                            )
+                        }
+                        processedVisitorIds.add(visitor.id)
+                    } else {
+                        setExpireStatus(visitor.id)
                     }
                 }
             }
+            isInitialLoad = false
             pendingVisitors = visitorList
             displayPendingVisitors(visitorList)
         };
@@ -227,14 +260,26 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getLoginUserHouseNo(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf()) {
-                snapshot ->
-            snapshot?.documents?.forEach {
-                val houseModel = HouseModel.fromHashMap(it.data ?: emptyMap());
-                SharedPreferencesService.setUserHouseNo(houseModel.houseNo)
+    private fun getLoginUserHouseNo() {
+        val userEmail = SharedPreferencesService.getUserEmail()
+        if (userEmail.isEmpty()) return
+
+        Log.d("NotificationDebug", "Fetching house no for email: $userEmail")
+        FirestoreService().getDocumentsWithEqualToConditionsOnce(
+            DatabaseTableName.HOUSES, 
+            mapOf("ownerEmail" to userEmail)
+        ) { snapshot ->
+            val document = snapshot?.documents?.firstOrNull()
+            Log.d("NotificationDebug", "House doc found: ${document?.id}")
+            if (document != null) {
+                val houseNo = document.getString("houseNo")
+                Log.d("NotificationDebug", "House No retrieved: $houseNo")
+                SharedPreferencesService.setUserHouseNo(houseNo ?: "")
+                getPendingRequest()
+            } else {
+                Log.d("NotificationDebug", "No house found for $userEmail")
+                Toast.makeText(this, "House details not found for $userEmail", Toast.LENGTH_SHORT).show()
             }
-            getPendingRequest()
-        };
+        }
     }
 }

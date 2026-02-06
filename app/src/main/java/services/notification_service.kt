@@ -91,4 +91,39 @@ class NotificationService : FirebaseMessagingService() {
             null
         }
     }
+
+    companion object {
+        fun sendLocalNotification(context: Context, title: String, message: String) {
+            Log.d("NotificationDebug", "sendLocalNotification called: $title - $message")
+            val channelId = "high_importance_channel"
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    channelId,
+                    "High Importance Notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                notificationManager.createNotificationChannel(channel)
+            }
+
+            val intent = Intent(context, SplashActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                context, 0, intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+
+            notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+        }
+    }
 }
