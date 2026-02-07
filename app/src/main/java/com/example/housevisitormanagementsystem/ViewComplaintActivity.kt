@@ -3,17 +3,27 @@ package com.example.housevisitormanagementsystem
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import adapter.ComplaintAdapter
 import android.content.Intent
+import android.util.Log
+import android.view.View
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import com.example.housevisitormanagementsystem.databinding.ActivityViewComplaintBinding
+import com.google.android.material.card.MaterialCardView
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
 import model.ComplaintModel
+import types.AnnouncementsType
+import types.ComplaintStatusType
+import utils.TimeAndDateUtils
 
 class ViewComplaintActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewComplaintBinding
-    private lateinit var adapter: ComplaintAdapter
-    private val complaintList = mutableListOf<ComplaintModel>()
+    private var allComplaintList: List<ComplaintModel> = emptyList()
+    private var filterComplaintList: List<ComplaintModel> = emptyList()
+    private  var selectedComplaintStatusType : ComplaintStatusType?=null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,60 +34,94 @@ class ViewComplaintActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
 
-        setupRecyclerView()
-        setupDummyData()
         setupClickListeners()
-    }
-
-    private fun setupRecyclerView() {
-        adapter = ComplaintAdapter(this, complaintList)
-        binding.rvComplaints.layoutManager = LinearLayoutManager(this)
-        binding.rvComplaints.adapter = adapter
-    }
-
-    private fun setupDummyData() {
-        complaintList.clear()
-        complaintList.add(
-            ComplaintModel(
-                "1", "Water Leakage in Kitchen", "A-104", "Oct 24, 10:30 AM",
-                "The sink pipe is leaking heavily and causing water to pool on the floor near the cabinets.",
-                "In Progress", R.drawable.ic_water_drop, R.color.deep_ocean_blue, R.color.bright_azure_blue
-            )
-        )
-        complaintList.add(
-            ComplaintModel(
-                "2", "Noise Complaint", "B-202", "Oct 23, 11:15 PM",
-                "Loud music playing from the apartment above late at night. It has been happening for 3 days.",
-                "Pending", R.drawable.ic_announcement, R.color.dark_coffee, R.color.orange
-            )
-        )
-        complaintList.add(
-            ComplaintModel(
-                "3", "Elevator Malfunction", "Block C", "Oct 20, 09:00 AM",
-                "Service elevator buttons on 5th floor are not responding.",
-                "Resolved", R.drawable.ic_elevator, R.color.deep_teal, R.color.status_green
-            )
-        )
-        complaintList.add(
-            ComplaintModel(
-                "4", "Unauthorized Parking", "Slot 45", "Oct 25, 08:45 AM",
-                "A silver sedan is parked in my designated spot (Slot 45) since last night.",
-                "Pending", R.drawable.ic_car, R.color.midnight_blue, R.color.purple
-            )
-        )
-        adapter.notifyDataSetChanged()
+        getAllComplaint()
     }
 
     private fun setupClickListeners() {
         binding.btnBack.setOnClickListener {
             finish()
         }
-
         binding.btnGenerateReport.setOnClickListener {
             android.widget.Toast.makeText(this, "Exporting to PDF...", android.widget.Toast.LENGTH_SHORT).show()
         }
         binding.fabAddComplaint.setOnClickListener {
             startActivity(Intent(this,AddComplaintActivity::class.java))
         }
+        binding.chipPending.setOnClickListener {
+            selectedComplaintStatusType= ComplaintStatusType.Pending;
+            setupFilters()
+        }
+        binding.chipInProgress.setOnClickListener {
+            selectedComplaintStatusType=ComplaintStatusType.InProgress;
+            setupFilters()
+        }
+        binding.chipResolved.setOnClickListener {
+            selectedComplaintStatusType=ComplaintStatusType.Resolved;
+            setupFilters()
+        }
+        binding.chipAll.setOnClickListener {
+            selectedComplaintStatusType=null;
+            setupFilters()
+        }
+        binding.etSearch.addTextChangedListener {
+            setupFilters()
+        }
     }
+
+    private fun getAllComplaint(){
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.COMPLAINT, mapOf()) {
+                snapshot ->
+            val announcementsList = mutableListOf<ComplaintModel>()
+            snapshot?.documents?.forEach {
+                announcementsList.add(ComplaintModel.fromHashMap(it.data ?: emptyMap()))
+            }
+            allComplaintList = announcementsList
+            setupFilters()
+        };
+    }
+
+    private fun setupFilters() {
+        val searchText = binding.etSearch.text.toString().trim().lowercase()
+        filterComplaintList = allComplaintList.filter {
+                announcementModel ->
+            val statusMatch = selectedComplaintStatusType == null || announcementModel.status == selectedComplaintStatusType
+
+            val searchMatch =
+                searchText.isEmpty() ||
+                        announcementModel.title.lowercase().contains(searchText) ||
+                        announcementModel.description.lowercase().contains(searchText)
+
+            statusMatch && searchMatch
+        }
+        displayFilteredComplaint()
+        Log.d("","filterComplaintList = ${filterComplaintList.size}")
+    }
+
+    private fun displayFilteredComplaint() {
+        binding.complaintsContainer.removeAllViews()
+        if (filterComplaintList.isEmpty()) {
+            binding.complaintsContainer.visibility = View.GONE
+            binding.tvNoData.visibility = View.VISIBLE
+            return
+        }
+        binding.complaintsContainer.visibility = View.VISIBLE
+        binding.tvNoData.visibility = View.GONE
+        for (announcements in filterComplaintList) {
+            val itemView = layoutInflater.inflate(
+                R.layout.item_complaint,
+                binding.complaintsContainer,
+                false
+            )
+            itemView.findViewById<TextView>(R.id.complaintItemTitle).text = announcements.title
+            itemView.findViewById<TextView>(R.id.complaintItemTime).text = TimeAndDateUtils.formatShortDateTime(announcements.createdAt)
+            itemView.findViewById<TextView>(R.id.complaintItemDescription).text = announcements.description
+            itemView.findViewById<ConstraintLayout>(R.id.complaintItemMain).setOnClickListener {
+                intent = Intent(this,UpdateComplaintStatusActivity::class.java)
+                startActivity(intent)
+            }
+            binding.complaintsContainer.addView(itemView)
+        }
+    }
+
 }

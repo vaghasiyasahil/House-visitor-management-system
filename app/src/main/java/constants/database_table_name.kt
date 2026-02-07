@@ -6,4 +6,5 @@ object DatabaseTableName{
     const val SECURITY_GUARDS = "security_guards";
     const val ANNOUNCEMENTS = "announcements";
     const val VISITOR = "visitor";
+    const val COMPLAINT = "complaint";
 }

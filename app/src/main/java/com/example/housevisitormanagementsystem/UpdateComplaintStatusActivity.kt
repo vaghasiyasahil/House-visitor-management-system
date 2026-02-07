@@ -42,9 +42,9 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
     }
 
     private fun setupUI(complaint: ComplaintModel) {
-        binding.tvComplaintDetail.text = "#CMP-${complaint.id} • ${complaint.houseNo}"
+        binding.tvComplaintDetail.text = "#CMP-${complaint.id} • ${complaint.createdHouseNo}"
         binding.tvDescription.text = complaint.title
-        selectedStatus = complaint.status
+        selectedStatus = complaint.status.name
         updateOptionSelection()
     }
 

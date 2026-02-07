@@ -158,22 +158,63 @@
                 app:chipCornerRadius="20dp"
                 app:chipStrokeWidth="0dp" />
 
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipResolved"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resolved"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipCornerRadius="20dp"
+                app:chipStrokeWidth="0dp" />
+
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
     <!-- RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvComplaints"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvComplaints"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        android:paddingBottom="24dp"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltersScroll"-->
+<!--        tools:listitem="@layout/item_complaint" />-->
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        android:paddingBottom="24dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/chipGroupFiltersScroll"
-        tools:listitem="@layout/item_complaint" />
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport">
+
+        <LinearLayout
+            android:id="@+id/complaintsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Complaint Available"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltersScroll"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddComplaint"
