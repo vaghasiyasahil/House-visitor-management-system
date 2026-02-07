@@ -116,12 +116,19 @@ class ViewComplaintActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.complaintItemTitle).text = complaint.title
             itemView.findViewById<TextView>(R.id.complaintItemTime).text = TimeAndDateUtils.formatShortDateTime(complaint.createdAt)
             itemView.findViewById<TextView>(R.id.complaintItemDescription).text = complaint.description
-            itemView.findViewById<TextView>(R.id.complaintItemStatus).text = complaint.status.name
             itemView.findViewById<ConstraintLayout>(R.id.complaintItemMain).setOnClickListener {
                 val intent = Intent(this, UpdateComplaintStatusActivity::class.java)
                 intent.putExtra("complaint", complaint)
                 startActivity(intent)
             }
+            itemView.findViewById<TextView>(R.id.complaintItemStatus).text = complaint.status.name
+            itemView.findViewById<TextView>(R.id.complaintItemStatus).setTextColor(ContextCompat.getColor(this, ComplaintStatusType.getColor(complaint.status)))
+            itemView.findViewById<TextView>(R.id.complaintItemStatus).setBackgroundColor(
+                ContextCompat.getColor(
+                    itemView.context,
+                    ComplaintStatusType.getBackground(complaint.status)
+                )
+            )
             binding.complaintsContainer.addView(itemView)
         }
     }
