@@ -123,12 +123,7 @@ class ViewComplaintActivity : AppCompatActivity() {
             }
             itemView.findViewById<TextView>(R.id.complaintItemStatus).text = complaint.status.name
             itemView.findViewById<TextView>(R.id.complaintItemStatus).setTextColor(ContextCompat.getColor(this, ComplaintStatusType.getColor(complaint.status)))
-            itemView.findViewById<TextView>(R.id.complaintItemStatus).setBackgroundColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    ComplaintStatusType.getBackground(complaint.status)
-                )
-            )
+
             binding.complaintsContainer.addView(itemView)
         }
     }
