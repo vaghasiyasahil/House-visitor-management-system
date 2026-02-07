@@ -1,19 +1,29 @@
 package com.example.housevisitormanagementsystem
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityUpdateComplaintStatusBinding
+import com.example.housevisitormanagementsystem.utils.Loader
+import com.google.firebase.Timestamp
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import model.ComplaintModel
+import types.ComplaintStatusType
+import types.UserRole
 
 class UpdateComplaintStatusActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUpdateComplaintStatusBinding
     private var selectedStatus: String = "Pending"
+    private var complaintModel:ComplaintModel?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,20 +41,21 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
 
-        val complaint = intent.getSerializableExtra("complaint") as? ComplaintModel
-        if (complaint == null) {
+        complaintModel = intent.getParcelableExtra<ComplaintModel>("complaint")
+        if (complaintModel == null) {
             finish()
             return
         }
 
-        setupUI(complaint)
+        setupUI()
         setupClickListeners()
     }
 
-    private fun setupUI(complaint: ComplaintModel) {
-        binding.tvComplaintDetail.text = "#CMP-${complaint.id} • ${complaint.createdHouseNo}"
-        binding.tvDescription.text = complaint.title
-        selectedStatus = complaint.status.name
+    private fun setupUI() {
+        binding.tvComplaintTitle.text = "${complaintModel?.title?:""}"
+        binding.tvComplaintHouseNo.text = "House No • ${complaintModel?.createdHouseNo?:""}"
+        binding.tvComplaintDescription.text = complaintModel?.description?:""
+        selectedStatus = complaintModel?.status?.name?:"pending"
         updateOptionSelection()
     }
 
@@ -69,8 +80,7 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         }
 
         binding.btnUpdateStatus.setOnClickListener {
-            Toast.makeText(this, "Status updated to $selectedStatus", Toast.LENGTH_SHORT).show()
-            finish()
+            updateStatus();
         }
     }
 
@@ -84,4 +94,31 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         binding.rbResolved.isChecked = selectedStatus == "Resolved"
         binding.optionResolved.isSelected = selectedStatus == "Resolved"
     }
+
+    private fun updateStatus(){
+        if(complaintModel==null){
+            finish();
+        }
+        lifecycleScope.launch {
+            try{
+                Loader.showLoader(this@UpdateComplaintStatusActivity);
+                val updateStatus = ComplaintStatusType.fromString(selectedStatus)
+                complaintModel = complaintModel?.copy(status = updateStatus?:ComplaintStatusType.Pending)
+                val success = FirestoreService().updateDocument(DatabaseTableName.COMPLAINT, complaintModel?.id?:"", complaintModel!!.toHashMap())
+                if (success) {
+                    Toast.makeText(this@UpdateComplaintStatusActivity, "Status updated to ${updateStatus?.name}", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@UpdateComplaintStatusActivity, "Fail To Update Status", Toast.LENGTH_SHORT).show()
+                }
+            }catch (e:Exception){
+                Log.d("","update complaint status = $e")
+                Toast.makeText(this@UpdateComplaintStatusActivity,"Fail To Update Status",Toast.LENGTH_SHORT).show();
+            }finally {
+                Loader.closeLoader();
+            }
+        }
+
+    }
+
 }

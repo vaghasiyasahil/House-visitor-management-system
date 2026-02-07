@@ -107,17 +107,19 @@ class ViewComplaintActivity : AppCompatActivity() {
         }
         binding.complaintsContainer.visibility = View.VISIBLE
         binding.tvNoData.visibility = View.GONE
-        for (announcements in filterComplaintList) {
+        for (complaint in filterComplaintList) {
             val itemView = layoutInflater.inflate(
                 R.layout.item_complaint,
                 binding.complaintsContainer,
                 false
             )
-            itemView.findViewById<TextView>(R.id.complaintItemTitle).text = announcements.title
-            itemView.findViewById<TextView>(R.id.complaintItemTime).text = TimeAndDateUtils.formatShortDateTime(announcements.createdAt)
-            itemView.findViewById<TextView>(R.id.complaintItemDescription).text = announcements.description
+            itemView.findViewById<TextView>(R.id.complaintItemTitle).text = complaint.title
+            itemView.findViewById<TextView>(R.id.complaintItemTime).text = TimeAndDateUtils.formatShortDateTime(complaint.createdAt)
+            itemView.findViewById<TextView>(R.id.complaintItemDescription).text = complaint.description
+            itemView.findViewById<TextView>(R.id.complaintItemStatus).text = complaint.status.name
             itemView.findViewById<ConstraintLayout>(R.id.complaintItemMain).setOnClickListener {
-                intent = Intent(this,UpdateComplaintStatusActivity::class.java)
+                val intent = Intent(this, UpdateComplaintStatusActivity::class.java)
+                intent.putExtra("complaint", complaint)
                 startActivity(intent)
             }
             binding.complaintsContainer.addView(itemView)

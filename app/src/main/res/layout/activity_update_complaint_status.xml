@@ -38,7 +38,16 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/tvComplaintDetail"
+                android:id="@+id/tvComplaintTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="The elevator is not working properly..."
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvComplaintHouseNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="#CMP-8492 • Elevator Malfunction"
@@ -46,13 +55,12 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tvDescription"
+                android:id="@+id/tvComplaintDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="The elevator is not working properly..."
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:text="#CMP-8492 • Elevator Malfunction"
+                android:textColor="@color/text_grey"
+                android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -258,40 +266,6 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Admin Notes (Optional)"
-                android:textColor="@color/text_grey"
-                android:textSize="14sp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilAdminNotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxBackgroundColor="#1A2632"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeWidth="0dp"
-                app:boxStrokeWidthFocused="0dp"
-                app:hintEnabled="false">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAdminNotes"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:gravity="top"
-                    android:hint="Add a note explaining the status change..."
-                    android:padding="16dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_grey"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
