@@ -1,14 +1,17 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
+import androidx.transition.Visibility
 import com.example.housevisitormanagementsystem.databinding.ActivityViewComplaintBinding
 import com.google.android.material.card.MaterialCardView
 import com.yourpackage.services.FirestoreService
@@ -16,6 +19,7 @@ import constants.DatabaseTableName
 import model.ComplaintModel
 import types.AnnouncementsType
 import types.ComplaintStatusType
+import types.UserRole
 import utils.TimeAndDateUtils
 
 class ViewComplaintActivity : AppCompatActivity() {
@@ -33,6 +37,10 @@ class ViewComplaintActivity : AppCompatActivity() {
         // Status bar customization
         window.statusBarColor = ContextCompat.getColor(this, R.color.night_blue)
         window.decorView.systemUiVisibility = 0
+
+        if(UserRole.fromString(SharedPreferencesService.getUserRole())!=UserRole.HouseOwner){
+            binding.fabAddComplaint.visibility=View.GONE;
+        }
 
         setupClickListeners()
         getAllComplaint()
@@ -70,7 +78,13 @@ class ViewComplaintActivity : AppCompatActivity() {
     }
 
     private fun getAllComplaint(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.COMPLAINT, mapOf()) {
+        val filter: Map<String, Any>
+        if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
+            filter = mapOf("createdHouseNo" to SharedPreferencesService.getUserHouseNo())
+        }else{
+            filter = mapOf()
+        }
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.COMPLAINT, filter) {
                 snapshot ->
             val announcementsList = mutableListOf<ComplaintModel>()
             snapshot?.documents?.forEach {
@@ -120,12 +134,15 @@ class ViewComplaintActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.complaintItemTime).text = TimeAndDateUtils.formatShortDateTime(complaint.createdAt)
             itemView.findViewById<TextView>(R.id.complaintItemDescription).text = complaint.description
             itemView.findViewById<ConstraintLayout>(R.id.complaintItemMain).setOnClickListener {
-                val intent = Intent(this, UpdateComplaintStatusActivity::class.java)
-                intent.putExtra("complaint", complaint)
-                startActivity(intent)
+                if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.Admin){
+                    val intent = Intent(this, UpdateComplaintStatusActivity::class.java)
+                    intent.putExtra("complaint", complaint)
+                    startActivity(intent)
+                }
             }
-            itemView.findViewById<TextView>(R.id.complaintItemStatus).text = complaint.status.name
+            itemView.findViewById<TextView>(R.id.complaintItemStatus).text = ComplaintStatusType.toDisplayString(complaint.status)
             itemView.findViewById<TextView>(R.id.complaintItemStatus).setTextColor(ContextCompat.getColor(this, ComplaintStatusType.getColor(complaint.status)))
+            itemView.findViewById<ImageView>(R.id.ivComplaintIcon).setImageResource(ComplaintStatusType.getIcon(complaint.status))
 
             binding.complaintsContainer.addView(itemView)
         }

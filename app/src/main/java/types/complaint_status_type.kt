@@ -1,10 +1,6 @@
 package types
 
 import com.example.housevisitormanagementsystem.R
-import types.AnnouncementsType.Event
-import types.AnnouncementsType.Maintenance
-import types.AnnouncementsType.Other
-import types.AnnouncementsType.Urgent
 
 enum class ComplaintStatusType {
     Pending,
@@ -18,6 +14,14 @@ enum class ComplaintStatusType {
                 "inprogress" -> InProgress
                 "resolved" -> Resolved
                 else -> null
+            }
+        }
+
+        fun toDisplayString(value: ComplaintStatusType): String? {
+            return when (value) {
+                Pending -> "Pending"
+                InProgress -> "In Progress"
+                Resolved -> "Resolved"
             }
         }
 
