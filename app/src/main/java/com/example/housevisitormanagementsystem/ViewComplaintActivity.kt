@@ -74,7 +74,10 @@ class ViewComplaintActivity : AppCompatActivity() {
                 snapshot ->
             val announcementsList = mutableListOf<ComplaintModel>()
             snapshot?.documents?.forEach {
-                announcementsList.add(ComplaintModel.fromHashMap(it.data ?: emptyMap()))
+                val model = ComplaintModel.fromHashMap(it.data ?: emptyMap())
+                if (model.title.isNotEmpty() || model.description.isNotEmpty()) {
+                    announcementsList.add(model)
+                }
             }
             allComplaintList = announcementsList
             setupFilters()
