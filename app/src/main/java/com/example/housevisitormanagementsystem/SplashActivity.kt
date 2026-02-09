@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import services.NotificationService
 import types.UserRole
 
 
@@ -28,6 +29,7 @@ class SplashActivity : AppCompatActivity() {
         }
         Handler(Looper.getMainLooper()).postDelayed({
             SharedPreferencesService.init(this)
+            NotificationService().onNewToken();
             navigateUser();
         },5000)
     }

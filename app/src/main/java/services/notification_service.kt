@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.housevisitormanagementsystem.R
 import com.example.housevisitormanagementsystem.SplashActivity
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.net.HttpURLConnection
@@ -19,10 +20,17 @@ import java.net.URL
 
 class NotificationService : FirebaseMessagingService() {
 
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        Log.d("FCM", "Device Token: $token")
-        SharedPreferencesService.setFcmToken(token)
+    fun onNewToken() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.e("FCM", "Fetching token failed", task.exception)
+                    return@addOnCompleteListener
+                }
+                val token = task.result
+                Log.d("FCM", "FCM Token: $token")
+                SharedPreferencesService.setFcmToken(token)
+            }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
