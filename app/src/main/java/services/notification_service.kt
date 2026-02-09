@@ -1,4 +1,5 @@
 package services
+import SharedPreferencesService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -21,6 +22,7 @@ class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM", "Device Token: $token")
+        SharedPreferencesService.setFcmToken(token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

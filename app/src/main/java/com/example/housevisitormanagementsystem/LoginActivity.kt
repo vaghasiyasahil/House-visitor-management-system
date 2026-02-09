@@ -11,12 +11,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityLoginBinding
 import com.example.housevisitormanagementsystem.utils.KeyboardUtils
 import com.example.housevisitormanagementsystem.utils.Validators
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
+import kotlinx.coroutines.launch
 import types.UserRole
+import types.VisitorStatus
 
 class LoginActivity : AppCompatActivity() {
 
@@ -81,6 +85,9 @@ class LoginActivity : AppCompatActivity() {
                 for (document in documents) {
                     val dbPassword = document.getString("password")
                     if (dbPassword == value) {
+                        lifecycleScope.launch {
+                            FirestoreService().updateDocument(DatabaseTableName.USER, document.getString("id")?:"", mapOf("fcmToken" to SharedPreferencesService.getFcmToken()));
+                        }
                         val role = document.getString("role")
                         val userEmail = document.getString("email")
                         val userId = document.getString("id")

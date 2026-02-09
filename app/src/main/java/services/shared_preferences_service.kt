@@ -8,6 +8,7 @@ object SharedPreferencesService {
     private const val USER_ID = "userId"
     private const val USER_EMAIL = "userEmail"
     private const val USER_HOUSE_NO = "userHouseNo"
+    private const val FCM_TOKEN = "fcmToken"
 
     private lateinit var prefs: SharedPreferences
     fun init(context: Context) {
@@ -29,6 +30,9 @@ object SharedPreferencesService {
     fun getUserHouseNo():String{
         return prefs.getString(USER_HOUSE_NO,"")?:"";
     }
+    fun getFcmToken():String{
+        return prefs.getString(FCM_TOKEN,"")?:"";
+    }
 
 
     fun setIsLogin(value: Boolean?) {
@@ -45,6 +49,9 @@ object SharedPreferencesService {
     }
     fun setUserHouseNo(value: String?){
         prefs.edit().putString(USER_HOUSE_NO,value?:"").apply()
+    }
+    fun setFcmToken(value: String?){
+        prefs.edit().putString(FCM_TOKEN,value?:"").apply()
     }
 
     fun clear() {

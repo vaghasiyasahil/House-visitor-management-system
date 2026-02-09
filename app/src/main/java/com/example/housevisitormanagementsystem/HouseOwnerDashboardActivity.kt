@@ -48,6 +48,8 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
+        binding.tvPreApproveTitle.text=SharedPreferencesService.getFcmToken()
+
         binding.imgProfile.setOnClickListener {
             showLogoutDialog()
         }
