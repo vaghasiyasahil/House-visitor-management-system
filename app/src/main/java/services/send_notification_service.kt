@@ -7,6 +7,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 
 object SendNotificationService {
@@ -38,11 +40,11 @@ object SendNotificationService {
         return credentials.accessToken.tokenValue
     }
 
-    fun sendNotification(
+    suspend fun sendNotification(
         title: String,
         body: String,
         fcmToken: String? = null
-    ) {
+    ) = withContext(Dispatchers.IO) {
         try {
             val accessToken = getAccessToken()
             val notification = JSONObject().apply {
@@ -50,10 +52,10 @@ object SendNotificationService {
                 put("body", body)
             }
             val message = JSONObject().apply {
-                if (!fcmToken.isNullOrEmpty()) {
-                    put("token", fcmToken)
-                } else {
+                if (fcmToken.isNullOrEmpty()) {
                     put("topic", "allUsers")
+                } else {
+                    put("token", fcmToken)
                 }
                 put("notification", notification)
             }

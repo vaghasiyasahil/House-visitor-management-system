@@ -1,14 +1,17 @@
 package services
 import SharedPreferencesService
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.NotificationCompat
 import com.example.housevisitormanagementsystem.R
 import com.example.housevisitormanagementsystem.SplashActivity
@@ -20,7 +23,7 @@ import java.net.URL
 
 class NotificationService : FirebaseMessagingService() {
 
-    fun onNewToken() {
+    fun init() {
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -31,6 +34,30 @@ class NotificationService : FirebaseMessagingService() {
                 Log.d("FCM", "FCM Token: $token")
                 SharedPreferencesService.setFcmToken(token)
             }
+
+        FirebaseMessaging.getInstance()
+            .subscribeToTopic("allUsers")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FCM", "Subscribed to allUsers")
+                } else {
+                    Log.e("FCM", "Topic subscription failed")
+                }
+            }
+    }
+
+    fun getPermission(activity: Activity){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(
+                    activity,
+                                        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    101
+                );
+            }
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

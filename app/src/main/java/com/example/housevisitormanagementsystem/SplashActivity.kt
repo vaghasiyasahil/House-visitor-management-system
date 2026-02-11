@@ -22,6 +22,7 @@ class SplashActivity : AppCompatActivity() {
         enableEdgeToEdge()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         setContentView(R.layout.activity_splash)
+        NotificationService().getPermission(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -29,7 +30,7 @@ class SplashActivity : AppCompatActivity() {
         }
         Handler(Looper.getMainLooper()).postDelayed({
             SharedPreferencesService.init(this)
-            NotificationService().onNewToken();
+            NotificationService().init();
             navigateUser();
         },5000)
     }
