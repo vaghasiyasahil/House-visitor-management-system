@@ -46,20 +46,6 @@ class NotificationService : FirebaseMessagingService() {
             }
     }
 
-    fun getPermission(activity: Activity){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    activity,
-                                        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                    101
-                );
-            }
-        }
-    }
-
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("FCM", "Received message: ${message.messageId}")
