@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import services.NotificationService
@@ -81,13 +82,17 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun navigateUser(){
+        Log.d("login data","is login = ${SharedPreferencesService.getIsLogin()}")
+        Log.d("login data","get User Role = ${SharedPreferencesService.getUserRole()}")
         if(SharedPreferencesService.getIsLogin()){
             if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.Admin){
                 startActivity(Intent(this,AdminDashboardActivity::class.java))
             }else if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.SecurityGuard){
                 startActivity(Intent(this,SecurityGuardDashboardActivity::class.java))
-            }else{
+            }else if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
                 startActivity(Intent(this,HouseOwnerDashboardActivity::class.java))
+            }else{
+                startActivity(Intent(this,LoginActivity::class.java))
             }
         }else{
             startActivity(Intent(this,LoginActivity::class.java))
