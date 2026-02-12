@@ -22,10 +22,14 @@ import types.UserRole
 
 class SplashActivity : AppCompatActivity() {
 
+    private var isTimerFinished = false
+    private var isPermissionHandled = false
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        startApp()
+        isPermissionHandled = true
+        checkAndNavigate()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +44,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         checkNotificationPermission()
+        startApp()
     }
 
     private fun checkNotificationPermission() {
@@ -49,21 +54,30 @@ class SplashActivity : AppCompatActivity() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                startApp()
+                isPermissionHandled = true
+                checkAndNavigate()
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
-            startApp()
+            isPermissionHandled = true
+            checkAndNavigate()
         }
     }
 
     private fun startApp() {
         Handler(Looper.getMainLooper()).postDelayed({
+            isTimerFinished = true
+            checkAndNavigate()
+        }, 2000)
+    }
+
+    private fun checkAndNavigate() {
+        if (isTimerFinished && isPermissionHandled) {
             SharedPreferencesService.init(this)
             NotificationService().init();
             navigateUser();
-        }, 2000)
+        }
     }
 
     fun navigateUser(){
