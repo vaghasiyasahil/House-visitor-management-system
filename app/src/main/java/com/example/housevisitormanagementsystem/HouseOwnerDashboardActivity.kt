@@ -82,15 +82,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
 
         binding.btnGenerateQR.setOnClickListener {
-            lifecycleScope.launch {
-                SendNotificationService.sendNotification(
-                    "title test",
-                    "body test",
-                    "fJnmSNHWSp6_jYKGypMp-i:APA91bF3tSzsLNWwAUky8dgco9qrosCdWjA1RD_goNDbAI7jhldjgOpSmGVpYer_we5SDcoFRQi5C9SFm0mRLpWMJ22YYwC3elvZmodhFc9stoJq26fmA3I"
-//                    "fNioogYCQFmJDGLDwtsXx1:APA91bFV7T-MAKfnPy1V3EEjZeZWl1Ld3E9I9ttsc1xqh3e_4zwSg3YN2KRLdCo7cj3QBO5Q4MZMzywySIqKPwM0pQje3sOoin3B2eybwK1-TgK9Ty5euo8"
-                )
-            }
-//            startActivity(Intent(this,AddQrCodeActivity::class.java))
+            startActivity(Intent(this,AddQrCodeActivity::class.java))
         }
     }
 
