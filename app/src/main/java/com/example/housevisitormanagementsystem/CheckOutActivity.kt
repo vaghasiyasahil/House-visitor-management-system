@@ -19,10 +19,13 @@ import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.VisitorModel
+import services.SendNotificationService
 import services.setBase64Image
 import types.UserRole
 import types.VisitorStatus
 import utils.TimeAndDateUtils
+import com.example.housevisitormanagementsystem.utils.Loader
+
 
 class CheckOutActivity : AppCompatActivity() {
 
@@ -87,11 +90,14 @@ class CheckOutActivity : AppCompatActivity() {
         }
     }
 
-    private fun setCheckedOutStatus(docId:String){
+    private fun setCheckedOutStatus(visitor:VisitorModel){
         lifecycleScope.launch {
+            Loader.showLoader(this@CheckOutActivity);
+            SendNotificationService.sendNotification("Visitor Check Out","${visitor.name} ${visitor.mobile}",visitor.houseOwnerFcmToken)
+            Loader.closeLoader();
             FirestoreService().updateDocument(
                 DatabaseTableName.VISITOR,
-                docId,
+                visitor.id,
                 mapOf(
                     "status" to VisitorStatus.CheckedOut.name,
                     "exitTime" to Timestamp.now(),
@@ -127,7 +133,7 @@ class CheckOutActivity : AppCompatActivity() {
             itemView.findViewById<TextView>(R.id.visitorEntryTime).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
             itemView.findViewById<View>(R.id.btnCheckOut).setOnClickListener {
-                setCheckedOutStatus(visitor.id)
+                setCheckedOutStatus(visitor)
             }
             binding.visitorContainer.addView(itemView)
         }

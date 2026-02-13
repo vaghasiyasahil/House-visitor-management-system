@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import adapter.HouseSearchAdapter
 import android.Manifest
 import android.app.Activity
@@ -31,6 +32,8 @@ import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.HouseModel
 import model.VisitorModel
+import services.NotificationService
+import services.SendNotificationService
 import services.base64Service
 import types.VisitorStatus
 
@@ -200,6 +203,18 @@ class CheckInActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.btnCheckInVisitor.isEnabled = false
 
+        var ownerEmail = ""
+        var houseOwnerFcmToken = ""
+        for(house in houseList){
+            ownerEmail = house.ownerEmail;
+        }
+        FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER,mapOf("email" to ownerEmail)){
+                userSnap ->
+            if(userSnap!=null && !userSnap.isEmpty){
+                houseOwnerFcmToken = userSnap.documents[0].getString("fcmToken")?:""
+            }
+        }
+
         val visitorModel = VisitorModel(
             name = binding.etVisitorName.text.toString(),
             houseNo = binding.etHouseNo.text.toString(),
@@ -207,11 +222,14 @@ class CheckInActivity : AppCompatActivity() {
             purpose = binding.etPurpose.text.toString(),
             status = VisitorStatus.Pending,
             visitorPhoto = base64Service.bitmapToBase64(capturedImage!!),
-            entryTime = Timestamp.now()
+            entryTime = Timestamp.now(),
+            houseOwnerFcmToken = houseOwnerFcmToken,
+            securityGuardFcmToken = SharedPreferencesService.getFcmToken()
         );
         lifecycleScope.launch{
             val docId = FirestoreService().addDocument(DatabaseTableName.VISITOR,visitorModel.toHashMap());
             if (docId != null) {
+                SendNotificationService.sendNotification("New Visitor","${binding.etVisitorName.text} ${binding.etMobileNumber.text}",houseOwnerFcmToken)
                 Toast.makeText(
                     this@CheckInActivity,
                     "Visitor checked in successfully",

@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
+import services.SendNotificationService
 import services.setBase64Image
 import utils.TimeAndDateUtils
 
@@ -83,7 +84,7 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
                     if (diffMillis in 0..tenMinutesInMillis) {
                         visitorList.add(visitor)
                     }else{
-                        setExpireStatus(visitor.id);
+                        setExpireStatus(visitor);
                     }
                 }
             }
@@ -92,9 +93,9 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         };
     }
 
-    private fun setExpireStatus(docId:String){
+    private fun setExpireStatus(visitor:VisitorModel){
         lifecycleScope.launch {
-            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Expired.name));
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("status" to VisitorStatus.Expired.name));
         }
     }
 

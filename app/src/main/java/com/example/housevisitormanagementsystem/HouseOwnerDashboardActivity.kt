@@ -100,7 +100,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
                     if (diffMillis in 0..tenMinutesInMillis) {
                         visitorList.add(visitor)
                     }else{
-                        setExpireStatus(visitor.id);
+                        setExpireStatus(visitor);
                     }
                 }
             }
@@ -109,21 +109,23 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         };
     }
 
-    private fun setExpireStatus(docId:String){
+    private fun setExpireStatus(visitor:VisitorModel){
         lifecycleScope.launch {
-            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Expired.name));
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("status" to VisitorStatus.Expired.name));
         }
     }
 
-    private fun setInsideStatus(docId:String){
+    private fun setInsideStatus(visitor:VisitorModel){
         lifecycleScope.launch {
-            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Inside.name));
+            SendNotificationService.sendNotification("Visitor Request Approve","${visitor.name} ${visitor.mobile}",visitor.securityGuardFcmToken)
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("status" to VisitorStatus.Inside.name));
         }
     }
 
-    private fun setRejectStatus(docId:String){
+    private fun setRejectStatus(visitor:VisitorModel){
         lifecycleScope.launch {
-            FirestoreService().updateDocument(DatabaseTableName.VISITOR,docId, mapOf("status" to VisitorStatus.Reject.name));
+            SendNotificationService.sendNotification("Visitor Request Reject","${visitor.name} ${visitor.mobile}",visitor.securityGuardFcmToken)
+            FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("status" to VisitorStatus.Reject.name));
         }
     }
 
@@ -154,7 +156,7 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             } ?: "just now"
             itemView.findViewById<TextView>(R.id.visitorTimeAgo).text = timeAgoText
             itemView.findViewById<TextView>(R.id.visitorStatus).setOnClickListener {
-                setInsideStatus(visitor.id)
+//                setInsideStatus(visitor.id)
             }
             itemView.findViewById<LinearLayout>(R.id.itemPendingVisitor).setOnClickListener {
                 showVisitorRequestDialog(visitor)
@@ -189,12 +191,12 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         }
 
         dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnReject).setOnClickListener {
-            setRejectStatus(visitor.id)
+            setRejectStatus(visitor)
             dialog.dismiss()
         }
 
         dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnApprove).setOnClickListener {
-            setInsideStatus(visitor.id)
+            setInsideStatus(visitor)
             dialog.dismiss()
         }
 

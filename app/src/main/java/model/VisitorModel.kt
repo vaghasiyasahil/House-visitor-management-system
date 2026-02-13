@@ -13,6 +13,8 @@ data class VisitorModel(
     var visitorPhoto: String = "",
     var houseNo: String = "",
     var purpose: String = "",
+    var houseOwnerFcmToken: String = "",
+    var securityGuardFcmToken: String = "",
 ) {
 
     fun toHashMap(): HashMap<String, Any?> {
@@ -25,7 +27,9 @@ data class VisitorModel(
             "exitTime" to exitTime,
             "visitorPhoto" to visitorPhoto,
             "houseNo" to houseNo,
-            "purpose" to purpose
+            "purpose" to purpose,
+            "houseOwnerFcmToken" to houseOwnerFcmToken,
+            "securityGuardFcmToken" to securityGuardFcmToken,
         )
     }
 
@@ -40,7 +44,9 @@ data class VisitorModel(
                 exitTime = map["exitTime"] as? Timestamp,
                 visitorPhoto = map["visitorPhoto"] as? String ?: "",
                 houseNo = map["houseNo"] as? String ?: "",
-                purpose = map["purpose"] as? String?:""
+                purpose = map["purpose"] as? String?:"",
+                houseOwnerFcmToken = map["houseOwnerFcmToken"] as? String?:"",
+                securityGuardFcmToken = map["securityGuardFcmToken"] as? String?:""
             )
         }
     }

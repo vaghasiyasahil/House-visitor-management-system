@@ -18,6 +18,7 @@ import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.AnnouncementModel
+import services.SendNotificationService
 import types.AnnouncementsType
 import types.UserRole
 import java.util.Calendar
@@ -129,6 +130,9 @@ class AddAnnouncementActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try{
                     FirestoreService().addDocument(DatabaseTableName.ANNOUNCEMENTS,announcement!!.toHashMap());
+                    if(binding.switchNotify.isChecked){
+                        SendNotificationService.sendNotification("New Announcement",title)
+                    }
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Sent Successfully", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
@@ -143,6 +147,9 @@ class AddAnnouncementActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try{
                     FirestoreService().updateDocument(DatabaseTableName.ANNOUNCEMENTS,announcementId!!, announcement!!.toHashMap())
+                    if(binding.switchNotify.isChecked){
+                        SendNotificationService.sendNotification("Change Announcement",title)
+                    }
                     Toast.makeText(this@AddAnnouncementActivity, "Announcement Updated", Toast.LENGTH_LONG).show()
                     finish()
                 }catch (e:Exception){
