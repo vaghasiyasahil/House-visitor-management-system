@@ -33,6 +33,7 @@ import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.HouseModel
 import model.SecurityGuardModel
+import services.MailService
 import services.base64Service
 import types.SecurityGuardShiftType
 import types.UserRole
@@ -319,6 +320,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
                             "createdAt" to Timestamp.now()
                         )
                         FirestoreService().addDocument(DatabaseTableName.USER, userData, addedGuardId)
+                        MailService.sendLoginIdAndPassword(UserRole.SecurityGuard.toString(),email,password)
                         Toast.makeText(this@AddSecurityGuardsActivity, "Security Guard Add Successfully", Toast.LENGTH_LONG).show()
                         finish()
                     } else {

@@ -22,6 +22,7 @@ import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.AnnouncementModel
 import model.HouseModel
+import services.MailService
 import types.AnnouncementsType
 
 class AddHouseActivity : AppCompatActivity() {
@@ -206,6 +207,7 @@ class AddHouseActivity : AppCompatActivity() {
                             "createdAt" to Timestamp.now()
                         )
                         FirestoreService().addDocument(DatabaseTableName.USER, userData, addedHouseId)
+                        MailService.sendLoginIdAndPassword(UserRole.HouseOwner.toString(),email,password)
                         Toast.makeText(this@AddHouseActivity, "House Add Successfully", Toast.LENGTH_LONG).show()
                         finish()
                     } else {

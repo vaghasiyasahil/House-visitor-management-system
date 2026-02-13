@@ -80,4 +80,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.google.auth.library.oauth2.http)
     implementation(libs.okhttp)
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
 }

@@ -15,4 +15,13 @@ enum class UserRole {
             }
         }
     }
+
+    override fun toString(): String {
+        return when (this) {
+            Admin -> "Admin"
+            HouseOwner -> "House Owner"
+            SecurityGuard -> "Security Guard"
+        }
+    }
+
 }
