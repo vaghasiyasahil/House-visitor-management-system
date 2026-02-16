@@ -126,16 +126,45 @@
         app:layout_constraintTop_toBottomOf="@id/tabContainer" />
 
     <!-- List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvBlocklist"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvBlocklist"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        android:paddingHorizontal="16dp"-->
+<!--        android:paddingBottom="16dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle" />-->
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"
-        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle" />
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle"
+        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport">
+
+        <LinearLayout
+            android:id="@+id/tempBlockContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Visitor Not Available"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

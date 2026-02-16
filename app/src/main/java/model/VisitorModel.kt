@@ -15,6 +15,7 @@ data class VisitorModel(
     var purpose: String = "",
     var houseOwnerFcmToken: String = "",
     var securityGuardFcmToken: String = "",
+    var isBlocked:Boolean = false,
 ) {
 
     fun toHashMap(): HashMap<String, Any?> {
@@ -30,6 +31,7 @@ data class VisitorModel(
             "purpose" to purpose,
             "houseOwnerFcmToken" to houseOwnerFcmToken,
             "securityGuardFcmToken" to securityGuardFcmToken,
+            "isBlocked" to isBlocked,
         )
     }
 
@@ -46,7 +48,8 @@ data class VisitorModel(
                 houseNo = map["houseNo"] as? String ?: "",
                 purpose = map["purpose"] as? String?:"",
                 houseOwnerFcmToken = map["houseOwnerFcmToken"] as? String?:"",
-                securityGuardFcmToken = map["securityGuardFcmToken"] as? String?:""
+                securityGuardFcmToken = map["securityGuardFcmToken"] as? String?:"",
+                isBlocked = map["isBlocked"] as? Boolean?:false
             )
         }
     }

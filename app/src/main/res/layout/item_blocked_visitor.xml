@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivAvatar"
+                android:id="@+id/visitorImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -43,22 +43,14 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_delivery"
                 android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/ivStatusOverlay"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="bottom|end"
-                android:src="@drawable/ic_block_circle"
-                app:tint="@color/red" />
         </FrameLayout>
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/visitorName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="John Doe"
+            android:text="Sahil Vaghasiya"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -67,16 +59,16 @@
             app:layout_constraintTop_toTopOf="@id/avatarContainer" />
 
         <TextView
-            android:id="@+id/tvDetails"
+            android:id="@+id/visitorMobile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="+1 (555) 019-2834"
+            android:text="+91 7894561235"
             android:textColor="@color/text_grey"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvName"
-            app:layout_constraintTop_toBottomOf="@id/tvName" />
+            app:layout_constraintStart_toStartOf="@id/visitorName"
+            app:layout_constraintTop_toBottomOf="@id/visitorName" />
 
         <LinearLayout
             android:id="@+id/tagContainer"
@@ -85,8 +77,8 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvName"
-            app:layout_constraintTop_toBottomOf="@id/tvDetails">
+            app:layout_constraintStart_toStartOf="@id/visitorName"
+            app:layout_constraintTop_toBottomOf="@id/visitorMobile">
 
             <TextView
                 android:id="@+id/tvReason"
@@ -101,7 +93,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/tvDuration"
+                android:id="@+id/houseNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -112,7 +104,6 @@
                 android:text="Until Oct 15"
                 android:textColor="@color/text_grey"
                 android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_time"
                 app:drawableTint="@color/text_grey" />
         </LinearLayout>
 
