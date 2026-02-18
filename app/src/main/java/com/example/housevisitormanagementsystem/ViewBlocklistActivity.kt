@@ -141,6 +141,10 @@ class ViewBlocklistActivity : AppCompatActivity() {
             )
             itemView.findViewById<TextView>(R.id.visitorName).text = visitor.name
             itemView.findViewById<TextView>(R.id.visitorMobile).text = visitor.mobile
+            itemView.findViewById<TextView>(R.id.tvReason).text = visitor.blockedReason
+            val hasReason = visitor.isBlocked && visitor.blockedReason.isNotEmpty()
+            itemView.findViewById<View>(R.id.reasonContainer).visibility = if (hasReason) View.VISIBLE else View.GONE
+            itemView.findViewById<View>(R.id.divider).visibility = if (hasReason) View.VISIBLE else View.GONE
             itemView.findViewById<TextView>(R.id.houseNo).text = "House #${visitor.houseNo}"
             if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
                 itemView.findViewById<TextView>(R.id.houseNo).visibility = View.GONE
@@ -151,8 +155,12 @@ class ViewBlocklistActivity : AppCompatActivity() {
                 itemView.findViewById<TextView>(R.id.btnAction).text = "Block Visitor"
             }
             itemView.findViewById<TextView>(R.id.btnAction).setOnClickListener {
-                lifecycleScope.launch {
-                    FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("isBlocked" to !visitor.isBlocked));
+                if (visitor.isBlocked) {
+                    lifecycleScope.launch {
+                        FirestoreService().updateDocument(DatabaseTableName.VISITOR,visitor.id, mapOf("isBlocked" to false, "blockedReason" to ""));
+                    }
+                } else {
+                    showBlockVisitorDialog(visitor)
                 }
             }
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
@@ -174,5 +182,40 @@ class ViewBlocklistActivity : AppCompatActivity() {
             binding.tabBlocked.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding.tvSectionTitle.text = "Currently Blocked"
         }
+    }
+
+    private fun showBlockVisitorDialog(visitor: VisitorModel) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_block_visitor, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<TextView>(R.id.tvDescription).text = "Are you sure you want to block ${visitor.name}?\nThey will no longer be able to request entry."
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnBlockVisitor).setOnClickListener {
+            val reason = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etReason).text.toString().trim()
+            if (reason.isEmpty()) {
+                Toast.makeText(this, "Please provide a reason", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                FirestoreService().updateDocument(
+                    DatabaseTableName.VISITOR,
+                    visitor.id,
+                    mapOf("isBlocked" to true, "blockedReason" to reason)
+                )
+                dialog.dismiss()
+                Toast.makeText(this@ViewBlocklistActivity, "${visitor.name} blocked", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
     }
 }

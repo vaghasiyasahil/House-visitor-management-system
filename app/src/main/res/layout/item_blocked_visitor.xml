@@ -81,52 +81,70 @@
             app:layout_constraintTop_toBottomOf="@id/visitorMobile">
 
             <TextView
-                android:id="@+id/tvReason"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_gray"
-                android:backgroundTint="#33E74C3C"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="Construction"
-                android:textColor="@color/red"
-                android:textSize="12sp" />
-
-            <TextView
                 android:id="@+id/houseNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_badge_gray"
-                android:drawablePadding="6dp"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Until Oct 15"
+                android:text="House #101"
                 android:textColor="@color/text_grey"
-                android:textSize="12sp"
-                app:drawableTint="@color/text_grey" />
+                android:textSize="12sp" />
         </LinearLayout>
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="20dp"
-            android:background="#1AFFFFFF"
-            app:layout_constraintTop_toBottomOf="@id/tagContainer" />
 
         <TextView
             android:id="@+id/btnAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:padding="8dp"
             android:text="Unblock Visitor"
             android:textColor="@color/bright_azure_blue"
             android:textSize="14sp"
             android:textStyle="bold"
+            android:background="@drawable/bg_badge_event"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toBottomOf="@id/tagContainer" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#1AFFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/btnAction" />
+
+        <LinearLayout
+            android:id="@+id/reasonContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_badge_gray"
+            android:backgroundTint="#1AE74C3C"
+            android:orientation="vertical"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:text="BLOCK REASON"
+                android:textColor="@color/red"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Construction work in progress..."
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -60,7 +60,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
         android:background="@drawable/bg_search_bar"
         app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
@@ -84,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_search_bar"
         android:orientation="horizontal"
         android:padding="4dp"
@@ -117,7 +116,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="6dp"
         android:text="Currently Blocked"
         android:textColor="@color/white"
         android:textSize="20sp"
@@ -125,20 +124,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabContainer" />
 
-    <!-- List -->
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/rvBlocklist"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginBottom="8dp"-->
-<!--        android:clipToPadding="false"-->
-<!--        android:paddingHorizontal="16dp"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/btnGenerateReport"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/tvSectionTitle" />-->
-
     <ScrollView
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
