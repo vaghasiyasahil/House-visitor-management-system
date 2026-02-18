@@ -101,14 +101,25 @@ class CheckInActivity : AppCompatActivity() {
         }
 
         // Show House No dropdown on focus or click
-        binding.etHouseNo.setOnClickListener {
+        binding.etHouseNo.setOnTouchListener { _, _ ->
             binding.etHouseNo.showDropDown()
-            binding.etHouseNo.requestFocus()
+            false
+        }
+        binding.etHouseNo.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etHouseNo.showDropDown()
+            }
         }
         
         // Show Purpose dropdown on click
-        binding.etPurpose.setOnClickListener {
+        binding.etPurpose.setOnTouchListener { _, _ ->
             binding.etPurpose.showDropDown()
+            false
+        }
+        binding.etPurpose.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etPurpose.showDropDown()
+            }
         }
 
         binding.btnCapturePhoto.setOnClickListener {
@@ -265,11 +276,5 @@ class CheckInActivity : AppCompatActivity() {
         val purposes = arrayOf("Guest", "Delivery", "Service", "Maintenance", "Emergency", "Courier", "Other")
         val adapter = ArrayAdapter(this, R.layout.item_dropdown, purposes)
         binding.etPurpose.setAdapter(adapter)
-        
-        // Ensure dropdown shows on click even if text is present
-        binding.etPurpose.setOnTouchListener { v, event ->
-            binding.etPurpose.showDropDown()
-            false
-        }
     }
 }
