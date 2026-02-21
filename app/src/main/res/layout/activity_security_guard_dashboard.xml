@@ -146,7 +146,7 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
-                    <!-- Expected Today -->
+                    <!-- Total Visitors Today -->
                     <LinearLayout
                         android:layout_width="140dp"
                         android:layout_height="160dp"
@@ -166,10 +166,10 @@
                             app:tint="@color/badge_purple_text" />
 
                         <TextView
-                            android:id="@+id/tvExpectedTodayCount"
+                            android:id="@+id/tvTotalVisitorsTodayCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="45"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="28sp"
                             android:textStyle="bold" />
@@ -177,12 +177,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Expected Today"
+                            android:text="Total Visitors Today"
                             android:textColor="@color/text_grey"
                             android:textSize="12sp" />
                     </LinearLayout>
 
-                    <!-- Security Alerts -->
+                    <!-- Total Announcements -->
                     <LinearLayout
                         android:layout_width="140dp"
                         android:layout_height="160dp"
@@ -195,16 +195,16 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_marginBottom="15dp"
-                            android:background="@drawable/bg_badge_red"
+                            android:background="@drawable/bg_badge_orange"
                             android:padding="6dp"
-                            android:src="@drawable/ic_warning_triangle"
-                            app:tint="@color/red" />
+                            android:src="@drawable/ic_announcement"
+                            app:tint="@color/badge_orange_text" />
 
                         <TextView
-                            android:id="@+id/tvSecurityAlertsCount"
+                            android:id="@+id/tvTotalAnnouncementsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="28sp"
                             android:textStyle="bold" />
@@ -212,7 +212,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Security Alerts"
+                            android:text="Total Announcements"
                             android:textColor="@color/text_grey"
                             android:textSize="12sp" />
                     </LinearLayout>

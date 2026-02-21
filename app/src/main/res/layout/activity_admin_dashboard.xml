@@ -182,11 +182,11 @@
                                 app:tint="@color/bright_blue" />
 
                             <TextView
-                                android:id="@+id/txtVal1"
+                                android:id="@+id/txtTotalVisitors"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp"
-                                android:text="@string/number"
+                                android:text="0"
                                 android:textColor="@color/white"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
@@ -196,10 +196,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/active_visitors"
+                                android:text="Total Visitors"
                                 android:textColor="@color/cool_gray"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/txtVal1" />
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalVisitors" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -362,6 +362,114 @@
                                 android:textColor="@color/cool_gray"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/txtTotalAnnouncements" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        app:cardBackgroundColor="@color/dark_navy"
+                        app:cardCornerRadius="24dp"
+                        app:strokeWidth="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <View
+                                android:id="@+id/bgIconComplaints"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_dark_bg"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Total Complaints"
+                                android:src="@drawable/ic_warning_triangle"
+                                app:layout_constraintBottom_toBottomOf="@id/bgIconComplaints"
+                                app:layout_constraintEnd_toEndOf="@id/bgIconComplaints"
+                                app:layout_constraintStart_toStartOf="@id/bgIconComplaints"
+                                app:layout_constraintTop_toTopOf="@id/bgIconComplaints"
+                                app:tint="@color/red" />
+
+                            <TextView
+                                android:id="@+id/txtTotalComplaints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/bgIconComplaints" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Complaints"
+                                android:textColor="@color/cool_gray"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalComplaints" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        app:cardBackgroundColor="@color/dark_navy"
+                        app:cardCornerRadius="24dp"
+                        app:strokeWidth="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <View
+                                android:id="@+id/bgIconBlocked"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_dark_bg"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Total Blocked Visitors"
+                                android:src="@drawable/ic_block_circle"
+                                app:layout_constraintBottom_toBottomOf="@id/bgIconBlocked"
+                                app:layout_constraintEnd_toEndOf="@id/bgIconBlocked"
+                                app:layout_constraintStart_toStartOf="@id/bgIconBlocked"
+                                app:layout_constraintTop_toTopOf="@id/bgIconBlocked"
+                                app:tint="@color/steel_blue_gray" />
+
+                            <TextView
+                                android:id="@+id/txtTotalBlockedVisitors"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/bgIconBlocked" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Blocked Visitors"
+                                android:textColor="@color/cool_gray"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/txtTotalBlockedVisitors" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>

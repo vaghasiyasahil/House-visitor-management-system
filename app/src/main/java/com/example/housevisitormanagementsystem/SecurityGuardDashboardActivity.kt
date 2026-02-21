@@ -24,12 +24,14 @@ import kotlinx.coroutines.launch
 import services.SendNotificationService
 import services.setBase64Image
 import utils.TimeAndDateUtils
+import types.UserRole
 
 class SecurityGuardDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecurityGuardDashboardBinding
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
     private var pendingVisitors: List<VisitorModel> = emptyList()
+    private var registrations = listOf<com.google.firebase.firestore.ListenerRegistration>()
 
     private val timeUpdater = object : Runnable {
         override fun run() {
@@ -67,7 +69,17 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         binding.tvViewAllActivity.setOnClickListener {
             startActivity(Intent(this, AllVisitorsActivity::class.java))
         }
+        setupDashboardCounts()
         getPendingRequest()
+    }
+
+    private fun setupDashboardCounts() {
+        registrations.forEach { it.remove() }
+        registrations = FirestoreService().getDashboardStatistics(UserRole.SecurityGuard) { stats ->
+            binding.tvVisitorsInsideCount.text = (stats["visitorsInside"] ?: 0).toString()
+            binding.tvTotalVisitorsTodayCount.text = (stats["totalVisitorsToday"] ?: 0).toString()
+            binding.tvTotalAnnouncementsCount.text = (stats["totalAnnouncements"] ?: 0).toString()
+        }
     }
 
     private fun getPendingRequest(){
@@ -170,4 +182,8 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         handler.removeCallbacks(timeUpdater)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        registrations.forEach { it.remove() }
+    }
 }

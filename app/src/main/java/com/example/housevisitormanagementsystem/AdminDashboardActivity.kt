@@ -7,10 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityAdminDashboardBinding
+import com.yourpackage.services.FirestoreService
+import types.UserRole
 
 class AdminDashboardActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAdminDashboardBinding
+    private var registrations = listOf<com.google.firebase.firestore.ListenerRegistration>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,20 +55,15 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
     private fun setupDashboardCounts() {
-        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-
-        db.collection(constants.DatabaseTableName.HOUSES).addSnapshotListener { value, _ ->
-            binding.txtTotalHouses.text = (value?.size() ?: 0).toString()
+        registrations.forEach { it.remove() }
+        registrations = FirestoreService().getDashboardStatistics(UserRole.Admin) { stats ->
+            binding.txtTotalHouses.text = (stats["totalHouses"] ?: 0).toString()
+            binding.txtTotalGuards.text = (stats["totalGuards"] ?: 0).toString()
+            binding.txtTotalAnnouncements.text = (stats["totalAnnouncements"] ?: 0).toString()
+            binding.txtTotalVisitors.text = (stats["totalVisitors"] ?: 0).toString()
+            binding.txtTotalComplaints.text = (stats["totalComplaints"] ?: 0).toString()
+            binding.txtTotalBlockedVisitors.text = (stats["totalBlockedVisitors"] ?: 0).toString()
         }
-
-        db.collection(constants.DatabaseTableName.SECURITY_GUARDS).addSnapshotListener { value, _ ->
-            binding.txtTotalGuards.text = (value?.size() ?: 0).toString()
-        }
-
-        db.collection(constants.DatabaseTableName.ANNOUNCEMENTS).addSnapshotListener { value, _ ->
-            binding.txtTotalAnnouncements.text = (value?.size() ?: 0).toString()
-        }
-        
         setupProfile()
     }
 
@@ -101,5 +99,10 @@ class AdminDashboardActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        registrations.forEach { it.remove() }
     }
 }

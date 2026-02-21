@@ -1,5 +1,6 @@
 package com.yourpackage.services
 
+import SharedPreferencesService
 import com.google.firebase.firestore.*
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
@@ -221,4 +222,97 @@ class FirestoreService {
         }
     }
 
+    fun getDashboardStatistics(
+        role: types.UserRole,
+        houseNo: String? = null,
+        callback: (Map<String, Int>) -> Unit
+    ): List<ListenerRegistration> {
+        val registrations = mutableListOf<ListenerRegistration>()
+        val stats = mutableMapOf<String, Int>()
+
+        val updateCallback = {
+            callback(stats.toMap())
+        }
+
+        when (role) {
+            types.UserRole.Admin -> {
+                registrations.add(firestore.collection(DatabaseTableName.HOUSES).addSnapshotListener { v, _ ->
+                    stats["totalHouses"] = v?.size() ?: 0
+                    updateCallback()
+                })
+                registrations.add(firestore.collection(DatabaseTableName.SECURITY_GUARDS).addSnapshotListener { v, _ ->
+                    stats["totalGuards"] = v?.size() ?: 0
+                    updateCallback()
+                })
+                registrations.add(firestore.collection(DatabaseTableName.ANNOUNCEMENTS).addSnapshotListener { v, _ ->
+                    stats["totalAnnouncements"] = v?.size() ?: 0
+                    updateCallback()
+                })
+                registrations.add(firestore.collection(DatabaseTableName.VISITOR).addSnapshotListener { v, _ ->
+                    stats["totalVisitors"] = v?.size() ?: 0
+                    updateCallback()
+                })
+                registrations.add(firestore.collection(DatabaseTableName.COMPLAINT).addSnapshotListener { v, _ ->
+                    stats["totalComplaints"] = v?.size() ?: 0
+                    updateCallback()
+                })
+                registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereEqualTo("isBlocked", true).addSnapshotListener { v, _ ->
+                    stats["totalBlockedVisitors"] = v?.size() ?: 0
+                    updateCallback()
+                })
+            }
+            types.UserRole.HouseOwner -> {
+                if (houseNo != null) {
+                    registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereEqualTo("houseNo", houseNo).addSnapshotListener { v, _ ->
+                        stats["myVisitors"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                    registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereEqualTo("houseNo", houseNo).whereEqualTo("status", types.VisitorStatus.Pending.name).addSnapshotListener { v, _ ->
+                        stats["pendingRequests"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                    registrations.add(firestore.collection(DatabaseTableName.ANNOUNCEMENTS).addSnapshotListener { v, _ ->
+                        stats["totalAnnouncements"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                    registrations.add(firestore.collection(DatabaseTableName.COMPLAINT).whereEqualTo("createdHouseNo", houseNo).addSnapshotListener { v, _ ->
+                        stats["myComplaints"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                    registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereEqualTo("houseNo", houseNo).whereEqualTo("isBlocked", true).addSnapshotListener { v, _ ->
+                        stats["myBlockedVisitors"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                    registrations.add(firestore.collection(DatabaseTableName.QR_CODES).whereEqualTo("houseOwnerEmail", SharedPreferencesService.getUserEmail()).addSnapshotListener { v, _ ->
+                        stats["myActiveQRCode"] = v?.size() ?: 0
+                        updateCallback()
+                    })
+                }
+            }
+            types.UserRole.SecurityGuard -> {
+                registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereEqualTo("status", types.VisitorStatus.Inside.name).addSnapshotListener { v, _ ->
+                    stats["visitorsInside"] = v?.size() ?: 0
+                    updateCallback()
+                })
+
+                val calendar = java.util.Calendar.getInstance()
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+                calendar.set(java.util.Calendar.MINUTE, 0)
+                calendar.set(java.util.Calendar.SECOND, 0)
+                calendar.set(java.util.Calendar.MILLISECOND, 0)
+                val todayStart = com.google.firebase.Timestamp(calendar.time)
+
+                registrations.add(firestore.collection(DatabaseTableName.VISITOR).whereGreaterThanOrEqualTo("entryTime", todayStart).addSnapshotListener { v, _ ->
+                    stats["totalVisitorsToday"] = v?.size() ?: 0
+                    updateCallback()
+                })
+
+                registrations.add(firestore.collection(DatabaseTableName.ANNOUNCEMENTS).addSnapshotListener { v, _ ->
+                    stats["totalAnnouncements"] = v?.size() ?: 0
+                    updateCallback()
+                })
+            }
+        }
+        return registrations
+    }
 }

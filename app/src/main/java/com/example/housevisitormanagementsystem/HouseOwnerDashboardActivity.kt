@@ -27,9 +27,12 @@ import services.setBase64Image
 import types.VisitorStatus
 import utils.TimeAndDateUtils
 
+import types.UserRole
+
 class HouseOwnerDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHouseOwnerDashboardBinding
     private var pendingVisitors: List<VisitorModel> = emptyList()
+    private var registrations = listOf<com.google.firebase.firestore.ListenerRegistration>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +90,8 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     }
 
     private fun getPendingRequest(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name,"houseNo" to SharedPreferencesService.getUserHouseNo())) {
+        val houseNo = SharedPreferencesService.getUserHouseNo()
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf("status" to VisitorStatus.Pending.name, "houseNo" to houseNo)) {
                 snapshot ->
             val visitorList = mutableListOf<VisitorModel>()
             val now = Timestamp.now()
@@ -233,14 +237,29 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
     }
 
 
+    private fun setupOverviewCounts() {
+        val houseNo = SharedPreferencesService.getUserHouseNo()
+        registrations.forEach { it.remove() }
+        registrations = FirestoreService().getDashboardStatistics(UserRole.HouseOwner, houseNo) { stats ->
+            binding.tvMyVisitorsCount.text = (stats["myVisitors"] ?: 0).toString()
+            binding.tvPendingCount.text = (stats["pendingRequests"] ?: 0).toString()
+            binding.tvActiveQRCount.text = (stats["myActiveQRCode"] ?: 0).toString()
+            binding.tvAnnouncementsCount.text = (stats["totalAnnouncements"] ?: 0).toString()
+            binding.tvMyComplaintsCount.text = (stats["myComplaints"] ?: 0).toString()
+            binding.tvBlockedVisitorsCount.text = (stats["myBlockedVisitors"] ?: 0).toString()
+        }
+    }
+
     private fun getLoginUserHouseNo(){
-        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.VISITOR, mapOf()) {
+        val email = SharedPreferencesService.getUserEmail()
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.HOUSES, mapOf("ownerEmail" to email)) {
                 snapshot ->
-            snapshot?.documents?.forEach {
-                val houseModel = HouseModel.fromHashMap(it.data ?: emptyMap());
+            if (snapshot != null && !snapshot.isEmpty) {
+                val houseModel = HouseModel.fromHashMap(snapshot.documents[0].data ?: emptyMap())
                 SharedPreferencesService.setUserHouseNo(houseModel.houseNo)
+                setupOverviewCounts()
+                getPendingRequest()
             }
-            getPendingRequest()
-        };
+        }
     }
 }
