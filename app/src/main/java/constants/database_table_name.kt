@@ -7,4 +7,5 @@ object DatabaseTableName{
     const val ANNOUNCEMENTS = "announcements";
     const val VISITOR = "visitor";
     const val COMPLAINT = "complaint";
+    const val QR_CODES = "qr_codes";
 }

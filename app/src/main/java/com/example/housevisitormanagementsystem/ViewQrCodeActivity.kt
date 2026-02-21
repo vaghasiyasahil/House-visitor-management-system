@@ -1,5 +1,7 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,58 +14,89 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housevisitormanagementsystem.databinding.ActivityViewQrCodeBinding
 import com.example.housevisitormanagementsystem.databinding.ItemQrCodeBinding
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
+import model.QrCodeModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ViewQrCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewQrCodeBinding
-
-    data class VisitorPass(
-        val name: String,
-        val purpose: String,
-        val validity: String
-    )
+    private var qrCodeList = mutableListOf<QrCodeModel>()
+    private lateinit var adapter: QrCodeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityViewQrCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val dummyData = listOf(
-            VisitorPass("Guest: Alice Johnson", "Personal Visit", "Valid until: 12 Jan, 2024"),
-            VisitorPass("Guest: Mark Smith", "Delivery", "Valid until: 10 Jan, 2024"),
-            VisitorPass("Guest: Sarah Wilson", "Maintenance", "Valid until: 15 Jan, 2024"),
-            VisitorPass("Guest: James Brown", "Personal Visit", "Valid until: 20 Jan, 2024")
-        )
-
         binding.rvQrCodes.layoutManager = LinearLayoutManager(this)
-        binding.rvQrCodes.adapter = QrCodeAdapter(dummyData) { pass ->
-            val intent = android.content.Intent(this, ViewQrCodeDetailsActivity::class.java).apply {
-                putExtra("VISITOR_NAME", pass.name)
-                putExtra("VISITOR_PURPOSE", pass.purpose)
-                putExtra("VISITOR_VALIDITY", pass.validity)
+        adapter = QrCodeAdapter(qrCodeList) { qrCode ->
+            val intent = Intent(this, ViewQrCodeDetailsActivity::class.java).apply {
+                putExtra("QR_DATA", qrCode.qrData)
+                putExtra("QR_CODE_ID", qrCode.id)
+                putExtra("VISITOR_NAME", qrCode.visitorName)
+                putExtra("VISITOR_PURPOSE", qrCode.purpose)
+                putExtra("VISITOR_MOBILE", qrCode.visitorMobile)
+                putExtra("VISITOR_PHOTO", qrCode.visitorPhoto)
+                putExtra("HOUSE_NO", qrCode.houseNo)
+                putExtra("IS_USED", qrCode.isUsed)
+                qrCode.expiresAt?.let {
+                    val sdf = SimpleDateFormat("dd MMM, yyyy hh:mm a", Locale.getDefault())
+                    putExtra("VISITOR_VALIDITY", "Valid until: ${sdf.format(it.toDate())}")
+                }
             }
             startActivity(intent)
         }
+        binding.rvQrCodes.adapter = adapter
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            
-            // Set status bar color to match background
             window.statusBarColor = getColor(R.color.dark_navy_bg)
-            
             insets
+        }
+
+        fetchQrCodes()
+    }
+
+    private fun fetchQrCodes() {
+        val userEmail = SharedPreferencesService.getUserEmail()
+
+        FirestoreService().getDocumentsWithEqualToConditions(
+            DatabaseTableName.QR_CODES,
+            mapOf("houseOwnerEmail" to userEmail)
+        ) { snapshot ->
+            qrCodeList.clear()
+            snapshot?.documents?.forEach { doc ->
+                val qrCode = QrCodeModel.fromHashMap(doc.data ?: emptyMap())
+                qrCodeList.add(qrCode)
+            }
+
+            // Sort by creation date (newest first)
+            qrCodeList.sortByDescending { it.createdAt?.toDate()?.time ?: 0 }
+
+            adapter.notifyDataSetChanged()
+
+            if (qrCodeList.isEmpty()) {
+                binding.layoutEmpty.visibility = View.VISIBLE
+                binding.rvQrCodes.visibility = View.GONE
+            } else {
+                binding.layoutEmpty.visibility = View.GONE
+                binding.rvQrCodes.visibility = View.VISIBLE
+            }
         }
     }
 
     class QrCodeAdapter(
-        private val passes: List<VisitorPass>,
-        private val onItemClick: (VisitorPass) -> Unit
+        private val qrCodes: List<QrCodeModel>,
+        private val onItemClick: (QrCodeModel) -> Unit
     ) : RecyclerView.Adapter<QrCodeAdapter.ViewHolder>() {
 
         class ViewHolder(val binding: ItemQrCodeBinding) : RecyclerView.ViewHolder(binding.root)
@@ -78,16 +111,45 @@ class ViewQrCodeActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val pass = passes[position]
-            holder.binding.tvVisitorName.text = pass.name
-            holder.binding.tvVisitorPurpose.text = pass.purpose
-            holder.binding.tvValidity.text = pass.validity
+            val qrCode = qrCodes[position]
+            holder.binding.tvVisitorName.text = qrCode.visitorName
+            holder.binding.tvVisitorPurpose.text = qrCode.purpose
+
+            // Show validity or status
+            val now = com.google.firebase.Timestamp.now()
+            when {
+                qrCode.isUsed -> {
+                    holder.binding.tvValidity.text = "Used"
+                    holder.binding.tvValidity.setTextColor(
+                        holder.itemView.context.getColor(R.color.text_grey)
+                    )
+                }
+                qrCode.expiresAt != null && qrCode.expiresAt!!.toDate().before(now.toDate()) -> {
+                    holder.binding.tvValidity.text = "Expired"
+                    holder.binding.tvValidity.setTextColor(
+                        holder.itemView.context.getColor(R.color.red)
+                    )
+                }
+                else -> {
+                    qrCode.expiresAt?.let {
+                        val sdf = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
+                        holder.binding.tvValidity.text = "Valid until: ${sdf.format(it.toDate())}"
+                    }
+                    holder.binding.tvValidity.setTextColor(
+                        holder.itemView.context.getColor(R.color.text_grey)
+                    )
+                }
+            }
+
+            // Hide edit/delete buttons (not needed for this flow)
+            holder.binding.btnEdit.visibility = View.GONE
+            holder.binding.btnDelete.visibility = View.GONE
 
             holder.itemView.setOnClickListener {
-                onItemClick(pass)
+                onItemClick(qrCode)
             }
         }
 
-        override fun getItemCount() = passes.size
+        override fun getItemCount() = qrCodes.size
     }
 }

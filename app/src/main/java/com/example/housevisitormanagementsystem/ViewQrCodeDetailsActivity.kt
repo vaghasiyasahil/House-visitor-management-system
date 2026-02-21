@@ -13,14 +13,22 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityViewQrCodeDetailsBinding
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
+import java.io.File
+import java.io.FileOutputStream
 import java.io.OutputStream
 
 class ViewQrCodeDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewQrCodeDetailsBinding
+    private var qrBitmap: Bitmap? = null
+    private var visitorName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +36,6 @@ class ViewQrCodeDetailsActivity : AppCompatActivity() {
         binding = ActivityViewQrCodeDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupUI()
         handleIntentData()
         setupClickListeners()
 
@@ -40,20 +47,49 @@ class ViewQrCodeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupUI() {
-        // Any additional UI setup
-    }
-
     private fun handleIntentData() {
-        val name = intent.getStringExtra("VISITOR_NAME") ?: "N/A"
+        val qrData = intent.getStringExtra("QR_DATA") ?: ""
+        visitorName = intent.getStringExtra("VISITOR_NAME") ?: "N/A"
         val purpose = intent.getStringExtra("VISITOR_PURPOSE") ?: "N/A"
         val validity = intent.getStringExtra("VISITOR_VALIDITY") ?: "N/A"
+        val qrCodeId = intent.getStringExtra("QR_CODE_ID") ?: ""
 
         binding.apply {
-            tvVisitorName.text = name.replace("Guest: ", "")
+            tvVisitorName.text = visitorName
             tvVisitorPurpose.text = purpose
             tvValidity.text = validity
-            tvQrId.text = "ID: PASS-${System.currentTimeMillis().toString().takeLast(6)}"
+            tvQrId.text = "ID: ${qrCodeId.takeLast(8).uppercase()}"
+        }
+
+        // Generate actual QR code bitmap from qrData
+        if (qrData.isNotEmpty()) {
+            qrBitmap = generateQrBitmap(qrData, 800)
+            qrBitmap?.let {
+                binding.ivQrCode.setImageBitmap(it)
+                binding.ivQrCode.setPadding(20, 20, 20, 20)
+            }
+        }
+    }
+
+    private fun generateQrBitmap(data: String, size: Int): Bitmap? {
+        return try {
+            val hints = hashMapOf<EncodeHintType, Any>()
+            hints[EncodeHintType.MARGIN] = 1
+            hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+
+            val writer = QRCodeWriter()
+            val bitMatrix = writer.encode(data, BarcodeFormat.QR_CODE, size, size, hints)
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+            for (x in 0 until size) {
+                for (y in 0 until size) {
+                    bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+                }
+            }
+            bitmap
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -67,32 +103,43 @@ class ViewQrCodeDetailsActivity : AppCompatActivity() {
         }
 
         binding.btnShare.setOnClickListener {
-            shareQrDetails()
+            shareQrCode()
         }
     }
 
     private fun saveQrToGallery() {
-        val bitmap = getBitmapFromView(binding.ivQrCode)
-        val filename = "QR_Visitor_${System.currentTimeMillis()}.jpg"
+        val bitmap = qrBitmap
+        if (bitmap == null) {
+            Toast.makeText(this, "No QR code to save", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val filename = "QR_Visitor_${System.currentTimeMillis()}.png"
         var outputStream: OutputStream? = null
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/VisitorPass")
                 }
-                val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                val imageUri = contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues
+                )
                 outputStream = imageUri?.let { contentResolver.openOutputStream(it) }
             } else {
-                // For older versions, would need write permission, skipping for now or showing toast
-                Toast.makeText(this, "Save function requires additional permissions on older Android", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Save function requires Android 10+",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return
             }
 
             outputStream?.use { stream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                 Toast.makeText(this, "QR Code saved to Gallery", Toast.LENGTH_LONG).show()
             } ?: run {
                 Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show()
@@ -103,31 +150,44 @@ class ViewQrCodeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun shareQrDetails() {
-        val visitorName = binding.tvVisitorName.text.toString()
-        val shareText = "Visitor Pass for $visitorName\n" +
-                "Purpose: ${binding.tvVisitorPurpose.text}\n" +
-                "Validity: ${binding.tvValidity.text}\n" +
-                "Please show this QR code at the entrance."
-
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, "Visitor Pass - $visitorName")
-            putExtra(Intent.EXTRA_TEXT, shareText)
+    private fun shareQrCode() {
+        val bitmap = qrBitmap
+        if (bitmap == null) {
+            Toast.makeText(this, "No QR code to share", Toast.LENGTH_SHORT).show()
+            return
         }
-        startActivity(Intent.createChooser(shareIntent, "Share Visitor Pass via"))
-    }
 
-    private fun getBitmapFromView(view: View): Bitmap {
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val bgDrawable = view.background
-        if (bgDrawable != null) {
-            bgDrawable.draw(canvas)
-        } else {
-            canvas.drawColor(Color.WHITE)
+        try {
+            // Save bitmap to cache for sharing
+            val cachePath = File(cacheDir, "images")
+            cachePath.mkdirs()
+            val file = File(cachePath, "visitor_pass_qr.png")
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.close()
+
+            val uri = FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.provider",
+                file
+            )
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Visitor Pass for $visitorName\n" +
+                            "Purpose: ${binding.tvVisitorPurpose.text}\n" +
+                            "${binding.tvValidity.text}\n\n" +
+                            "Please show this QR code at the society entrance."
+                )
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(shareIntent, "Share Visitor Pass via"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to share QR Code", Toast.LENGTH_SHORT).show()
         }
-        view.draw(canvas)
-        return bitmap
     }
 }

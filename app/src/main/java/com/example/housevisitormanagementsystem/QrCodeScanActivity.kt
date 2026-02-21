@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,12 +17,23 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.housevisitormanagementsystem.databinding.ActivityQrCodeScanBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.Timestamp
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.yourpackage.services.FirestoreService
+import constants.DatabaseTableName
+import kotlinx.coroutines.launch
+import model.QrCodeModel
+import services.setBase64Image
+import types.VisitorStatus
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -31,6 +44,7 @@ class QrCodeScanActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var cameraProvider: ProcessCameraProvider? = null
     private var isScanning = true
+    private var currentQrCode: QrCodeModel? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -56,7 +70,7 @@ class QrCodeScanActivity : AppCompatActivity() {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-        
+
         setupBottomSheet()
         setupClickListeners()
 
@@ -78,7 +92,7 @@ class QrCodeScanActivity : AppCompatActivity() {
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    isScanning = true // Resume scanning when bottom sheet is dismissed
+                    isScanning = true
                 }
             }
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
@@ -89,12 +103,12 @@ class QrCodeScanActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         val bottomSheetView = binding.bottomSheet
-        bottomSheetView.findViewById<View>(R.id.btnInstantApproval).setOnClickListener {
-            Toast.makeText(this, "Visitor Approved!", Toast.LENGTH_SHORT).show()
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        bottomSheetView.findViewById<MaterialButton>(R.id.btnInstantApproval).setOnClickListener {
+            approveVisitorEntry()
         }
 
-        bottomSheetView.findViewById<View>(R.id.btnDenyEntry).setOnClickListener {
+        bottomSheetView.findViewById<MaterialButton>(R.id.btnDenyEntry).setOnClickListener {
             Toast.makeText(this, "Entry Denied", Toast.LENGTH_SHORT).show()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -170,10 +184,124 @@ class QrCodeScanActivity : AppCompatActivity() {
     private fun onQrCodeDetected(data: String) {
         if (!isScanning) return
         isScanning = false
-        
-        // Show result in bottom sheet
+
+        // Validate QR code against Firestore
+        validateQrCode(data)
+    }
+
+    private fun validateQrCode(qrData: String) {
+        FirestoreService().getDocumentsWithEqualToConditionsOnce(
+            DatabaseTableName.QR_CODES,
+            mapOf("qrData" to qrData)
+        ) { snapshot ->
+            if (snapshot == null || snapshot.isEmpty) {
+                showError("Invalid QR Code", "This QR code is not recognized by the system.")
+                return@getDocumentsWithEqualToConditionsOnce
+            }
+
+            val doc = snapshot.documents[0]
+            val qrCode = QrCodeModel.fromHashMap(doc.data ?: emptyMap())
+            currentQrCode = qrCode
+
+            // Check if already used
+            if (qrCode.isUsed) {
+                showError("QR Code Already Used", "This QR code has already been used for entry.")
+                return@getDocumentsWithEqualToConditionsOnce
+            }
+
+            // Check if expired
+            val now = Timestamp.now()
+            if (qrCode.expiresAt != null && qrCode.expiresAt!!.toDate().before(now.toDate())) {
+                showError("QR Code Expired", "This QR code has expired and is no longer valid.")
+                return@getDocumentsWithEqualToConditionsOnce
+            }
+
+            // Valid QR — show visitor details
+            showValidVisitor(qrCode)
+        }
+    }
+
+    private fun showError(title: String, message: String) {
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Scan Again") { d, _ ->
+                d.dismiss()
+                isScanning = true
+            }
+            .setCancelable(false)
+            .create()
+
+        dialog.show()
+    }
+
+    private fun showValidVisitor(qrCode: QrCodeModel) {
+        val bottomSheetView = binding.bottomSheet
+
+        // Update status badge to VALID
+        val statusBadgeText = bottomSheetView.findViewById<TextView>(R.id.tvVisitorName)
+        // Populate visitor details
+        bottomSheetView.findViewById<TextView>(R.id.tvVisitorName).text = qrCode.visitorName
+        bottomSheetView.findViewById<TextView>(R.id.tvHouseDetails).text = "House #${qrCode.houseNo}"
+        bottomSheetView.findViewById<TextView>(R.id.tvVisitorId).text = "ID: ${qrCode.id.takeLast(8).uppercase()}"
+        bottomSheetView.findViewById<TextView>(R.id.tvPurpose).text = qrCode.purpose
+
+        // Show validity
+        qrCode.expiresAt?.let {
+            val sdf = SimpleDateFormat("hh:mm a, dd MMM", Locale.getDefault())
+            bottomSheetView.findViewById<TextView>(R.id.tvValidUntil).text = sdf.format(it.toDate())
+        }
+
+        // Set visitor photo
+        val ivVisitorImage = bottomSheetView.findViewById<ShapeableImageView>(R.id.ivVisitorImage)
+        ivVisitorImage.setBase64Image(qrCode.visitorPhoto)
+
+        // Show bottom sheet
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        Toast.makeText(this, "QR Detected: $data", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun approveVisitorEntry() {
+        val qrCode = currentQrCode ?: return
+
+        lifecycleScope.launch {
+            try {
+                // Mark QR code as used
+                FirestoreService().updateDocument(
+                    DatabaseTableName.QR_CODES,
+                    qrCode.id,
+                    mapOf("isUsed" to true)
+                )
+
+                // Update visitor status to Inside and set entry time
+                if (qrCode.visitorId.isNotEmpty()) {
+                    FirestoreService().updateDocument(
+                        DatabaseTableName.VISITOR,
+                        qrCode.visitorId,
+                        mapOf(
+                            "status" to VisitorStatus.Inside.name,
+                            "entryTime" to Timestamp.now()
+                        )
+                    )
+                }
+
+                Toast.makeText(
+                    this@QrCodeScanActivity,
+                    "✓ ${qrCode.visitorName} checked in successfully!",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            } catch (e: Exception) {
+                Log.e("QrCodeScanActivity", "Error approving visitor", e)
+                Toast.makeText(
+                    this@QrCodeScanActivity,
+                    "Failed to check in visitor. Please try again.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                isScanning = true
+            }
+        }
     }
 
     override fun onDestroy() {

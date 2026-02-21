@@ -4,6 +4,7 @@ import com.example.housevisitormanagementsystem.R
 
 enum class VisitorStatus {
     Pending,
+    Approved,
     Reject,
     Inside,
     Expired,
@@ -13,6 +14,7 @@ enum class VisitorStatus {
         fun fromString(value: String): VisitorStatus? {
             return when (value.lowercase().replace(" ","").replace("_","").replace("-","")) {
                 "pending" -> Pending
+                "approved" -> Approved
                 "reject" -> Reject
                 "inside" -> Inside
                 "expired" -> Expired
@@ -29,6 +31,7 @@ enum class VisitorStatus {
 //                CheckedOut -> R.color.red
 
                 Pending -> R.color.status_yellow
+                Approved -> R.color.status_green
                 Reject -> R.color.red
                 Inside -> R.color.status_green
                 Expired -> R.color.status_grey

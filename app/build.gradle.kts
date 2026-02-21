@@ -82,4 +82,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.android.mail)
     implementation(libs.android.activation)
+    implementation(libs.zxing.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 }
