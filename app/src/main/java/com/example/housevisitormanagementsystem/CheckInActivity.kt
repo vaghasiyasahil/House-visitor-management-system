@@ -224,6 +224,25 @@ class CheckInActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                val blockedSnap = FirestoreService().getDocumentsWithEqualToConditionsOnceSuspend(
+                        DatabaseTableName.VISITOR,
+                        mapOf(
+                            "isBlocked" to true,
+                            "mobile" to binding.etMobileNumber.text.toString()
+                        )
+                    )
+
+                if (blockedSnap != null && !blockedSnap.isEmpty) {
+                    Toast.makeText(
+                        this@CheckInActivity,
+                        "This visitor is blocked",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnCheckInVisitor.isEnabled = true
+                    return@launch
+                }
                 var houseOwnerFcmToken = ""
                 val userSnap = FirestoreService().getDocumentsWithEqualToConditionsOnceSuspend(
                     DatabaseTableName.USER,
