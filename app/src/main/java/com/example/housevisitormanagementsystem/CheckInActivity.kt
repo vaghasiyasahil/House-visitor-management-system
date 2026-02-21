@@ -217,12 +217,17 @@ class CheckInActivity : AppCompatActivity() {
         var ownerEmail = ""
         var houseOwnerFcmToken = ""
         for(house in houseList){
-            ownerEmail = house.ownerEmail;
+            if(binding.etHouseNo.text.toString()==house.houseNo){
+                ownerEmail = house.ownerEmail;
+                break
+            }
         }
-        FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER,mapOf("email" to ownerEmail)){
-                userSnap ->
-            if(userSnap!=null && !userSnap.isEmpty){
-                houseOwnerFcmToken = userSnap.documents[0].getString("fcmToken")?:""
+        lifecycleScope.launch {
+            FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER,mapOf("email" to ownerEmail)){
+                    userSnap ->
+                if(userSnap!=null && !userSnap.isEmpty){
+                    houseOwnerFcmToken = userSnap.documents[0].getString("fcmToken")?:""
+                }
             }
         }
 

@@ -46,6 +46,16 @@ class NotificationService : FirebaseMessagingService() {
             }
     }
 
+    fun setNewToken() {
+        FirebaseMessaging.getInstance().deleteToken()
+            .addOnCompleteListener {
+                FirebaseMessaging.getInstance().token
+                    .addOnSuccessListener { newToken ->
+                        SharedPreferencesService.setFcmToken(newToken)
+                    }
+            }
+    }
+
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("FCM", "Received message: ${message.messageId}")

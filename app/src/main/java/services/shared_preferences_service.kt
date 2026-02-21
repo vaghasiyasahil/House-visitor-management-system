@@ -1,5 +1,8 @@
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import services.NotificationService
 
 object SharedPreferencesService {
     private const val PREFERENCES_NAME = "house_visitor_management_system"
@@ -56,5 +59,6 @@ object SharedPreferencesService {
 
     fun clear() {
         prefs.edit().clear().apply()
+        NotificationService().setNewToken();
     }
 }
