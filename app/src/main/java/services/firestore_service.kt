@@ -108,13 +108,29 @@ class FirestoreService {
             }
     }
 
+    suspend fun getDocumentsWithEqualToConditionsOnceSuspend(
+        collectionName: String,
+        conditions: Map<String, Any>
+    ): QuerySnapshot? {
+        return try {
+            var query: Query = firestore.collection(collectionName)
+            conditions.forEach { (field, value) ->
+                query = query.whereEqualTo(field, value)
+            }
+            query.get().await()
+        } catch (e: Exception) {
+            Log.e("FirestoreService", "Condition Error: ${e.message}")
+            null
+        }
+    }
+
 
 
     suspend fun updateDocument(
         collectionName: String,
         docId: String,
         data: Map<String, Any>
-        ): Boolean {
+    ): Boolean {
         return try {
             firestore.collection(collectionName).document(docId).update(data).await()
             true
@@ -128,7 +144,7 @@ class FirestoreService {
         collectionName: String,
         docId: String,
         data: HashMap<String, Any?>,
-        ): Boolean {
+    ): Boolean {
         return try {
             firestore.collection(collectionName).document(docId).update(data).await()
             true

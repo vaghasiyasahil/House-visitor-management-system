@@ -64,7 +64,7 @@ class CheckInActivity : AppCompatActivity() {
                 @Suppress("DEPRECATION")
                 result.data?.extras?.get("data") as? Bitmap
             }
-            
+
             if (imageBitmap != null) {
                 capturedImage = imageBitmap
                 binding.ivCapturedPhoto.setImageBitmap(imageBitmap)
@@ -91,7 +91,7 @@ class CheckInActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnBack.setOnClickListener { finish() }
-        
+
         binding.main.setOnClickListener {
             KeyboardUtils.hideKeyboard(this)
         }
@@ -110,7 +110,7 @@ class CheckInActivity : AppCompatActivity() {
                 binding.etHouseNo.showDropDown()
             }
         }
-        
+
         // Show Purpose dropdown on click
         binding.etPurpose.setOnTouchListener { _, _ ->
             binding.etPurpose.showDropDown()
@@ -215,47 +215,55 @@ class CheckInActivity : AppCompatActivity() {
         binding.btnCheckInVisitor.isEnabled = false
 
         var ownerEmail = ""
-        var houseOwnerFcmToken = ""
-        for(house in houseList){
-            if(binding.etHouseNo.text.toString()==house.houseNo){
-                ownerEmail = house.ownerEmail;
+        for (house in houseList) {
+            if (binding.etHouseNo.text.toString() == house.houseNo) {
+                ownerEmail = house.ownerEmail
                 break
             }
         }
-        lifecycleScope.launch {
-            FirestoreService().getDocumentsWithEqualToConditionsOnce(DatabaseTableName.USER,mapOf("email" to ownerEmail)){
-                    userSnap ->
-                if(userSnap!=null && !userSnap.isEmpty){
-                    houseOwnerFcmToken = userSnap.documents[0].getString("fcmToken")?:""
-                }
-            }
-        }
 
-        val visitorModel = VisitorModel(
-            name = binding.etVisitorName.text.toString(),
-            houseNo = binding.etHouseNo.text.toString(),
-            mobile = binding.etMobileNumber.text.toString(),
-            purpose = binding.etPurpose.text.toString(),
-            status = VisitorStatus.Pending,
-            visitorPhoto = base64Service.bitmapToBase64(capturedImage!!),
-            entryTime = Timestamp.now(),
-            houseOwnerFcmToken = houseOwnerFcmToken,
-            securityGuardFcmToken = SharedPreferencesService.getFcmToken()
-        );
-        lifecycleScope.launch{
-            val docId = FirestoreService().addDocument(DatabaseTableName.VISITOR,visitorModel.toHashMap());
-            if (docId != null) {
-                SendNotificationService.sendNotification("New Visitor","${binding.etVisitorName.text} ${binding.etMobileNumber.text}",houseOwnerFcmToken)
+        lifecycleScope.launch {
+            try {
+                var houseOwnerFcmToken = ""
+                val userSnap = FirestoreService().getDocumentsWithEqualToConditionsOnceSuspend(
+                    DatabaseTableName.USER,
+                    mapOf("email" to ownerEmail)
+                )
+                if (userSnap != null && !userSnap.isEmpty) {
+                    houseOwnerFcmToken = userSnap.documents[0].getString("fcmToken") ?: ""
+                }
+
+                val visitorModel = VisitorModel(
+                    name = binding.etVisitorName.text.toString(),
+                    houseNo = binding.etHouseNo.text.toString(),
+                    mobile = binding.etMobileNumber.text.toString(),
+                    purpose = binding.etPurpose.text.toString(),
+                    status = VisitorStatus.Pending,
+                    visitorPhoto = base64Service.bitmapToBase64(capturedImage!!),
+                    entryTime = Timestamp.now(),
+                    houseOwnerFcmToken = houseOwnerFcmToken,
+                    securityGuardFcmToken = SharedPreferencesService.getFcmToken()
+                )
+                val docId = FirestoreService().addDocument(DatabaseTableName.VISITOR, visitorModel.toHashMap())
+                if (docId != null) {
+                    SendNotificationService.sendNotification(
+                        "New Visitor",
+                        "${binding.etVisitorName.text} ${binding.etMobileNumber.text}",
+                        houseOwnerFcmToken
+                    )
+                    Toast.makeText(
+                        this@CheckInActivity,
+                        "Visitor checked in successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                } else {
+                    throw Exception("Failed to add visitor document")
+                }
+            } catch (e: Exception) {
                 Toast.makeText(
                     this@CheckInActivity,
-                    "Visitor checked in successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
-            } else {
-                Toast.makeText(
-                    this@CheckInActivity,
-                    "Failed to check in visitor",
+                    "Failed to check in visitor: ${e.message}",
                     Toast.LENGTH_SHORT
                 ).show()
                 binding.progressBar.visibility = View.GONE
@@ -273,7 +281,7 @@ class CheckInActivity : AppCompatActivity() {
             binding.etHouseNo.setText(selectedHouse?.houseNo)
             KeyboardUtils.hideKeyboard(this)
         }
-        
+
         setupPurposeDropdown()
     }
 
