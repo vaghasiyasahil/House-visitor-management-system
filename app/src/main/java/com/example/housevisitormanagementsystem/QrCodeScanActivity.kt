@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -238,25 +239,20 @@ class QrCodeScanActivity : AppCompatActivity() {
     private fun showValidVisitor(qrCode: QrCodeModel) {
         val bottomSheetView = binding.bottomSheet
 
-        // Update status badge to VALID
         val statusBadgeText = bottomSheetView.findViewById<TextView>(R.id.tvVisitorName)
-        // Populate visitor details
         bottomSheetView.findViewById<TextView>(R.id.tvVisitorName).text = qrCode.visitorName
         bottomSheetView.findViewById<TextView>(R.id.tvHouseDetails).text = "House #${qrCode.houseNo}"
         bottomSheetView.findViewById<TextView>(R.id.tvVisitorId).text = "ID: ${qrCode.id.takeLast(8).uppercase()}"
         bottomSheetView.findViewById<TextView>(R.id.tvPurpose).text = qrCode.purpose
 
-        // Show validity
         qrCode.expiresAt?.let {
             val sdf = SimpleDateFormat("hh:mm a, dd MMM", Locale.getDefault())
             bottomSheetView.findViewById<TextView>(R.id.tvValidUntil).text = sdf.format(it.toDate())
         }
 
-        // Set visitor photo
         val ivVisitorImage = bottomSheetView.findViewById<ShapeableImageView>(R.id.ivVisitorImage)
         ivVisitorImage.setBase64Image(qrCode.visitorPhoto)
 
-        // Show bottom sheet
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -272,14 +268,14 @@ class QrCodeScanActivity : AppCompatActivity() {
                     mapOf("isUsed" to true)
                 )
 
-                // Update visitor status to Inside and set entry time
                 if (qrCode.visitorId.isNotEmpty()) {
                     FirestoreService().updateDocument(
                         DatabaseTableName.VISITOR,
                         qrCode.visitorId,
                         mapOf(
                             "status" to VisitorStatus.Inside.name,
-                            "entryTime" to Timestamp.now()
+                            "entryTime" to Timestamp.now(),
+                            "securityGuardFcmToken" to SharedPreferencesService.getFcmToken()
                         )
                     )
                 }

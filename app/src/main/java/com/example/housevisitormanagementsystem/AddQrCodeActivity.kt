@@ -150,7 +150,8 @@ class AddQrCodeActivity : AppCompatActivity() {
                 purpose = binding.etPurpose.text.toString().trim(),
                 status = VisitorStatus.Approved,
                 visitorPhoto = base64Service.bitmapToBase64(capturedImage!!),
-                entryTime = Timestamp.now()
+                entryTime = Timestamp.now(),
+                houseOwnerFcmToken = SharedPreferencesService.getFcmToken()
             )
 
             val visitorId = FirestoreService().addDocument(
