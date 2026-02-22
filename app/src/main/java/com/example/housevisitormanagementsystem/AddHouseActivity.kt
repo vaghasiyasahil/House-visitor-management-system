@@ -204,6 +204,7 @@ class AddHouseActivity : AppCompatActivity() {
                             "password" to password,
                             "role" to UserRole.HouseOwner.name,
                             "name" to name,
+                            "fcmToken" to "N/A",
                             "createdAt" to Timestamp.now()
                         )
                         FirestoreService().addDocument(DatabaseTableName.USER, userData, addedHouseId)

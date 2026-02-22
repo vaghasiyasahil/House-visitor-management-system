@@ -132,6 +132,9 @@ class CheckOutActivity : AppCompatActivity() {
             )
             itemView.findViewById<TextView>(R.id.visitorEntryTime).text = TimeAndDateUtils.formatShortDateTime(visitor.entryTime)
             itemView.findViewById<ShapeableImageView>(R.id.visitorImage).setBase64Image(visitor.visitorPhoto)
+            if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
+                itemView.findViewById<View>(R.id.btnCheckOut).visibility = View.GONE
+            }
             itemView.findViewById<View>(R.id.btnCheckOut).setOnClickListener {
                 setCheckedOutStatus(visitor)
             }

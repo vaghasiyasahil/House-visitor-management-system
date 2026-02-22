@@ -317,6 +317,7 @@ class AddSecurityGuardsActivity : AppCompatActivity() {
                             "password" to password,
                             "role" to UserRole.SecurityGuard.name,
                             "name" to name,
+                            "fcmToken" to "N/A",
                             "createdAt" to Timestamp.now()
                         )
                         FirestoreService().addDocument(DatabaseTableName.USER, userData, addedGuardId)
