@@ -14,6 +14,7 @@ import com.google.firebase.Timestamp
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.VisitorModel
+import model.SecurityGuardModel
 import types.VisitorStatus
 import android.graphics.BitmapFactory
 import android.util.Base64
@@ -74,6 +75,17 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         }
         setupDashboardCounts()
         getPendingRequest()
+        fetchGuardData()
+    }
+
+    private fun fetchGuardData() {
+        val email = SharedPreferencesService.getUserEmail()
+        FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.SECURITY_GUARDS, mapOf("email" to email)) { snapshot ->
+            if (snapshot != null && !snapshot.isEmpty) {
+                val guardData = SecurityGuardModel.fromHashMap(snapshot.documents[0].data ?: emptyMap())
+                binding.ivProfile.setBase64Image(guardData.image)
+            }
+        }
     }
 
     private fun setupDashboardCounts() {
