@@ -65,28 +65,7 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <FrameLayout
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/circle_dark_bg">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_alerts"
-                        app:tint="@color/white" />
-
-                    <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/notification_dot" />
-                </FrameLayout>
             </RelativeLayout>
 
             <!-- Status Overview -->

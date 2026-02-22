@@ -41,7 +41,7 @@
             android:layout_marginStart="16dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@id/profileContainer"
-            app:layout_constraintEnd_toStartOf="@id/notificationContainer"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profileContainer"
             app:layout_constraintTop_toTopOf="@id/profileContainer">
 
@@ -60,32 +60,6 @@
                 android:textColor="@color/text_grey"
                 android:textSize="12sp" />
         </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/notificationContainer"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_dark_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/notification"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="@color/white" />
-
-            <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/notification_dot" />
-        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView

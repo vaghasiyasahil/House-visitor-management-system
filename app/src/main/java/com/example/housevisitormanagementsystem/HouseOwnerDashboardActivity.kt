@@ -56,10 +56,6 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             showLogoutDialog()
         }
 
-        binding.notificationContainer.setOnClickListener {
-            Toast.makeText(this, "Notifications clicked", Toast.LENGTH_SHORT).show()
-        }
-
         binding.btnVisitorApproval.setOnClickListener {
             startActivity(Intent(this,CheckOutActivity::class.java))
         }
