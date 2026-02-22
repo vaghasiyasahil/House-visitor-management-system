@@ -13,9 +13,9 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="hello_again">HELLO, AGAIN</string>
-    <string name="admin_user">Admin User</string>
-    <string name="welcome_back_home">Welcome Home, Sahil</string>
-    <string name="owner_unit_info">Unit A-402 • Skyline Residency</string>
+    <string name="admin_user">Admin</string>
+    <string name="welcome_back_home">Welcome Home, </string>
+    <string name="owner_unit_info">Skyline Residency</string>
     <string name="notification">Notification</string>
     <string name="overview">overview</string>
     <string name="updated_just_now">Updated just now</string>

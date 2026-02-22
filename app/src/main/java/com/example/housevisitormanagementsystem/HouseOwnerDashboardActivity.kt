@@ -45,6 +45,8 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        binding.welcomeMessageAndName.text = "Welcome, ${SharedPreferencesService.getUserName()}"
+        binding.houseNoAndResidencyName.text = "Skyline Residency • ${SharedPreferencesService.getUserHouseNo()}"
 
         getLoginUserHouseNo()
         getPendingRequest()

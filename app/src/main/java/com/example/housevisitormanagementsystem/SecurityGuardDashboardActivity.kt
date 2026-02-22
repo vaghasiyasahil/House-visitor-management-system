@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -50,6 +51,8 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        binding.guardName.text = SharedPreferencesService.getUserName()
 
         binding.btnCheckIn.setOnClickListener {
             startActivity(Intent(this,CheckInActivity::class.java))

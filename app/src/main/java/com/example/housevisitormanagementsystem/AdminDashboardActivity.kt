@@ -1,5 +1,6 @@
 package com.example.housevisitormanagementsystem
 
+import SharedPreferencesService
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +26,8 @@ class AdminDashboardActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        binding.adminUserName.text = SharedPreferencesService.getUserName();
 
         binding.houseManagement.setOnClickListener {
             intent = Intent(this,ViewHouseActivity::class.java)

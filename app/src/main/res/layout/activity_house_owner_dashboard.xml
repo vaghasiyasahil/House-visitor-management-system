@@ -46,6 +46,7 @@
             app:layout_constraintTop_toTopOf="@id/profileContainer">
 
             <TextView
+                android:id="@+id/welcomeMessageAndName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_back_home"
@@ -54,6 +55,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/houseNoAndResidencyName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/owner_unit_info"
