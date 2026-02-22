@@ -9,6 +9,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.housevisitormanagementsystem.databinding.ActivityAdminDashboardBinding
 import com.yourpackage.services.FirestoreService
+import android.widget.Toast
+import constants.DatabaseTableName
 import types.UserRole
 
 class AdminDashboardActivity : AppCompatActivity() {
@@ -55,6 +57,19 @@ class AdminDashboardActivity : AppCompatActivity() {
         }
 
         setupDashboardCounts()
+        listenForUserDeletion()
+    }
+
+    private fun listenForUserDeletion() {
+        val userId = SharedPreferencesService.getUserId()
+        FirestoreService().getCollection(DatabaseTableName.USER).document(userId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) return@addSnapshotListener
+                if (snapshot != null && !snapshot.exists()) {
+                    Toast.makeText(this, "Your account has been deleted", Toast.LENGTH_LONG).show()
+                    performLogout()
+                }
+            }
     }
 
     private fun setupDashboardCounts() {

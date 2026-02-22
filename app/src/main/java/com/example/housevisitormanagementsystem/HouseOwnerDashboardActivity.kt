@@ -51,6 +51,19 @@ class HouseOwnerDashboardActivity : AppCompatActivity() {
         getLoginUserHouseNo()
         getPendingRequest()
         setupClickListeners()
+        listenForUserDeletion()
+    }
+
+    private fun listenForUserDeletion() {
+        val userId = SharedPreferencesService.getUserId()
+        FirestoreService().getCollection(DatabaseTableName.USER).document(userId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) return@addSnapshotListener
+                if (snapshot != null && !snapshot.exists()) {
+                    Toast.makeText(this, "Your account has been deleted", Toast.LENGTH_LONG).show()
+                    performLogout()
+                }
+            }
     }
 
     private fun setupClickListeners() {

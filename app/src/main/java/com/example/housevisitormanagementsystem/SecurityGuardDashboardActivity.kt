@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -76,6 +77,19 @@ class SecurityGuardDashboardActivity : AppCompatActivity() {
         setupDashboardCounts()
         getPendingRequest()
         fetchGuardData()
+        listenForUserDeletion()
+    }
+
+    private fun listenForUserDeletion() {
+        val userId = SharedPreferencesService.getUserId()
+        FirestoreService().getCollection(DatabaseTableName.USER).document(userId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) return@addSnapshotListener
+                if (snapshot != null && !snapshot.exists()) {
+                    Toast.makeText(this, "Your account has been deleted", Toast.LENGTH_LONG).show()
+                    performLogout()
+                }
+            }
     }
 
     private fun fetchGuardData() {

@@ -145,6 +145,7 @@ class ViewHouseActivity : AppCompatActivity() {
             Loader.showLoader(this@ViewHouseActivity)
             val success  = FirestoreService().deleteDocument(DatabaseTableName.HOUSES, house.id)
             if(success){
+                FirestoreService().deleteDocument(DatabaseTableName.USER, house.id)
                 Toast.makeText(this@ViewHouseActivity, "House deleted successfully", Toast.LENGTH_SHORT).show()
             }else{
                 Toast.makeText(this@ViewHouseActivity, "House Delete failed", Toast.LENGTH_SHORT).show()

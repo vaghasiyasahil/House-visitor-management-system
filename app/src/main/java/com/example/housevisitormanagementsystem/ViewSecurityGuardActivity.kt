@@ -171,7 +171,9 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             Loader.showLoader(this@ViewSecurityGuardActivity)
             val success  = FirestoreService().deleteDocument(DatabaseTableName.SECURITY_GUARDS, securityGuard.id)
             if(success){
+                FirestoreService().deleteDocument(DatabaseTableName.USER, securityGuard.id)
                 Toast.makeText(this@ViewSecurityGuardActivity, "Security Guard deleted successfully", Toast.LENGTH_SHORT).show()
+                getSecurityGuard() // Refresh the list
             }else{
                 Toast.makeText(this@ViewSecurityGuardActivity, "Security Guard Delete failed", Toast.LENGTH_SHORT).show()
             }
