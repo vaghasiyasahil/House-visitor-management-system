@@ -174,12 +174,22 @@ class ViewHouseActivity : AppCompatActivity() {
         titlePaint.textAlign = Paint.Align.CENTER
         canvas.drawText("House Management Report", 595f / 2, 50f, titlePaint)
 
+        var yPos = 80f
+        paint.textSize = 12f
+        canvas.drawText("Generated on: ${utils.TimeAndDateUtils.formatShortDateTime(com.google.firebase.Timestamp.now())}", 40f, yPos, paint)
+
+        yPos += 20f
+        val filterSearch = if (searchText.isBlank()) "All" else searchText
+        canvas.drawText("Filters - Search: $filterSearch", 40f, yPos, paint)
+
+        yPos += 30f
+
         // Table Constants
         val startX = 20f
         val endX = 575f
-        var yPos = 100f
         val rowHeight = 25f
         val padding = 5f
+        val tableStartY = yPos
 
         // Column Configs
         val colSn = startX
@@ -221,12 +231,12 @@ class ViewHouseActivity : AppCompatActivity() {
         }
 
         // Vertical lines
-        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colHouseNo, 100f - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colOwner, 100f - 18f, colOwner, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colEmail, 100f - 18f, colEmail, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colMembers, 100f - 18f, colMembers, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(startX, tableStartY - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colHouseNo, tableStartY - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colOwner, tableStartY - 18f, colOwner, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colEmail, tableStartY - 18f, colEmail, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colMembers, tableStartY - 18f, colMembers, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, tableStartY - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 
