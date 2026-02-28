@@ -57,7 +57,11 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             startActivity(Intent(this, AddSecurityGuardsActivity::class.java))
         }
         binding.btnGenerateReport.setOnClickListener {
-            generatePDF()
+            if (filterSecurityGuardList.isEmpty()) {
+                Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show()
+            } else {
+                generatePDF()
+            }
         }
 
         binding.etSearch.addTextChangedListener {
@@ -197,12 +201,27 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         titlePaint.textAlign = Paint.Align.CENTER
         canvas.drawText("Security Guards Report", 595f / 2, 50f, titlePaint)
 
+        var yPos = 80f
+        paint.textSize = 12f
+        canvas.drawText("Generated on: ${utils.TimeAndDateUtils.formatShortDateTime(com.google.firebase.Timestamp.now())}", 40f, yPos, paint)
+
+        yPos += 20f
+        val filterShift = selectedSecurityGuardFilter?.name ?: "All"
+        val filterSearch =
+            if (binding.etSearch.text.isNullOrBlank())
+                "All"
+            else
+                binding.etSearch.text.toString()
+        canvas.drawText("Filters - Shift: $filterShift, Search: $filterSearch", 40f, yPos, paint)
+
+        yPos += 30f
+
         // Table Constants
         val startX = 20f
         val endX = 575f
-        var yPos = 100f
         val rowHeight = 25f
         val padding = 5f
+        val tableStartY = yPos
 
         // Column Configs
         val colSn = startX
@@ -247,13 +266,13 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         }
 
         // Vertical lines
-        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colName, 100f - 18f, colName, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colEmail, 100f - 18f, colEmail, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colPhone, 100f - 18f, colPhone, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colShift, 100f - 18f, colShift, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colSalary, 100f - 18f, colSalary, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(startX, tableStartY - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colName, tableStartY - 18f, colName, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colEmail, tableStartY - 18f, colEmail, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colPhone, tableStartY - 18f, colPhone, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colShift, tableStartY - 18f, colShift, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colSalary, tableStartY - 18f, colSalary, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, tableStartY - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 

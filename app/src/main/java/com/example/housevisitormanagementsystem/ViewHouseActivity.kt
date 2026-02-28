@@ -58,7 +58,11 @@ class ViewHouseActivity : AppCompatActivity() {
             startActivity(Intent(this, AddHouseActivity::class.java))
         }
         binding.btnGenerateReport.setOnClickListener {
-            generatePDF()
+            if (filterHouseList.isEmpty()) {
+                Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show()
+            } else {
+                generatePDF()
+            }
         }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
