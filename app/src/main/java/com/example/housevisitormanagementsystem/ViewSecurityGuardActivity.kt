@@ -30,6 +30,8 @@ import types.SecurityGuardShiftType
 import types.VisitorStatus
 import java.io.File
 import java.io.FileOutputStream
+import android.net.Uri
+import androidx.core.content.FileProvider
 
 class ViewSecurityGuardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewSecurityGuardBinding
@@ -268,17 +270,33 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
                 if (uri != null) {
                     contentResolver.openOutputStream(uri)?.use { pdfDocument.writeTo(it) }
                     Toast.makeText(this, "PDF saved to Downloads", Toast.LENGTH_LONG).show()
+                    openPdf(uri)
                 }
             } else {
                 val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
                 pdfDocument.writeTo(FileOutputStream(file))
                 Toast.makeText(this, "PDF saved to ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                
+                val uri = FileProvider.getUriForFile(this, "${packageName}.provider", file)
+                openPdf(uri)
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error generating PDF: ${e.message}", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
         } finally {
             pdfDocument.close()
+        }
+    }
+
+    private fun openPdf(uri: Uri) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show()
         }
     }
 }
