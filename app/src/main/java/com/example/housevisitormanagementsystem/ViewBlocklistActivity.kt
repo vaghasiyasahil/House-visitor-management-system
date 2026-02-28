@@ -240,12 +240,27 @@ class ViewBlocklistActivity : AppCompatActivity() {
         titlePaint.textAlign = Paint.Align.CENTER
         canvas.drawText("Blocklist Report", 595f / 2, 50f, titlePaint)
 
+        var yPos = 80f
+        paint.textSize = 12f
+        canvas.drawText("Generated on: ${utils.TimeAndDateUtils.formatShortDateTime(com.google.firebase.Timestamp.now())}", 40f, yPos, paint)
+
+        yPos += 20f
+        val filterStatus = selectedTempBlockFilter.name
+        val filterSearch =
+            if (binding.etSearch.text.isNullOrBlank())
+                "All"
+            else
+                binding.etSearch.text.toString()
+        canvas.drawText("Filters - Status: $filterStatus, Search: $filterSearch", 40f, yPos, paint)
+
+        yPos += 30f
+
         // Table Constants
         val startX = 20f
         val endX = 575f
-        var yPos = 100f
         val rowHeight = 25f
         val padding = 5f
+        val tableStartY = yPos
 
         // Column Configs
         val colSn = startX
@@ -287,12 +302,12 @@ class ViewBlocklistActivity : AppCompatActivity() {
         }
 
         // Vertical lines
-        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colName, 100f - 18f, colName, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colMobile, 100f - 18f, colMobile, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colHouseNo, 100f - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(colReason, 100f - 18f, colReason, yPos - rowHeight + 7f, paint)
-        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(startX, tableStartY - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colName, tableStartY - 18f, colName, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colMobile, tableStartY - 18f, colMobile, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colHouseNo, tableStartY - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colReason, tableStartY - 18f, colReason, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, tableStartY - 18f, endX, yPos - rowHeight + 7f, paint)
 
         pdfDocument.finishPage(page)
 
