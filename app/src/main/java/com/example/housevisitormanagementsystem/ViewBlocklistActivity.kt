@@ -22,6 +22,9 @@ import model.VisitorModel
 import services.setBase64Image
 import types.TempBlocklistType
 import types.UserRole
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.os.Build
 
 class ViewBlocklistActivity : AppCompatActivity() {
 
@@ -56,7 +59,11 @@ class ViewBlocklistActivity : AppCompatActivity() {
         }
 
         binding.btnGenerateReport.setOnClickListener {
-            Toast.makeText(this, "Exporting to PDF...", Toast.LENGTH_SHORT).show()
+            if (filterVisitorsList.isEmpty()) {
+                Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show()
+            } else {
+                generatePDF()
+            }
         }
 
         binding.etSearch.addTextChangedListener {
@@ -217,5 +224,119 @@ class ViewBlocklistActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    private fun generatePDF() {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+        val paint = Paint()
+        val titlePaint = Paint()
+
+        // Page Title
+        titlePaint.textSize = 20f
+        titlePaint.isFakeBoldText = true
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Blocklist Report", 595f / 2, 50f, titlePaint)
+
+        // Table Constants
+        val startX = 20f
+        val endX = 575f
+        var yPos = 100f
+        val rowHeight = 25f
+        val padding = 5f
+
+        // Column Configs
+        val colSn = startX
+        val colName = colSn + 30f
+        val colMobile = colName + 110f
+        val colHouseNo = colMobile + 100f
+        val colReason = colHouseNo + 80f
+
+        // 1. Draw Header Background
+        paint.color = android.graphics.Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        // 2. Draw Header Text
+        paint.color = android.graphics.Color.BLACK
+        paint.textSize = 11f
+        paint.isFakeBoldText = true
+        canvas.drawText("#", colSn + padding, yPos, paint)
+        canvas.drawText("Name", colName + padding, yPos, paint)
+        canvas.drawText("Mobile", colMobile + padding, yPos, paint)
+        canvas.drawText("House No", colHouseNo + padding, yPos, paint)
+        canvas.drawText("Reason", colReason + padding, yPos, paint)
+
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+        
+        yPos += rowHeight
+        paint.isFakeBoldText = false
+
+        for ((index, item) in filterVisitorsList.withIndex()) {
+            if (yPos > 800) break
+
+            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
+            canvas.drawText(item.name.take(18), colName + padding, yPos, paint)
+            canvas.drawText(item.mobile, colMobile + padding, yPos, paint)
+            canvas.drawText(item.houseNo, colHouseNo + padding, yPos, paint)
+            canvas.drawText(item.blockedReason.take(30), colReason + padding, yPos, paint)
+            
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            yPos += rowHeight
+        }
+
+        // Vertical lines
+        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colName, 100f - 18f, colName, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colMobile, 100f - 18f, colMobile, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colHouseNo, 100f - 18f, colHouseNo, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colReason, 100f - 18f, colReason, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+
+        pdfDocument.finishPage(page)
+
+        val fileName = "Blocklist_Report_${System.currentTimeMillis()}.pdf"
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS)
+                }
+                val uri = contentResolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                if (uri != null) {
+                    contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        pdfDocument.writeTo(outputStream)
+                    }
+                    Toast.makeText(this, "PDF saved to Downloads", Toast.LENGTH_LONG).show()
+                    openPdf(uri)
+                }
+            } else {
+                val file = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), fileName)
+                pdfDocument.writeTo(java.io.FileOutputStream(file))
+                Toast.makeText(this, "PDF saved to ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                val uri = androidx.core.content.FileProvider.getUriForFile(this, "${packageName}.provider", file)
+                openPdf(uri)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error generating PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        } finally {
+            pdfDocument.close()
+        }
+    }
+
+    private fun openPdf(uri: android.net.Uri) {
+        try {
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show()
+        }
     }
 }
