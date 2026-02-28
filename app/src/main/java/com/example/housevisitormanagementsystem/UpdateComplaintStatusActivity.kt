@@ -55,7 +55,7 @@ class UpdateComplaintStatusActivity : AppCompatActivity() {
         binding.tvComplaintTitle.text = "${complaintModel?.title?:""}"
         binding.tvComplaintHouseNo.text = "House No • ${complaintModel?.createdHouseNo?:""}"
         binding.tvComplaintDescription.text = complaintModel?.description?:""
-        selectedStatus = complaintModel?.status?.name?:"pending"
+        selectedStatus = ComplaintStatusType.toDisplayString(complaintModel?.status?:ComplaintStatusType.Pending)?:"Peinding"
         updateOptionSelection()
     }
 
