@@ -225,7 +225,7 @@ class ViewVisitorActivity : AppCompatActivity() {
         val pdfDocument = PdfDocument()
         val paint = Paint()
         val titlePaint = Paint()
-        val pageInfo = PdfDocument.PageInfo.Builder(615, 842, 1).create()
+        val pageInfo = PdfDocument.PageInfo.Builder(800, 842, 1).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
         var yPos = 40f
@@ -233,7 +233,8 @@ class ViewVisitorActivity : AppCompatActivity() {
         titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         titlePaint.textSize = 20f
         titlePaint.color = Color.BLACK
-        canvas.drawText("Visitor Management System - Report", 120f, yPos, titlePaint)
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Visitor Management System - Report", 800f / 2, yPos, titlePaint)
 
         yPos += 30f
         paint.textSize = 12f
@@ -253,59 +254,114 @@ class ViewVisitorActivity : AppCompatActivity() {
         canvas.drawText("Filters - Status: $filterStatus, Date: $filterDate, Search: $filterSearch", 40f, yPos, paint)
 
         yPos += 30f
+
+        val startX = 20f
+        val endX = 780f
+        val rowHeight = 35f
+        val padding = 5f
+
+        val colPhoto = startX
+        val colName = colPhoto + 45f
+        val colMobile = colName + 120f
+        val colHouse = colMobile + 80f
+        val colPurpose = colHouse + 70f
+        val colStatus = colPurpose + 70f
+        val colInTime = colStatus + 80f
+        val colOutTime = colInTime + 130f
+
+        paint.color = Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        paint.color = Color.BLACK
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         paint.textSize = 10f
-        
-        val colPhoto = 20f
-        val colName = 70f
-        val colMobile = 160f
-        val colHouse = 240f
-        val colPurpose = 280f
-        val colStatus = 340f
-        val colInTime = 390f
-        val colOutTime = 500f
 
-        canvas.drawText("Photo", colPhoto, yPos, paint)
-        canvas.drawText("Name", colName, yPos, paint)
-        canvas.drawText("Mobile No", colMobile, yPos, paint)
-        canvas.drawText("House", colHouse, yPos, paint)
-        canvas.drawText("Purpose", colPurpose, yPos, paint)
-        canvas.drawText("Status", colStatus, yPos, paint)
-        canvas.drawText("In Time", colInTime, yPos, paint)
-        canvas.drawText("Out Time", colOutTime, yPos, paint)
+        canvas.drawText("Photo", colPhoto + padding, yPos, paint)
+        canvas.drawText("Name", colName + padding, yPos, paint)
+        canvas.drawText("Mobile", colMobile + padding, yPos, paint)
+        canvas.drawText("House", colHouse + padding, yPos, paint)
+        canvas.drawText("Purpose", colPurpose + padding, yPos, paint)
+        canvas.drawText("Status", colStatus + padding, yPos, paint)
+        canvas.drawText("In Time", colInTime + padding, yPos, paint)
+        canvas.drawText("Out Time", colOutTime + padding, yPos, paint)
 
-        yPos += 10f
-        canvas.drawLine(20f, yPos, 575f, yPos, paint)
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        yPos += 45f
+        yPos += rowHeight
 
         for (visitor in filterVisitorsList) {
             if (yPos > 800f) {
+                // Draw vertical boundaries before concluding the page
+                canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colName, 100f - 18f, colName, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colMobile, 100f - 18f, colMobile, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colHouse, 100f - 18f, colHouse, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colPurpose, 100f - 18f, colPurpose, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colStatus, 100f - 18f, colStatus, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colInTime, 100f - 18f, colInTime, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(colOutTime, 100f - 18f, colOutTime, yPos - rowHeight + 7f, paint)
+                canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+
                 pdfDocument.finishPage(page)
                 page = pdfDocument.startPage(pageInfo)
                 canvas = page.canvas
-                yPos = 40f
+                yPos = 50f
+                
+                // Redraw table headers on new page
+                paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                paint.color = Color.LTGRAY
+                canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+                paint.color = Color.BLACK
+                canvas.drawText("Photo", colPhoto + padding, yPos, paint)
+                canvas.drawText("Name", colName + padding, yPos, paint)
+                canvas.drawText("Mobile", colMobile + padding, yPos, paint)
+                canvas.drawText("House", colHouse + padding, yPos, paint)
+                canvas.drawText("Purpose", colPurpose + padding, yPos, paint)
+                canvas.drawText("Status", colStatus + padding, yPos, paint)
+                canvas.drawText("In Time", colInTime + padding, yPos, paint)
+                canvas.drawText("Out Time", colOutTime + padding, yPos, paint)
+                canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+                
+                paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+                yPos += rowHeight
             }
 
             val visitorBitmap = base64Service.base64ToBitmap(visitor.visitorPhoto)
             if (visitorBitmap != null) {
-                val scaledBitmap = Bitmap.createScaledBitmap(visitorBitmap, 40, 40, false)
-                canvas.drawBitmap(scaledBitmap, colPhoto, yPos - 30f, paint)
+                // Scale bitmap to fit within the 35f rowHeight
+                val scaledBitmap = Bitmap.createScaledBitmap(visitorBitmap, 24, 24, false)
+                canvas.drawBitmap(scaledBitmap, colPhoto + padding, yPos - 18f, paint)
             } else {
-                canvas.drawText("N/A", colPhoto, yPos, paint)
+                canvas.drawText("N/A", colPhoto + padding, yPos, paint)
             }
 
-            canvas.drawText(shortenText(visitor.name, 20), colName, yPos, paint)
-            canvas.drawText(visitor.mobile, colMobile, yPos, paint)
-            canvas.drawText(visitor.houseNo, colHouse, yPos, paint)
-            canvas.drawText(shortenText(visitor.purpose ?: "", 12), colPurpose, yPos, paint)
-            canvas.drawText(visitor.status.name, colStatus, yPos, paint)
-            canvas.drawText(TimeAndDateUtils.formatShortDateTime(visitor.entryTime).replace(",",""), colInTime, yPos, paint)
-            canvas.drawText(TimeAndDateUtils.formatShortDateTime(visitor.exitTime).replace(",",""), colOutTime, yPos, paint)
+            canvas.drawText(shortenText(visitor.name, 15), colName + padding, yPos, paint)
+            canvas.drawText(visitor.mobile, colMobile + padding, yPos, paint)
+            canvas.drawText(visitor.houseNo, colHouse + padding, yPos, paint)
+            canvas.drawText(shortenText(visitor.purpose ?: "-", 10), colPurpose + padding, yPos, paint)
+            canvas.drawText(visitor.status.name, colStatus + padding, yPos, paint)
+            canvas.drawText(TimeAndDateUtils.formatShortDateTime(visitor.entryTime).replace(",",""), colInTime + padding, yPos, paint)
+            canvas.drawText(TimeAndDateUtils.formatShortDateTime(visitor.exitTime).replace(",","").takeIf { it.isNotEmpty() && it != "N/A" } ?: "-", colOutTime + padding, yPos, paint)
 
-            yPos += 50f
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            yPos += rowHeight
         }
+
+        // Draw vertical lines for the last page
+        val tableTopY = if(filterVisitorsList.isEmpty()) 100f else (yPos - (filterVisitorsList.size * rowHeight) - rowHeight)
+        val limitY = if(tableTopY < 0f) 50f else tableTopY
+        
+        canvas.drawLine(startX, limitY - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colName, limitY - 18f, colName, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colMobile, limitY - 18f, colMobile, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colHouse, limitY - 18f, colHouse, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colPurpose, limitY - 18f, colPurpose, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colStatus, limitY - 18f, colStatus, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colInTime, limitY - 18f, colInTime, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colOutTime, limitY - 18f, colOutTime, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, limitY - 18f, endX, yPos - rowHeight + 7f, paint)
+
         pdfDocument.finishPage(page)
         savePdf(pdfDocument)
     }
