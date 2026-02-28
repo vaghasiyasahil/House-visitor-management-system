@@ -246,9 +246,9 @@ class ViewAnnouncementActivity : AppCompatActivity() {
         val colSn = startX
         val colTitle = colSn + 30f
         val colCategory = colTitle + 140f
-        val colDate = colCategory + 90f
-        val colTime = colDate + 90f
-        val colAuthor = colTime + 90f
+        val colDate = colCategory + 80f
+        val colTime = colDate + 110f
+        val colAuthor = colTime + 80f
 
         paint.color = Color.LTGRAY
         canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)

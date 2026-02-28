@@ -21,6 +21,16 @@ import types.AnnouncementsType
 import types.ComplaintStatusType
 import types.UserRole
 import utils.TimeAndDateUtils
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.os.Build
+import android.content.ContentValues
+import android.provider.MediaStore
+import android.os.Environment
+import java.io.File
+import java.io.FileOutputStream
+import android.net.Uri
+import androidx.core.content.FileProvider
 
 class ViewComplaintActivity : AppCompatActivity() {
 
@@ -51,7 +61,11 @@ class ViewComplaintActivity : AppCompatActivity() {
             finish()
         }
         binding.btnGenerateReport.setOnClickListener {
-            android.widget.Toast.makeText(this, "Exporting to PDF...", android.widget.Toast.LENGTH_SHORT).show()
+            if (filterComplaintList.isEmpty()) {
+                android.widget.Toast.makeText(this, "No data to export", android.widget.Toast.LENGTH_SHORT).show()
+            } else {
+                generatePDF()
+            }
         }
         binding.fabAddComplaint.setOnClickListener {
             startActivity(Intent(this,AddComplaintActivity::class.java))
@@ -148,4 +162,117 @@ class ViewComplaintActivity : AppCompatActivity() {
         }
     }
 
+    private fun generatePDF() {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+        val paint = Paint()
+        val titlePaint = Paint()
+
+        // Page Title
+        titlePaint.textSize = 20f
+        titlePaint.isFakeBoldText = true
+        titlePaint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Complaints Report", 595f / 2, 50f, titlePaint)
+
+        // Table Constants
+        val startX = 20f
+        val endX = 575f
+        var yPos = 100f
+        val rowHeight = 25f
+        val padding = 5f
+
+        // Column Configs
+        val colSn = startX
+        val colTitle = colSn + 30f
+        val colDesc = colTitle + 140f
+        val colDate = colDesc + 160f
+        val colStatus = colDate + 130f
+
+        // 1. Draw Header Background
+        paint.color = android.graphics.Color.LTGRAY
+        canvas.drawRect(startX, yPos - 18f, endX, yPos + 7f, paint)
+
+        // 2. Draw Header Text
+        paint.color = android.graphics.Color.BLACK
+        paint.textSize = 11f
+        paint.isFakeBoldText = true
+        canvas.drawText("#", colSn + padding, yPos, paint)
+        canvas.drawText("Title", colTitle + padding, yPos, paint)
+        canvas.drawText("Description", colDesc + padding, yPos, paint)
+        canvas.drawText("Date", colDate + padding, yPos, paint)
+        canvas.drawText("Status", colStatus + padding, yPos, paint)
+
+        canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+        
+        yPos += rowHeight
+        paint.isFakeBoldText = false
+
+        for ((index, item) in filterComplaintList.withIndex()) {
+            if (yPos > 800) break
+
+            canvas.drawText((index + 1).toString(), colSn + padding, yPos, paint)
+            canvas.drawText(item.title.take(20), colTitle + padding, yPos, paint)
+            canvas.drawText(item.description.take(30), colDesc + padding, yPos, paint)
+            canvas.drawText(TimeAndDateUtils.formatShortDateTime(item.createdAt), colDate + padding, yPos, paint)
+            canvas.drawText(item.status.name, colStatus + padding, yPos, paint)
+            
+            canvas.drawLine(startX, yPos + 7f, endX, yPos + 7f, paint)
+            yPos += rowHeight
+        }
+
+        // Vertical lines
+        canvas.drawLine(startX, 100f - 18f, startX, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colTitle, 100f - 18f, colTitle, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colDesc, 100f - 18f, colDesc, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colDate, 100f - 18f, colDate, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(colStatus, 100f - 18f, colStatus, yPos - rowHeight + 7f, paint)
+        canvas.drawLine(endX, 100f - 18f, endX, yPos - rowHeight + 7f, paint)
+
+        pdfDocument.finishPage(page)
+
+        val fileName = "Complaints_Report_${System.currentTimeMillis()}.pdf"
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+                val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                if (uri != null) {
+                    contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        pdfDocument.writeTo(outputStream)
+                    }
+                    android.widget.Toast.makeText(this, "PDF saved to Downloads", android.widget.Toast.LENGTH_LONG).show()
+                    openPdf(uri)
+                }
+            } else {
+                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+                pdfDocument.writeTo(FileOutputStream(file))
+                android.widget.Toast.makeText(this, "PDF saved to ${file.absolutePath}", android.widget.Toast.LENGTH_LONG).show()
+                val uri = FileProvider.getUriForFile(this, "${packageName}.provider", file)
+                openPdf(uri)
+            }
+        } catch (e: Exception) {
+            android.widget.Toast.makeText(this, "Error generating PDF: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        } finally {
+            pdfDocument.close()
+        }
+    }
+
+    private fun openPdf(uri: Uri) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+        } catch (e: Exception) {
+            android.widget.Toast.makeText(this, "No PDF viewer found", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
 }

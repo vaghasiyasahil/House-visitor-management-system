@@ -179,9 +179,9 @@ class ViewHouseActivity : AppCompatActivity() {
 
         // Column Configs
         val colSn = startX
-        val colHouseNo = colSn + 30f
-        val colOwner = colHouseNo + 80f
-        val colEmail = colOwner + 130f
+        val colHouseNo = colSn + 40f
+        val colOwner = colHouseNo + 100f
+        val colEmail = colOwner + 140f
         val colMembers = colEmail + 160f
 
         // 1. Draw Header Background

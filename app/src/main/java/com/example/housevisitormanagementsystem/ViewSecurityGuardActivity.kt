@@ -208,9 +208,9 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
         val colSn = startX
         val colName = colSn + 30f
         val colEmail = colName + 110f
-        val colPhone = colEmail + 120f
-        val colShift = colPhone + 100f
-        val colSalary = colShift + 70f
+        val colPhone = colEmail + 140f
+        val colShift = colPhone + 90f
+        val colSalary = colShift + 60f
 
         // 1. Draw Header Background
         paint.color = android.graphics.Color.LTGRAY

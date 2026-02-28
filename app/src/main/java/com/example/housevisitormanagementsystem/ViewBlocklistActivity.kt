@@ -251,7 +251,7 @@ class ViewBlocklistActivity : AppCompatActivity() {
         val colSn = startX
         val colName = colSn + 30f
         val colMobile = colName + 110f
-        val colHouseNo = colMobile + 100f
+        val colHouseNo = colMobile + 110f
         val colReason = colHouseNo + 80f
 
         // 1. Draw Header Background
