@@ -177,7 +177,7 @@ class AddQrCodeActivity : AppCompatActivity() {
                     expiresAt = expiresAt,
                     isUsed = false,
                     houseOwnerEmail = ownerEmail,
-                    visitorPhoto = visitorModel.visitorPhoto
+                    visitorPhoto = visitorModel.visitorPhoto,
                 )
 
                 val qrCodeId = FirestoreService().addDocument(

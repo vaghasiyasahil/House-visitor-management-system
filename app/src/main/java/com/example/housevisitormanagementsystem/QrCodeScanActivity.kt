@@ -31,6 +31,7 @@ import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.QrCodeModel
+import services.SendNotificationService
 import services.setBase64Image
 import types.VisitorStatus
 import java.text.SimpleDateFormat
