@@ -135,6 +135,9 @@ class ViewVisitorActivity : AppCompatActivity() {
     }
 
     private fun getVisitor(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.visitorContainer.visibility = View.GONE
+        
         val filter: Map<String, Any>
         if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
             filter = mapOf("houseNo" to SharedPreferencesService.getUserHouseNo())
@@ -149,6 +152,7 @@ class ViewVisitorActivity : AppCompatActivity() {
             }
             visitorsList = visitorList
             setupFilters()
+            binding.progressBar.visibility = View.GONE
         };
     }
 

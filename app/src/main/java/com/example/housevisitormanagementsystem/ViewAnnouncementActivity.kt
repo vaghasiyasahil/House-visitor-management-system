@@ -106,6 +106,9 @@ class ViewAnnouncementActivity : AppCompatActivity() {
     }
 
     private fun getAllAnnouncement(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.announcementsContainer.visibility = View.GONE
+        
         FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.ANNOUNCEMENTS, mapOf()) {
                 snapshot ->
             val announcementsList = mutableListOf<AnnouncementModel>()
@@ -114,6 +117,7 @@ class ViewAnnouncementActivity : AppCompatActivity() {
             }
             allAnnouncementsList = announcementsList
             setupFilters()
+            binding.progressBar.visibility = View.GONE
         };
     }
 

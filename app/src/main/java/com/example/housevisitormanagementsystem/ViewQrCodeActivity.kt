@@ -76,6 +76,9 @@ class ViewQrCodeActivity : AppCompatActivity() {
     }
 
     private fun fetchQrCodes() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.rvQrCodes.visibility = View.GONE
+        
         val userEmail = SharedPreferencesService.getUserEmail()
 
         FirestoreService().getDocumentsWithEqualToConditions(
@@ -101,6 +104,7 @@ class ViewQrCodeActivity : AppCompatActivity() {
 
                 adapter.notifyDataSetChanged()
 
+                binding.progressBar.visibility = View.GONE
                 if (qrCodeList.isEmpty()) {
                     binding.layoutEmpty.visibility = View.VISIBLE
                     binding.rvQrCodes.visibility = View.GONE

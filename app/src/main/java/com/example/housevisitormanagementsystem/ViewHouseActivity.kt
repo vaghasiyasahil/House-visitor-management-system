@@ -79,6 +79,9 @@ class ViewHouseActivity : AppCompatActivity() {
     }
 
     private fun getHouses(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.houseContainer.visibility = View.GONE
+        
         FirestoreService().getDocumentsQuery(DatabaseTableName.HOUSES) {
                 snapshot ->
             val tempHouseList = mutableListOf<HouseModel>()
@@ -87,6 +90,7 @@ class ViewHouseActivity : AppCompatActivity() {
             }
             houseList = tempHouseList
             setupFilters()
+            binding.progressBar.visibility = View.GONE
         };
     }
 

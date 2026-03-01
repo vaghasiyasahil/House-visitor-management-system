@@ -92,6 +92,9 @@ class ViewComplaintActivity : AppCompatActivity() {
     }
 
     private fun getAllComplaint(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.complaintsContainer.visibility = View.GONE
+        
         val filter: Map<String, Any>
         if(UserRole.fromString(SharedPreferencesService.getUserRole())==UserRole.HouseOwner){
             filter = mapOf("createdHouseNo" to SharedPreferencesService.getUserHouseNo())
@@ -109,6 +112,7 @@ class ViewComplaintActivity : AppCompatActivity() {
             }
             allComplaintList = announcementsList
             setupFilters()
+            binding.progressBar.visibility = View.GONE
         };
     }
 

@@ -82,6 +82,9 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
     }
 
     private fun getSecurityGuard(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.securityGuardsContainer.visibility = View.GONE
+        
         FirestoreService().getDocumentsWithEqualToConditions(DatabaseTableName.SECURITY_GUARDS,
             mapOf()
         ) {
@@ -92,6 +95,7 @@ class ViewSecurityGuardActivity : AppCompatActivity() {
             }
             securityGuardList = securityList
             setupFilters()
+            binding.progressBar.visibility = View.GONE
         };
     }
 
