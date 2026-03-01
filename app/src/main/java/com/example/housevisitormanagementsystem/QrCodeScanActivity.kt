@@ -31,6 +31,7 @@ import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import kotlinx.coroutines.launch
 import model.QrCodeModel
+import model.VisitorModel
 import services.SendNotificationService
 import services.setBase64Image
 import types.VisitorStatus
@@ -47,6 +48,7 @@ class QrCodeScanActivity : AppCompatActivity() {
     private var cameraProvider: ProcessCameraProvider? = null
     private var isScanning = true
     private var currentQrCode: QrCodeModel? = null
+    private var currentVisitor: VisitorModel? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -219,7 +221,16 @@ class QrCodeScanActivity : AppCompatActivity() {
             }
 
             // Valid QR — show visitor details
-            showValidVisitor(qrCode)
+            lifecycleScope.launch {
+                val visitorSnapshot = FirestoreService().getDocument(DatabaseTableName.VISITOR, qrCode.visitorId)
+                if (visitorSnapshot != null && visitorSnapshot.exists()) {
+                    val visitor = model.VisitorModel.fromHashMap(visitorSnapshot.data ?: emptyMap())
+                    currentVisitor = visitor
+                    showValidVisitor(qrCode, visitor)
+                } else {
+                    showError("Visitor Not Found", "Could not find visitor details.")
+                }
+            }
         }
     }
 
@@ -237,14 +248,14 @@ class QrCodeScanActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showValidVisitor(qrCode: QrCodeModel) {
+    private fun showValidVisitor(qrCode: QrCodeModel, visitor: model.VisitorModel) {
         val bottomSheetView = binding.bottomSheet
 
         val statusBadgeText = bottomSheetView.findViewById<TextView>(R.id.tvVisitorName)
-        bottomSheetView.findViewById<TextView>(R.id.tvVisitorName).text = qrCode.visitorName
-        bottomSheetView.findViewById<TextView>(R.id.tvHouseDetails).text = "House #${qrCode.houseNo}"
+        bottomSheetView.findViewById<TextView>(R.id.tvVisitorName).text = visitor.name
+        bottomSheetView.findViewById<TextView>(R.id.tvHouseDetails).text = "House #${visitor.houseNo}"
         bottomSheetView.findViewById<TextView>(R.id.tvVisitorId).text = "ID: ${qrCode.id.takeLast(8).uppercase()}"
-        bottomSheetView.findViewById<TextView>(R.id.tvPurpose).text = qrCode.purpose
+        bottomSheetView.findViewById<TextView>(R.id.tvPurpose).text = visitor.purpose
 
         qrCode.expiresAt?.let {
             val sdf = SimpleDateFormat("hh:mm a, dd MMM", Locale.getDefault())
@@ -252,13 +263,14 @@ class QrCodeScanActivity : AppCompatActivity() {
         }
 
         val ivVisitorImage = bottomSheetView.findViewById<ShapeableImageView>(R.id.ivVisitorImage)
-        ivVisitorImage.setBase64Image(qrCode.visitorPhoto)
+        ivVisitorImage.setBase64Image(visitor.visitorPhoto)
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun approveVisitorEntry() {
         val qrCode = currentQrCode ?: return
+        val visitor = currentVisitor ?: return
 
         lifecycleScope.launch {
             try {
@@ -283,7 +295,7 @@ class QrCodeScanActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@QrCodeScanActivity,
-                    "✓ ${qrCode.visitorName} checked in successfully!",
+                    "✓ ${visitor.name} checked in successfully!",
                     Toast.LENGTH_LONG
                 ).show()
 

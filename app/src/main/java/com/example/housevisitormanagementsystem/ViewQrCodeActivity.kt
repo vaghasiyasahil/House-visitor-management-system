@@ -17,13 +17,21 @@ import com.example.housevisitormanagementsystem.databinding.ItemQrCodeBinding
 import com.yourpackage.services.FirestoreService
 import constants.DatabaseTableName
 import model.QrCodeModel
+import model.VisitorModel
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+data class QrCodeWithVisitor(
+    val qrCode: QrCodeModel,
+    val visitor: VisitorModel
+)
 
 class ViewQrCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewQrCodeBinding
-    private var qrCodeList = mutableListOf<QrCodeModel>()
+    private var qrCodeList = mutableListOf<QrCodeWithVisitor>()
     private lateinit var adapter: QrCodeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,17 +45,17 @@ class ViewQrCodeActivity : AppCompatActivity() {
         }
 
         binding.rvQrCodes.layoutManager = LinearLayoutManager(this)
-        adapter = QrCodeAdapter(qrCodeList) { qrCode ->
+        adapter = QrCodeAdapter(qrCodeList) { item ->
             val intent = Intent(this, ViewQrCodeDetailsActivity::class.java).apply {
-                putExtra("QR_DATA", qrCode.qrData)
-                putExtra("QR_CODE_ID", qrCode.id)
-                putExtra("VISITOR_NAME", qrCode.visitorName)
-                putExtra("VISITOR_PURPOSE", qrCode.purpose)
-                putExtra("VISITOR_MOBILE", qrCode.visitorMobile)
-                putExtra("VISITOR_PHOTO", qrCode.visitorPhoto)
-                putExtra("HOUSE_NO", qrCode.houseNo)
-                putExtra("IS_USED", qrCode.isUsed)
-                qrCode.expiresAt?.let {
+                putExtra("QR_DATA", item.qrCode.qrData)
+                putExtra("QR_CODE_ID", item.qrCode.id)
+                putExtra("VISITOR_NAME", item.visitor.name)
+                putExtra("VISITOR_PURPOSE", item.visitor.purpose)
+                putExtra("VISITOR_MOBILE", item.visitor.mobile)
+                putExtra("VISITOR_PHOTO", item.visitor.visitorPhoto)
+                putExtra("HOUSE_NO", item.visitor.houseNo)
+                putExtra("IS_USED", item.qrCode.isUsed)
+                item.qrCode.expiresAt?.let {
                     val sdf = SimpleDateFormat("dd MMM, yyyy hh:mm a", Locale.getDefault())
                     putExtra("VISITOR_VALIDITY", "Valid until: ${sdf.format(it.toDate())}")
                 }
@@ -73,30 +81,39 @@ class ViewQrCodeActivity : AppCompatActivity() {
             DatabaseTableName.QR_CODES,
             mapOf("houseOwnerEmail" to userEmail)
         ) { snapshot ->
-            qrCodeList.clear()
-            snapshot?.documents?.forEach { doc ->
-                val qrCode = QrCodeModel.fromHashMap(doc.data ?: emptyMap())
-                qrCodeList.add(qrCode)
-            }
+            lifecycleScope.launch {
+                val newList = mutableListOf<QrCodeWithVisitor>()
+                snapshot?.documents?.forEach { doc ->
+                    val qrCode = QrCodeModel.fromHashMap(doc.data ?: emptyMap())
+                    val visitorSnapshot = FirestoreService().getDocument(DatabaseTableName.VISITOR, qrCode.visitorId)
+                    if (visitorSnapshot != null && visitorSnapshot.exists()) {
+                        val visitor = VisitorModel.fromHashMap(visitorSnapshot.data ?: emptyMap())
+                        newList.add(QrCodeWithVisitor(qrCode, visitor))
+                    }
+                }
 
-            // Sort by creation date (newest first)
-            qrCodeList.sortByDescending { it.createdAt?.toDate()?.time ?: 0 }
+                qrCodeList.clear()
+                qrCodeList.addAll(newList)
 
-            adapter.notifyDataSetChanged()
+                // Sort by creation date (newest first)
+                qrCodeList.sortByDescending { it.qrCode.createdAt?.toDate()?.time ?: 0 }
 
-            if (qrCodeList.isEmpty()) {
-                binding.layoutEmpty.visibility = View.VISIBLE
-                binding.rvQrCodes.visibility = View.GONE
-            } else {
-                binding.layoutEmpty.visibility = View.GONE
-                binding.rvQrCodes.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+
+                if (qrCodeList.isEmpty()) {
+                    binding.layoutEmpty.visibility = View.VISIBLE
+                    binding.rvQrCodes.visibility = View.GONE
+                } else {
+                    binding.layoutEmpty.visibility = View.GONE
+                    binding.rvQrCodes.visibility = View.VISIBLE
+                }
             }
         }
     }
 
     class QrCodeAdapter(
-        private val qrCodes: List<QrCodeModel>,
-        private val onItemClick: (QrCodeModel) -> Unit
+        private val items: List<QrCodeWithVisitor>,
+        private val onItemClick: (QrCodeWithVisitor) -> Unit
     ) : RecyclerView.Adapter<QrCodeAdapter.ViewHolder>() {
 
         class ViewHolder(val binding: ItemQrCodeBinding) : RecyclerView.ViewHolder(binding.root)
@@ -111,9 +128,11 @@ class ViewQrCodeActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val qrCode = qrCodes[position]
-            holder.binding.tvVisitorName.text = qrCode.visitorName
-            holder.binding.tvVisitorPurpose.text = qrCode.purpose
+            val item = items[position]
+            val qrCode = item.qrCode
+            val visitor = item.visitor
+            holder.binding.tvVisitorName.text = visitor.name
+            holder.binding.tvVisitorPurpose.text = visitor.purpose
 
             // Show validity or status
             val now = com.google.firebase.Timestamp.now()
@@ -146,10 +165,10 @@ class ViewQrCodeActivity : AppCompatActivity() {
             holder.binding.btnDelete.visibility = View.GONE
 
             holder.itemView.setOnClickListener {
-                onItemClick(qrCode)
+                onItemClick(item)
             }
         }
 
-        override fun getItemCount() = qrCodes.size
+        override fun getItemCount() = items.size
     }
 }
