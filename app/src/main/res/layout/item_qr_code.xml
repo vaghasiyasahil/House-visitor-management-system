@@ -17,23 +17,17 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- QR Icon / Placeholder -->
-        <FrameLayout
-            android:id="@+id/qrContainer"
+        <!-- Visitor Photo -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivVisitorImage"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:background="@drawable/circle_dark_bg"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            android:src="@drawable/person_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_qr_code_scanner"
-                app:tint="@color/bright_azure_blue" />
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Visitor Info -->
         <LinearLayout
@@ -45,7 +39,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/actionLayout"
-            app:layout_constraintStart_toEndOf="@id/qrContainer"
+            app:layout_constraintStart_toEndOf="@id/ivVisitorImage"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView

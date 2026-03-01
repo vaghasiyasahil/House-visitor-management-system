@@ -121,6 +121,22 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <!-- Visitor Photo (NEW) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="16dp">
+                        
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/ivVisitorImage"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/person_image"
+                            app:shapeAppearanceOverlay="@style/CircleImage" />
+                    </LinearLayout>
+
                     <!-- Name Field -->
                     <LinearLayout
                         android:layout_width="match_parent"

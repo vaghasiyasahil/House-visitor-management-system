@@ -20,6 +20,7 @@ import com.example.housevisitormanagementsystem.databinding.ActivityViewQrCodeDe
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import services.setBase64Image
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -59,6 +60,11 @@ class ViewQrCodeDetailsActivity : AppCompatActivity() {
             tvVisitorPurpose.text = purpose
             tvValidity.text = validity
             tvQrId.text = "ID: ${qrCodeId.takeLast(8).uppercase()}"
+        }
+
+        val visitorPhoto = intent.getStringExtra("VISITOR_PHOTO") ?: ""
+        if (visitorPhoto.isNotEmpty()) {
+            binding.ivVisitorImage.setBase64Image(visitorPhoto)
         }
 
         // Generate actual QR code bitmap from qrData

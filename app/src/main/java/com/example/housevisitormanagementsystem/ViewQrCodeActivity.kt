@@ -20,6 +20,7 @@ import model.QrCodeModel
 import model.VisitorModel
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import services.setBase64Image
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -133,6 +134,7 @@ class ViewQrCodeActivity : AppCompatActivity() {
             val visitor = item.visitor
             holder.binding.tvVisitorName.text = visitor.name
             holder.binding.tvVisitorPurpose.text = visitor.purpose
+            holder.binding.ivVisitorImage.setBase64Image(visitor.visitorPhoto)
 
             // Show validity or status
             val now = com.google.firebase.Timestamp.now()
